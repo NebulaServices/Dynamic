@@ -10,8 +10,11 @@ import fetch from './methods/fetch';
 import message from './methods/message';
 import write from './methods/write';
 import imports from './methods/imports';
+import reflect from './methods/reflect';
+import niche from './methods/niche';
+import storage from './methods/storage';
+import cookie from './methods/cookie';
 
-import DynamicMeta from '../meta';
 import DynamicClientMethods from './methods';
 
 export default class DynamicClient {
@@ -28,6 +31,10 @@ export default class DynamicClient {
     message = message;
     write = write;
     imports = imports;
+    reflect = reflect;
+    niche = niche;
+    storage = storage;
+    cookie = cookie;
 
     methods = DynamicClientMethods;
 

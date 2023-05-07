@@ -4,10 +4,12 @@ import DynamicUtil from './util';
 import DynamicUrlRewriter from './url';
 import DynamicMeta from './meta';
 import DynamicHttp from './http';
+import DynamicRegex from './regex';
 import DynamicMiddleware from './middleware';
 import HeaderData from './headers';
 import BareClient from '@tomphttp/bare-client';
 import DynamicTypeFunctions from './istype';
+import DynamicCookies from './cookie';
 
 class DynamicBundle {
   modules = new DynamicModules(this);
@@ -17,6 +19,8 @@ class DynamicBundle {
   rewrite = new DynamicRewrites(this);
   url = new DynamicUrlRewriter(this);
   is = new DynamicTypeFunctions(this);
+  cookies = new DynamicCookies(this);
+  regex = new DynamicRegex(this);
   headers = HeaderData;
   bare:BareClient;
 

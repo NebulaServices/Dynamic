@@ -7,7 +7,7 @@ export default function PostMessage(node: any, parent: any = {}) {
             property: {type: 'Identifier', name: '__dynamic$message'},
         },
         arguments: [
-            {type: 'Identifier', name: (node.object?.name||node.name||node.value)},
+            node.object||node,
         ]
     }).forEach(([e,v])=>node[e]=v)
 

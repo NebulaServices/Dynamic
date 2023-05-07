@@ -15,6 +15,11 @@ export default class html {
 
   config = [
       {
+        "elements": "all",
+        "tags": ['style'],
+        "action": "css"
+      },
+      {
           "elements": ['SCRIPT', 'IFRAME', 'EMBED', 'INPUT', 'TRACK', 'MEDIA', 'SOURCE', 'IMG'],
           "tags": ['src'],
           "action": "url"
@@ -55,6 +60,11 @@ export default class html {
         "elements": ['META'],
         "tags": ['http-equiv'],
         "action": "delete",
+      },
+      {
+        "elements": ['IFRAME'],
+        "tags": ['srcdoc'],
+        "action": "html",
       }
   ];
 
@@ -91,7 +101,8 @@ The document has moved
       if ((node.tagName=='script'||node.tagName=='SCRIPT')&&(!ProxyNode.getAttribute('src'))&&(ProxyNode.getAttribute('type')!=='application/json')) {
         node.childNodes.forEach((e:any)=>{
           if (e.nodeName!=='#text') return e;
-          e.value = that.ctx.rewrite.js.rewrite(e.value, meta);
+          if (ProxyNode.getAttribute('type') && ProxyNode.getAttribute('type')!=='application/javascript' && ProxyNode.getAttribute('type')!=='text/javascript') return e;
+          e.value = that.ctx.rewrite.js.rewrite(e.value, {type: 'script'}, false, that.ctx);
         })
       }
       if (node.tagName=='style'||node.tagName=='STYLE') {
@@ -100,9 +111,9 @@ The document has moved
           e.value = that.ctx.rewrite.css.rewrite(e.value, meta)
         })
       }
-      
+
       that.config.forEach((config:any)=>{
-        if (config.elements.indexOf(node.nodeName.toUpperCase())!==-1) {
+        if (Array.isArray(config.elements)) if (config.elements.indexOf(node.nodeName.toUpperCase())!==-1) {
           config.tags.forEach((tag:any) => {
             if (ProxyNode.getAttribute(tag)) {
               switch(config.action) {
@@ -116,6 +127,23 @@ The document has moved
                 case "delete":
                   ProxyNode.removeAttribute(tag);
                   break;
+                case "html":
+                  ProxyNode.setAttribute(`data-dynamic_${tag}`, ProxyNode.getAttribute(tag));
+                  ProxyNode.removeAttribute(tag);
+
+                  const blob = new Blob([that.ctx.rewrite.html.rewrite(ProxyNode.getAttribute(tag), meta)], {type: 'text/html'});
+
+                  ProxyNode.setAttribute('src', URL.createObjectURL(blob));
+                  break;
+                case "srcset":
+                  ProxyNode.setAttribute(`data-dynamic_${tag}`, ProxyNode.getAttribute(tag));
+                  ProxyNode.setAttribute(tag, Srcset.encode(ProxyNode.getAttribute(tag), that.ctx));
+                  break;
+                case "css":
+                  console.log(ProxyNode);
+                  ProxyNode.setAttribute(`data-dynamic_${tag}`, ProxyNode.getAttribute(tag));
+                  //ProxyNode.setAttribute(tag, that.ctx.rewrite.css.encode(ProxyNode.getAttribute(tag), that.ctx.meta));
+                  break;
                 default:
                   break;
               }
@@ -126,11 +154,16 @@ The document has moved
     })
 
     if (head) {
-      ast.childNodes[1].childNodes[0].childNodes.splice(0,0, head[1]);
-      ast.childNodes[1].childNodes[0].childNodes.splice(0,0, head[0]);
+      var HTML = ast.childNodes.find((e:any)=>e.nodeName=='html');
+      var Head = HTML.childNodes.find((e:any)=>e.nodeName=='head');
+
+      Head.childNodes.splice(0,0, head[1]);
+      Head.childNodes.splice(0,0, head[0]);
+      if (head[2]) Head.childNodes.splice(0,0, head[2]);
+      if (head[3]) Head.childNodes.splice(0,0, head[3]);
     }
 
-    src = this.parse5.serialize(ast);
+    src = this.parse5.serialize(ast, {scriptingEnabled: true});
 
     return src;
   }

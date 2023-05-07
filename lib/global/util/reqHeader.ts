@@ -1,19 +1,36 @@
-export default function Header(headers: any, meta: any, request: Request) {
-    const { referrer }: any = request;
+export default function Header(headers: any, meta: any, request: any, cookies: any) {
+    let { referrer }: any = request;
 
-    headers['origin'] = `${meta.protocol}//${meta.host}`;
+    [
+        'origin',
+        'Origin',
+        'host',
+        'Host',
+        'referer',
+        'Referer'
+    ].forEach((header: string) => {
+        if (headers[header]) delete headers[header];
+    });
+
+    headers['Origin'] = `${meta.protocol}//${meta.host}`;
     headers['host'] = meta.host;
     headers['Host'] = meta.host;
+    headers['Referer'] = meta.href;
 
-    if (referrer) {
+    if (request.referrerPolicy == 'origin' && meta.origin) {
+        referrer = meta.origin+'/';
+    }
+
+    if (cookies) {
+        headers['Cookie'] = cookies;
+    }
+
+    if (referrer && referrer != location.origin+'/') {
         try {
-            var unwritten = this.ctx.url.decode(referrer)
-
-            headers['referer'] = unwritten;
-        } catch {
-            headers['referer'] = meta.href;
-        }
-    } else headers['referer'] = meta.href;
+            headers['Referer'] = this.ctx.url.decode(referrer);
+            headers['Origin'] = new URL(this.ctx.url.decode(referrer)).origin;
+        } catch {}
+    }
 
     return new Headers(headers);
 }

@@ -36,11 +36,27 @@ export default [
         function: 'self',
     },
     {
+        name: 'cookie',
+        function: 'self',
+    },
+    {
         name: 'fetch',
         function: 'self',
     },
     {
+        name: 'reflect',
+        function: 'self',
+    },
+    {
         name: 'message',
+        function: 'self',
+    },
+    {
+        name: 'niche',
+        function: 'self',
+    },
+    {
+        name: 'storage',
         function: 'self',
     }
 ]

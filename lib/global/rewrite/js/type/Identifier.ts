@@ -4,7 +4,9 @@ import PostMessage from '../object/PostMessage';
 export default function Identifier(node: any, parent: any = {}) {
     if (typeof node.name !== 'string') return false;
 
-    if (!['location', 'parent', 'top', 'postMessage'].includes(node.name)) return false;
+    if (!['location', 'parent', 'top', 'postMessage', 'opener', 'window', 'self', 'globalThis', 'parent'].includes(node.name)) return false;
+
+    if (parent.type=='AssignmentExpression'&&parent.left==node&&node.name=='location') return node.name = '__dynamic$location';
 
     if (parent.type=='CallExpression'&&(parent.callee==node)) return;
     if (parent.type=='MemberExpression'&&(parent.object!==node&&(parent.object.name!=='document'||parent.object.name!=='window'||parent.object.name!=='self'||parent.object.name!=='globalThis'))) return;
@@ -24,22 +26,15 @@ export default function Identifier(node: any, parent: any = {}) {
     if (parent.type=='UpdateExpression') return;
     if (parent.type=='ForInStatement'&&parent.left==node) return;
     if (parent.type=='MethodDefinition'&&parent.key==node) return;
+    if (parent.type=='AssignmentPattern'&&parent.left==node) return;
     if (parent.type=='NewExpression') return;
     if (parent?.parent?.type=='NewExpression') return;
+    if (parent.type=='UnaryExpression'&&parent.argument==node) return;
 
-    if (node.name=='postMessage'&&parent.type=='CallExpression') {
-        var original = 'undefined'
-        node.type = 'CallExpression';
-        node.callee = {type: 'Identifier', name: '__dynamic$message'}
-        node.arguments = [{type: 'Identifier', name: original}]
-        if (parent=='CallExpression') {
-            parent.arguments = parent.arguments
-        }
+    if (node.name=='location'&&parent.type=='BinaryExpression') node.name = '__dynamic$location'
+    if (node.name == '__dynamic') node.name = 'undefined';
 
-        return;
-    }
-
-    if (node.name=='location') return node.name = '__dynamic$location'
+    //if (node.name=='eval') return node.name = '__dynamic$eval';
 
     node.name = `__dynamic$get(${node.name})`;
 }

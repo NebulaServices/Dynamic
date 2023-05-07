@@ -15,20 +15,23 @@ export default class js {
     this.ctx = ctx.ctx;
   }
 
-  rewrite(src:any, meta:MetaURL, inject: Boolean = true) {
+  rewrite(src:any, config: any = {}, inject: Boolean = true, dynamic: any = {}) {
     this.emit = emit;
 
+    if (src.includes('/* dynamic.js */')) return src;
+
     try {
-      src = this.process(src)
+      src = `/* dynamic.js */\n\n${src}`;
+      src = this.process(src, config, this.ctx, dynamic);
     } catch(e) {
       console.log(e)
     }
     
     if (inject) {
       src = `
-      if (typeof self !== undefined && typeof self.importScripts == 'function') importScripts('/dynamic/dynamic.config.js', '/dynamic/dynamic.handler.js?'+Math.floor(Math.random()*(99999-10000)+10000));
+      if (typeof self !== undefined && typeof self.importScripts == 'function' && typeof self.__dynamic == 'undefined') importScripts('/dynamic/dynamic.config.js', '/dynamic/dynamic.handler.js?'+Math.floor(Math.random()*(99999-10000)+10000));
 
-      ${src}`
+      ${src}`;
     }
 
     return src;

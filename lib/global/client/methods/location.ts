@@ -1,7 +1,12 @@
 export default function Location(self: any, doc: Boolean = true) {
     delete self.__dynamic$location;
 
-    var property: any = new URL(self.__dynamic.url.decode(self.location.pathname+self.location.search+self.location.hash));
+    try {
+        var property: any = new URL(self.__dynamic.url.decode(self.__dynamic$url || self.location.pathname+self.location.search+self.location.hash));
+    } catch {
+        self.__dynamic$url = 'about:blank'
+        var property: any = new URL('about:blank');
+    }
 
     self.__dynamic.meta.load(property);
 

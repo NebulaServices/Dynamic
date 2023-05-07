@@ -1,4 +1,4 @@
-export default function Location(self: any) {
+export default function Worker(self: any) {
     const XHR = self.XMLHttpRequest;
 
     self.Worker = new Proxy(self.Worker, {

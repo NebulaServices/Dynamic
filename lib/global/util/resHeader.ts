@@ -6,9 +6,6 @@ export default function Header(headers: any, meta: any) {
         if (header.toLowerCase() == 'location') {
             headers[header] = this.ctx.url.encode(headers[header], meta);
         }
-        if (header.toLowerCase() == 'set-cookie') {
-
-        }
     }
 
     return new Headers(headers);

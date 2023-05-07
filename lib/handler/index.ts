@@ -13,5 +13,7 @@ importScripts('/dynamic/dynamic.config.js');
   __dynamic.client.message(self);
   __dynamic.client.location(self, false);
   __dynamic.client.window(self);
+  __dynamic.client.get(self);
+  __dynamic.client.reflect(self);
   __dynamic.client.imports(self);
 })(self);

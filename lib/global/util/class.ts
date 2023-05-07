@@ -1,17 +1,11 @@
 export default function Class(obj: any) {
-    try {
-        return !Object.getOwnPropertyNames(obj).includes('arguments');
-    } catch(e) {
-        return false;
-    }
+  try {
+    new new Proxy(obj, { construct: () => ({}) });
 
-    /*const isCtorClass = obj.constructor
-        && obj.constructor.toString().substring(0, 5) === 'class'
-    if(obj.prototype === undefined) {
-      return isCtorClass
-    }
-    const isPrototypeCtorClass = obj.prototype.constructor 
-      && obj.prototype.constructor.toString
-      && obj.prototype.constructor.toString().substring(0, 5) === 'class'
-    return isCtorClass || isPrototypeCtorClass*/
+    if (!Object.getOwnPropertyNames(obj).includes('arguments')) throw new Error("");
+      
+    return true;
+  } catch (err) {
+    return false;
+  }
 };
