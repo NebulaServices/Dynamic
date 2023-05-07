@@ -52,11 +52,11 @@ export default function Niche(self: any) {
                     if (e.name) {
                         var cloned = self.__dynamic.util.clone(e);
                         
-                        cloned.__defineGetter__('name', function() {
+                        cloned.__defineGetter__('name', function(this: any) {
                             return this._name;
                         });
 
-                        cloned.__defineSetter__('name', function(value: any) {
+                        cloned.__defineSetter__('name', function(this: any, value: any) {
                             this._name = value;
                         });
 

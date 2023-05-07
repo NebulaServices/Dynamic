@@ -29,7 +29,7 @@ class DynamicModules {
   base64 = base64;
   cookie = {...cookie, serialize: (...args: any) => { try {return cookie.serialize.apply({}, args)} catch(e) {console.log(e);}}};
   setCookieParser = setCookieParser;
-  astring = {...astring, generate: (...args: any) => {return astring.generate.apply({}, args).replace(`return (a = (p = (R = (q = ["origin", (g = L.dv, "recaptcha-setup"), "ports"], g.data) == q[1], w)[39](8, T, g[q[0]]) == w[39](33, T, O), !Y) || g.source == Y.contentWindow, R && p && a && __dynamic$get(g[q[2]]).length > B ? __dynamic$get(g[q[2]])[B] : null);`, `return (a = (p = (R = (q = ["origin", (g = L.dv, "recaptcha-setup"), "ports"], g.data) == q[1], w)[39](8, T, g[q[0]]) == w[39](8, T, g[q[0]]), !Y) || g.source == Y.contentWindow, R && p && a && __dynamic$get(g[q[2]]).length > B ? __dynamic$get(g[q[2]])[B] : null);`)}};
+  astring = {...astring, generate: (...args: any) => {return (astring.generate.apply({}, args) as string | any).replace(`return (a = (p = (R = (q = ["origin", (g = L.dv, "recaptcha-setup"), "ports"], g.data) == q[1], w)[39](8, T, g[q[0]]) == w[39](33, T, O), !Y) || g.source == Y.contentWindow, R && p && a && __dynamic$get(g[q[2]]).length > B ? __dynamic$get(g[q[2]])[B] : null);`, `return (a = (p = (R = (q = ["origin", (g = L.dv, "recaptcha-setup"), "ports"], g.data) == q[1], w)[39](8, T, g[q[0]]) == w[39](8, T, g[q[0]]), !Y) || g.source == Y.contentWindow, R && p && a && __dynamic$get(g[q[2]]).length > B ? __dynamic$get(g[q[2]])[B] : null);`)}};
 
   ctx;
 

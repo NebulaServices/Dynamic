@@ -21,8 +21,8 @@ class DynamicBundle {
   client = new DynamicClient(this);
   headers = HeaderData;
 
-  parent:Window;
-  top:Window;
+  parent:Window | any;
+  top:Window | any;
 
   define:any;
   config;

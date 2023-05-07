@@ -22,7 +22,7 @@ class DynamicBundle {
   cookies = new DynamicCookies(this);
   regex = new DynamicRegex(this);
   headers = HeaderData;
-  bare:BareClient;
+  bare: BareClient | any;
 
   middleware = new DynamicMiddleware(this);
 

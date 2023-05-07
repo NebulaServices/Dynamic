@@ -7,7 +7,7 @@ import emit from './emit';
 export default class js {
   iterate = iterate;
   process = process;
-  emit:any;
+  emit = emit;
 
   ctx;
   
@@ -16,7 +16,6 @@ export default class js {
   }
 
   rewrite(src:any, config: any = {}, inject: Boolean = true, dynamic: any = {}) {
-    this.emit = emit;
 
     if (src.includes('/* dynamic.js */')) return src;
 

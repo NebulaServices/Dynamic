@@ -1,4 +1,4 @@
-export default function Header(headers: any, meta: any) {
+export default function Header(this: any, headers: any, meta: any) {
 
     for (const header in headers) {
         if (this.ctx.headers.csp.indexOf(header.toLowerCase())!==-1) delete headers[header];

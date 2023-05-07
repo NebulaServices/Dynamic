@@ -1,8 +1,8 @@
 import Client from '../../../client/client'
 
 export default function Fetch(self: any) {
-    const XMLResponseURL = Object.getOwnPropertyDescriptor(self.XMLHttpRequest.prototype, 'responseURL');
-    const ResponseURL = Object.getOwnPropertyDescriptor(self.Response.prototype, 'url');
+    const XMLResponseURL: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.XMLHttpRequest.prototype, 'responseURL');
+    const ResponseURL: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.Response.prototype, 'url');
 
     self.Request = new Proxy(self.Request, {
         construct(t, a: any): any {

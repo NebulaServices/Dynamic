@@ -64,8 +64,8 @@ import { DynamicBundle } from '../global/bundle';
         const Dynamic: DynamicBundle = new DynamicBundle(__dynamic.config);
 
         if (request.url.startsWith(location.origin + __dynamic.config.prefix + 'caches/')) {
-          const cache = await caches.open('__dynamic');
-          const res = await cache.match(new URL(request.url).pathname);
+          const cache: Response | any = await caches.open('__dynamic');
+          const res: Response | any = await cache.match(new URL(request.url).pathname);
 
           if (!res) return new Response(null, {
             status: 201
@@ -117,7 +117,7 @@ import { DynamicBundle } from '../global/bundle';
 
         if (__dynamic.headers.method.body.indexOf(request.method.toUpperCase())==-1) Request.body = await request.blob();
 
-        const BareRequest = await __dynamic.bare.fetch(Dynamic.meta.href, Request.init);
+        const BareRequest: Response | any = await __dynamic.bare.fetch(Dynamic.meta.href, Request.init);
 
         const ResHeaders: Headers = Dynamic.util.resHeader(BareRequest.rawHeaders, Dynamic.meta);
 
@@ -180,7 +180,7 @@ import { DynamicBundle } from '../global/bundle';
         if (ResponseBody) ResHeaders.set('content-length', ResponseBody.size);
 
         return new Response(ResponseBody, {status: BareRequest.status, statusText: BareRequest.statusText, headers: ResHeaders});
-      } catch(e) {
+      } catch(e: Error | any) {
         console.error(e, request.url);
         return new Response(e, {status: 500, statusText: 'error', headers: new Headers({})});
       }

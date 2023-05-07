@@ -5,13 +5,14 @@ export default function WebSocket(self: any) {
     var websockets: any = [];
     var target = (id: any) => self.location.protocol.replace('http', 'ws') + '//' + self.location.hostname + "/bare/v1/?id=" + id;
 
-    var wsUrl = Object.getOwnPropertyDescriptor(self.WebSocket.prototype, 'url');
+    var WSUrl: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.WebSocket.prototype, 'url');
   
     self.__dynamic.define(self.WebSocket.prototype, 'url', {
       get() {
-        var url = wsUrl.get.call(this);
+        var url = WSUrl.get.call(this);
         try {
-          var param = new URLSearchParams(new URL(url).search).get('id');
+          var param: number | any = new URLSearchParams(new URL(url).search).get('id');
+
           if (param) {
             return String(websockets.find((e:any)=>e[0]==parseInt(param))[1])
           }

@@ -3,9 +3,9 @@ import Srcset from '../../rewrite/html/srcset';
 
 export default function Attribute(self: any) {
 
-    const ContentWindow: PropertyDescriptor = Object.getOwnPropertyDescriptor(self.HTMLIFrameElement.prototype, 'contentWindow');
+    const ContentWindow: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.HTMLIFrameElement.prototype, 'contentWindow');
     
-    const IFrameSrc: PropertyDescriptor = Object.getOwnPropertyDescriptor(self.HTMLIFrameElement.prototype, 'src');
+    const IFrameSrc: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.HTMLIFrameElement.prototype, 'src');
 
     const AttributeList: Array<string> = ['src', 'href', 'srcset', 'action', 'data', 'integrity', 'nonce'];
 
@@ -37,13 +37,6 @@ export default function Attribute(self: any) {
             return Reflect.apply(t, g, a);
         }
     });
-
-    /*self.HTMLElement.prototype.insertBefore = new Proxy(self.HTMLElement.prototype.insertBefore, {
-        apply(t: any, g: any, a: any) {
-            if (!a[1]) a[1] = null;
-            return t.call(g, ...a);
-        }
-    });*/
 
     const config: any = [
         {
@@ -108,7 +101,7 @@ export default function Attribute(self: any) {
     config.forEach((config: any) => {
         config.elements.forEach((element: any) => {
             config.tags.forEach((tag: string) => {
-                var descriptor = Object.getOwnPropertyDescriptor(element.prototype, tag);
+                var descriptor: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(element.prototype, tag);
 
                 if (!descriptor) descriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, tag);
 
@@ -195,8 +188,8 @@ export default function Attribute(self: any) {
         })
     });
 
-    var OuterHTML: PropertyDescriptor = Object.getOwnPropertyDescriptor(self.Element.prototype, 'outerHTML');
-    var InnerHTML: PropertyDescriptor = Object.getOwnPropertyDescriptor(self.Element.prototype, 'innerHTML');
+    var OuterHTML: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.Element.prototype, 'outerHTML');
+    var InnerHTML: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.Element.prototype, 'innerHTML');
 
     self.__dynamic.define(self.HTMLElement.prototype, 'innerHTML', {
         get() {

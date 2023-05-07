@@ -1,4 +1,4 @@
-export default function Header(headers: any, meta: any, request: any, cookies: any) {
+export default function Header(this: any, headers: any, meta: any, request: any, cookies: any) {
     let { referrer }: any = request;
 
     [
