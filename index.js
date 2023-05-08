@@ -4,6 +4,9 @@ import Webpack from './lib/webpack.js';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import nodeStatic from 'node-static';
+import chalk from 'chalk';
+
+const port = 80;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,5 +38,7 @@ server.on('upgrade', (req, socket, head) => {
 });
 
 server.listen({
-  port: process.env.PORT || 80,
+  port: port,
+}, () => {
+  console.log(chalk.green.bold("[Dynamic] ") + "live at port " + chalk.underline.bold.green(port));
 });
