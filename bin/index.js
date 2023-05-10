@@ -2,6 +2,7 @@
 import { execa } from "execa";
 import chalk from "chalk";
 import commands from "./commands.js";
+import help from "./help.js"
 
 const [command, ...args] = process.argv.slice(2);
 
@@ -16,10 +17,9 @@ async function runCommand(commandName) {
 }
 
 function showHelp() {
-  console.log(
-    chalk.green.bold("[Dynamic] ") +
-      `Commands:\nhelp: shows this message\nbuild: builds all scripts necessary for Dynamic to properly run.\nstart: starts Dynamic.`
-  );
+    Object.entries(help).forEach(([command, description]) => {
+        console.log(`  ${chalk.green.bold(command)}: ${description}`);
+      });
 }
 
 function showVersion() {

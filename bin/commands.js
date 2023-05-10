@@ -3,8 +3,12 @@ const commands = {
     command: "npm start",
     answer: "Starting...",
   },
+  install: {
+    command: "npm install",
+    answer: "Installed dependencies",
+  },
   build: {
-    command: "webpack",
+    command: "npm run build",
     answer: "Built the app... available in /static/dynamic",
   },
 };

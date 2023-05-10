@@ -3,6 +3,12 @@ async function worker() {
     scope: "/service",
   });
 }
+
+document.addEventListener('DOMContentLoaded', async function(){
+  await worker();
+})
+
+
 function isUrl(val = "") {
   if (
     /^http(s?):\/\//.test(val) ||
@@ -15,6 +21,7 @@ const inpbox = document.getElementById("uform");
 
 inpbox.addEventListener("submit", (event) => {
   event.preventDefault();
+
   console.log("Connecting to service -> loading");
 
   if (typeof navigator.serviceWorker === "undefined")
