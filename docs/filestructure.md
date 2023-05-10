@@ -1,5 +1,5 @@
 # Dynamics' File structure
-
+```
 / 
 ├── index.js                  # the server 
 └── static/                   # carries all files accessible to the client
@@ -16,3 +16,4 @@
 
 /lib                          # contains the code that gets compiled
 └── client/                  # contains client scripts
+```
