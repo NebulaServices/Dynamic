@@ -16,7 +16,7 @@ Dynamic is the beginning of a new generation of interception proxy technology, F
 
 1. Install Modules 
 ```bash
-npm i && npm i ./bin -g
+npm i && npm i @greenydeveloper/dynamic-cli -g
 ```
 
 2. Build scripts 
