@@ -10,7 +10,7 @@ const walk:Function = (node:any, callback:any) =>
 	}
 	else
 	{
-		let childNode,i;
+		let childNode,i: any;
 
 		if (node.childNodes !== undefined)
 		{

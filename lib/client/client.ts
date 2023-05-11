@@ -1,6 +1,8 @@
 import { DynamicBundle } from '../global/client';
 
 export default function(self: any, config: any = {}, altURL: string = '') {
+  if (self.hasOwnProperty("__dynamic")) return false;
+
   const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config || config);
 
   __dynamic.parent = self.parent;

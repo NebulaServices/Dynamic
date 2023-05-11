@@ -1,6 +1,8 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+//import TerserPlugin from "terser-webpack-plugin";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
     
@@ -28,4 +30,12 @@ export default {
     filename: 'dynamic.[name].js',
     path: join(__dirname, 'static', 'dynamic'),
   },
+  /*optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+      }),
+    ],
+  },*/
 };

@@ -11,6 +11,9 @@ export default function Location(self: any) {
         }
     }
     
-    self.History.prototype.pushState = new Proxy(self.History.prototype.pushState, self.__dynamic$history)
-    self.History.prototype.replaceState = new Proxy(self.History.prototype.replaceState, self.__dynamic$history)
+    self.history.pushState = new Proxy(self.history.pushState, self.__dynamic$history);
+    self.history.replaceState = new Proxy(self.history.replaceState, self.__dynamic$history);
+
+    self.history.pushState = new Proxy(self.history.pushState, self.__dynamic$history);
+    self.history.replaceState = new Proxy(self.history.replaceState, self.__dynamic$history);
 }

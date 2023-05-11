@@ -9,7 +9,7 @@ export default function Get(self: any) {
         }
 
         if (self.Document) if (object instanceof self.Document) {
-            return self.__dynamic.util.CreateDocumentProxy(object);
+            return self.__dynamic$document;
         }
 
         return object;

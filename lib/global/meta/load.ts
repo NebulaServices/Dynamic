@@ -1,4 +1,4 @@
-export default function loadMeta(url: URL) {
+export default function loadMeta(this: any, url: URL) {
   var that = this;
 
   url = this.ctx.modules.url.parse(url.href);

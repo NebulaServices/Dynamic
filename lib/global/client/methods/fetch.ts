@@ -1,6 +1,6 @@
 import Client from '../../../client/client'
 
-export default function Fetch(self: any) {
+export default function fetch(self: any) {
     const XMLResponseURL: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.XMLHttpRequest.prototype, 'responseURL');
     const ResponseURL: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.Response.prototype, 'url');
 
@@ -27,7 +27,7 @@ export default function Fetch(self: any) {
 
     self.fetch = new Proxy(self.fetch, {
         apply(t, g, a): any {
-            if (a[0]) if (a[0] instanceof self.Request) return Reflect.apply(t, g, a);
+            if (a[0]) if (a[0].constructor.name == 'Request') return Reflect.apply(t, g, a);
 
             if (a[0]) a[0] = self.__dynamic.url.encode(a[0], self.__dynamic.meta);
             
@@ -39,7 +39,7 @@ export default function Fetch(self: any) {
         apply(t, g, a) {
             if (a[1]) a[1] = self.__dynamic.url.encode(a[1], self.__dynamic.meta);
             if (a[2]===false) a[2] = true;
-
+            
             return Reflect.apply(t, g, a);
         }
     });

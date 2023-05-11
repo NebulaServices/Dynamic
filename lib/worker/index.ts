@@ -10,12 +10,15 @@ import { DynamicBundle } from '../global/bundle';
     event.waitUntil(self.clients.claim());
   });
 
-  self.addEventListener('message', async ({ data }: MessageEvent) => {
+  self.addEventListener('message', async (event: MessageEvent) => {
+    const { data }: MessageEvent = event;
+
     if (data.type == 'createBlobHandler') {
       var res = new Response(data.blob, {
         headers: {
           'Content-Type': 'text/html',
-          'Content-Length': data.blob.size
+          'Content-Length': data.blob.size,
+          'x-dynamic-location': data.location
         }
       });
 
@@ -54,7 +57,7 @@ import { DynamicBundle } from '../global/bundle';
     async fetch(event: any) {
       const { request } = event;
       
-      try {
+      //try {
         if (!!__dynamic.util.file(request)) return await __dynamic.util.edit(request);
         if (!!__dynamic.util.path(request)) return await fetch(request);
         if (!__dynamic.util.routePath(request)) return await __dynamic.util.route(request);
@@ -76,7 +79,9 @@ import { DynamicBundle } from '../global/bundle';
           const ResponseBlob = await res.blob();
           const ResponseText = await ResponseBlob.text();
 
-          const HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+'/dynamic/dynamic.client.js', location.origin+'/dynamic/dynamic.config.js', '', `window.__dynamic$url = "about:srcdoc"`);
+          const HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+'/dynamic/dynamic.client.js', location.origin+'/dynamic/dynamic.config.js', '', `window.__dynamic$url = "${res.headers.get('x-dynamic-location')}"`);
+
+          Dynamic.meta.load(new URL(res.headers.get('x-dynamic-location')));
 
           if (Dynamic.is.html(Dynamic.meta, res.headers.get('content-type'), ResponseText))
             body = new Blob([Dynamic.rewrite.html.rewrite(ResponseText, Dynamic.meta, HeaderInject)]);
@@ -137,10 +142,11 @@ import { DynamicBundle } from '../global/bundle';
         }
 
         var Clients = await self.clients.matchAll();
-        for await (var client of Clients) {
-          client.postMessage({type: 'cookies', host: Dynamic.meta.host});
-        }
 
+        for await (var client of Clients) {
+          client.postMessage({type: 'cookies', host: Dynamic.meta.host, cookies: await Cookies.get(Dynamic.meta.host)});
+        }
+    
         let ResponseBody: any = false;
 
         switch(request.destination) {
@@ -180,10 +186,10 @@ import { DynamicBundle } from '../global/bundle';
         if (ResponseBody) ResHeaders.set('content-length', ResponseBody.size);
 
         return new Response(ResponseBody, {status: BareRequest.status, statusText: BareRequest.statusText, headers: ResHeaders});
-      } catch(e: Error | any) {
-        console.error(e, request.url);
+      /*} catch(e: Error | any) {
+        console.error(e.message, request.url);
         return new Response(e, {status: 500, statusText: 'error', headers: new Headers({})});
-      }
+      }*/
     }
   }
 })(self) as Function;

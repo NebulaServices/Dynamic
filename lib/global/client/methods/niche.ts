@@ -1,8 +1,4 @@
-/* niche methods that can be used to escape sandbox */
-
-// document.origin, document.referrer, document.domain, window.performance.getEntries(), etc...
-
-export default function Niche(self: any) {
+export default function niche(self: any) {
     self.__dynamic.define(self.document, 'origin', {
         value: self.__dynamic$location.origin,
         configurable: false,
@@ -70,16 +66,19 @@ export default function Niche(self: any) {
                         self.__dynamic.define(cloned, 'name', {
                             value: cloned._name,
                             writable: false,
-                        })
+                        });
 
                         delete cloned._name;
 
                         for (var i in e) {
                             if (i=='name') continue;
 
+                            if (typeof e[i] == 'function') var val = new Proxy(e[i], {apply(t, g, a) {if (t.name=='toJSON') {var b: any = {}; for (var c in cloned) b[c] = cloned[c]; return b;}; return Reflect.apply(t, e, a)}});
+                            else var val = e[i];
+
                             Object.defineProperty(cloned, i, {
-                                value: e[i],
-                                writable: false,
+                                value: val,
+                                writable: true,
                             });
                         }
 
@@ -92,7 +91,29 @@ export default function Niche(self: any) {
         });
     });
 
-    /*self.Function = new Proxy(self.Function, {
+    var _toString = self.Function.prototype.toString;
+
+    self.__dynamic.define(self.Function.prototype, 'toString', {
+        value: function(this: any) {
+            var string: string = Reflect.apply(_toString, this, []);
+            if (string.includes('[native code]')) {
+                return `function ${this.name}() { [native code] }`;
+            }
+
+            return string;
+        },
+        writable: true,
+    });
+
+    self.Function.prototype.bind = new Proxy(self.Function.prototype.bind, {
+        apply(t, g, a) {
+            if (a[0] == self.__dynamic$window) a[0] = a[0].__dynamic$self;
+
+            return Reflect.apply(t, g, a);
+        }
+    })
+
+    self.Function = new Proxy(self.Function, {
         apply(t, g, a: any) {
             var args: any = [...a];
             var body: any = args.pop();
@@ -115,9 +136,11 @@ export default function Niche(self: any) {
         }
     });
 
+    
+
     self.__dynamic.eval = function() {
-        console.log(arguments);
-        var script = arguments[0];
+        if (!arguments.length) return;
+        var script = arguments[0].toString();
 
         script = self.__dynamic.rewrite.js.rewrite(script, {type: 'script'}, false, self.__dynamic);
 
@@ -129,8 +152,13 @@ export default function Niche(self: any) {
                 return this === window ? self.__dynamic.eval : this.eval;
             },
             set(val: any) {
-                this.eval = val;
+                return val;
             },
         }
-    );*/
+    );
+
+    self.onerror = function() {
+        console.log(arguments);
+        try {throw new Error("ErrorStackTrace")} catch(e) {console.error(e)};
+    }
 }

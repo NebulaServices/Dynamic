@@ -59,7 +59,7 @@ export default class html {
       {
         "elements": ['META'],
         "tags": ['http-equiv'],
-        "action": "delete",
+        "action": "http-equiv",
       },
       {
         "elements": ['IFRAME'],
@@ -113,17 +113,18 @@ The document has moved
       }
 
       that.config.forEach((config:any)=>{
-        if (Array.isArray(config.elements)) if (config.elements.indexOf(node.nodeName.toUpperCase())!==-1) {
+        if ((Array.isArray(config.elements) && config.elements.indexOf(node.nodeName.toUpperCase())!==-1) || config.elements == 'all') {
           config.tags.forEach((tag:any) => {
             if (ProxyNode.getAttribute(tag)) {
               switch(config.action) {
                 case "url":
                   ProxyNode.setAttribute(`data-dynamic_${tag}`, ProxyNode.getAttribute(tag));
-                  ProxyNode.setAttribute(tag, that.ctx.url.encode(ProxyNode.getAttribute(tag), that.ctx.meta));
+                  ProxyNode.setAttribute(tag, that.ctx.url.encode(ProxyNode.getAttribute(tag), meta));
                   break;
                 case "rewrite":
                   ProxyNode.setAttribute(config.new, ProxyNode.getAttribute(tag));
                   ProxyNode.removeAttribute(tag);
+                  break;
                 case "delete":
                   ProxyNode.removeAttribute(tag);
                   break;
@@ -140,9 +141,26 @@ The document has moved
                   ProxyNode.setAttribute(tag, Srcset.encode(ProxyNode.getAttribute(tag), that.ctx));
                   break;
                 case "css":
-                  console.log(ProxyNode);
                   ProxyNode.setAttribute(`data-dynamic_${tag}`, ProxyNode.getAttribute(tag));
-                  //ProxyNode.setAttribute(tag, that.ctx.rewrite.css.encode(ProxyNode.getAttribute(tag), that.ctx.meta));
+                  ProxyNode.setAttribute(tag, that.ctx.rewrite.css.rewrite(ProxyNode.getAttribute(tag), meta));
+                  break;
+                case "http-equiv":
+                  const content = ProxyNode.getAttribute('content');
+                  const name = ProxyNode.getAttribute('http-equiv');
+
+                  switch(name.toLowerCase()) {
+                    case "refresh":
+                      var time = content.split(';url=')[0], value = content.split(';url=')[1];
+
+                      ProxyNode.setAttribute('content', `${time};url=${that.ctx.url.encode(value, meta)}`);
+                      break;
+                    case "content-security-policy":
+                      ProxyNode.removeAttribute('content');
+                      ProxyNode.removeAttribute('http-equiv');
+                      break;
+                    default:
+                      break;
+                  }
                   break;
                 default:
                   break;

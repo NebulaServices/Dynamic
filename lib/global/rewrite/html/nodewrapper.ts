@@ -12,14 +12,20 @@ export default class Node {
     }
 
     getAttribute(attr: any) {
+        if (!this.Original.attrs) return false;
+
         return (this.Original.attrs.find((e:any)=>e.name==attr)||{value:null}).value;
     }
 
     setAttribute(attr: any, value: any) {
+        if (!this.Original.attrs) return false;
+
         return this.Original.attrs.find((e:any)=>e.name==attr)?(this.Original.attrs.find((e:any)=>e.name==attr)||{value:null}).value = value:this.Original.attrs.push({name:attr,value:value});
     }
 
     removeAttribute(attr:any) {
+        if (!this.Original.attrs) return false;
+
         return this.Original.attrs.splice((this.Original.attrs.findIndex((e:any)=>e.name==attr)||-1), 1);
     }
 }

@@ -1,4 +1,3 @@
-import { Node } from "meriyah/dist/src/estree";
 import Identifier from './type/Identifier';
 import MemberExpression from "./type/MemberExpression";
 import Literal from './type/Literal';
