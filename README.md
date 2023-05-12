@@ -1,7 +1,7 @@
-DISCLAIMER: TEMPORARY LOGO
-![Frame 1 (3)](https://github.com/NebulaServices/Dynamic/assets/81369743/8bd8f8b4-c0e0-457b-98ca-d093b63d5592)
+# Dynamic
+**A new generation interception proxy of technology**, designed to make the way you interact with the internet effortlessly fast. Built with the latest technologies and fully written in TypeScript, Dynamic brings you a seamless and effortless web browsing experience.
 
-<div align='center'>
+
 Join the revolution today and experience the power of Dynamic.
 
 ## Features
@@ -47,4 +47,4 @@ npm start
 
 
 Made with ❤️ By Nebula Services 
-    </div> 
+
