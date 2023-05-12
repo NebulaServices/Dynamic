@@ -1,8 +1,8 @@
+DISCLAIMER: TEMPORARY LOGO
+![Frame 1](https://github.com/NebulaServices/Dynamic/assets/81369743/4c10338b-7f7f-4149-abca-e057a84a0da8)
 
+<div align='center'>
 Join the revolution today and experience the power of Dynamic.
-
-
-
 
 ## Features
 
@@ -47,3 +47,4 @@ npm start
 
 
 Made with ❤️ By Nebula Services 
+    </div> 
