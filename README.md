@@ -1,5 +1,5 @@
 DISCLAIMER: TEMPORARY LOGO
-![Frame 1](https://github.com/NebulaServices/Dynamic/assets/81369743/4c10338b-7f7f-4149-abca-e057a84a0da8)
+![Frame 1 (3)](https://github.com/NebulaServices/Dynamic/assets/81369743/8bd8f8b4-c0e0-457b-98ca-d093b63d5592)
 
 <div align='center'>
 Join the revolution today and experience the power of Dynamic.
