@@ -11,7 +11,7 @@ export default function window(self: any) {
 
                 if (!val) return val;
 
-                if (typeof val == 'function') return new Proxy(val, {apply(t, g, a) {if (document.defaultView && a[0] == document.defaultView.__dynamic$document) a[0] = document; else if (a[0] == self.__dynamic$document) a[0] = document; return Reflect.apply(t, document, a)}});
+                if (typeof val == 'function') return new Proxy(val, {apply(t, g, a) {if (document.defaultView && a[0] == document.defaultView.__dynamic$document) a[0] = document; else if (a[0] == self.__dynamic$document) a[0] = document; return val.apply(document, a)}});
 
                 return val;
             },

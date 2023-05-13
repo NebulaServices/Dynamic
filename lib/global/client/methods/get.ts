@@ -12,6 +12,10 @@ export default function Get(self: any) {
             return self.__dynamic$document;
         }
 
+        if (object == self) return self.__dynamic$window;
+
+        //if (typeof object == 'function') return new Proxy(object, {apply(t, g, a) {return Reflect.apply(t, g, a)}});
+
         return object;
     }
 

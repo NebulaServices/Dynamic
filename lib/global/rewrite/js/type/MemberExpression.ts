@@ -10,7 +10,13 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
       }
     }
 
-    
+    if (config.destination !== 'worker') if (node.object.type=='Identifier') {
+      node.object = {
+        type: 'CallExpression',
+        callee: {type: 'Identifier', name: '__dynamic$get'},
+        arguments: [node.object]
+      }
+    }
 
     node.object.name+='';
 
@@ -28,8 +34,6 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
         }
       }
     }
-
-    
 
     if (node.property.name=='eval') node.property.name = '__dynamic$eval';
     if (node.object.name=='eval') node.property.name = '__dynamic$eval';

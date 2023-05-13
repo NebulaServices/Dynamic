@@ -120,9 +120,15 @@ import { DynamicBundle } from '../global/bundle';
           credentials: 'include'
         });
 
+        let BareRequest: Response | any;
+
         if (__dynamic.headers.method.body.indexOf(request.method.toUpperCase())==-1) Request.body = await request.blob();
 
-        const BareRequest: Response | any = await __dynamic.bare.fetch(Dynamic.meta.href, Request.init);
+        if (Dynamic.meta.protocol !== 'about:') {
+          BareRequest = await __dynamic.bare.fetch(Dynamic.meta.href, Request.init);
+        } else {
+          BareRequest = new __dynamic.util.about(new Blob(["<html><head></head><body></body></html>"]));
+        }
 
         const ResHeaders: Headers = Dynamic.util.resHeader(BareRequest.rawHeaders, Dynamic.meta);
 
@@ -170,6 +176,9 @@ import { DynamicBundle } from '../global/bundle';
           case "style":
             if (Dynamic.is.css(Dynamic.meta, BareRequest.headers.get('content-type')))
               ResponseBody = new Blob([Dynamic.rewrite.css.rewrite(await BareRequest.text(), Dynamic.meta)], {type: BareRequest.headers.get('content-type')||'text/css'});
+            break;
+          case "manifest":
+            ResponseBody = new Blob([Dynamic.rewrite.man.rewrite(await BareRequest.text(), Dynamic.meta)], {type: BareRequest.headers.get('content-type')||'application/json'})
             break;
           default:
             break;

@@ -9,6 +9,6 @@
     "moduleResolution": "node",
     "strict": true
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "lib/global/pkg/base64.ts"],
   "exclude": ["node_modules"]
 }

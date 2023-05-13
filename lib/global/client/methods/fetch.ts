@@ -95,7 +95,7 @@ export default function fetch(self: any) {
     if ('serviceWorker' in navigator) {
         self.__dynamic.sw = self.navigator.serviceWorker;
 
-        self.navigator.serviceWorker.register = () => {};
+        //self.navigator.serviceWorker.register = () => {};
 
         delete self.navigator.serviceWorker;
         delete self.Navigator.prototype.serviceWorker;

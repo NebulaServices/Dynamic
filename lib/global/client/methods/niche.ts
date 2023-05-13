@@ -111,7 +111,9 @@ export default function niche(self: any) {
 
             return Reflect.apply(t, g, a);
         }
-    })
+    });
+
+    self.__dynamic.Function = self.Function.bind({});
 
     self.Function = new Proxy(self.Function, {
         apply(t, g, a: any) {
@@ -157,8 +159,41 @@ export default function niche(self: any) {
         }
     );
 
-    self.onerror = function() {
+    self.Function.prototype.apply = new Proxy(self.Function.prototype.apply, {
+        apply(t, g, a) {
+            if (a[0] == self.__dynamic$window) a[0] = a[0].__dynamic$self;
+            if (a[0] == self.__dynamic$document) a[0] = self.document;
+
+            return Reflect.apply(t, g, a);
+        }
+    });
+
+    self.Function.prototype.call = new Proxy(self.Function.prototype.call, {
+        apply(t, g, a) {
+            if (a[0] == self.__dynamic$window) a[0] = a[0].__dynamic$self;
+            if (a[0] == self.__dynamic$document) a[0] = self.document;
+
+            return Reflect.apply(t, g, a);
+        }
+    });
+
+    /*self.onerror = function() {
         console.log(arguments);
+        throw "";
         try {throw new Error("ErrorStackTrace")} catch(e) {console.error(e)};
+    }*/
+
+    /* favicon request emulation */
+    if (!document.querySelector('link[rel="icon"], link[rel="shortcut icon"]') && self.__dynamic$location.pathname == "/") {
+        var link = document.createElement('link');
+        link.rel = 'icon';
+        link.href = '/favicon.ico';
+
+        link.dataset['dynamic_hidden'] = 'true';
+
+        link.onerror = () => link.remove();
+        link.onload = () => link.remove();
+
+        document.head.appendChild(link);
     }
 }

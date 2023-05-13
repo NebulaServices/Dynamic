@@ -19,7 +19,7 @@ export default function Location(self: any, doc: Boolean = true) {
         })
     }), ["assign", "replace", "toString", "reload"].forEach(t => {
         Object.defineProperty(self.__dynamic.location, t, {
-            get: () => t=='toString'?()=>property['href']:new Function("arg", `return window.location.${t}(arg?${"reload"!==t&&"toString"!==t?"(self.__dynamic).url.encode(arg, new URL('"+property.href+"'))":"arg"}:null)`),
+            get: () => t=='toString'?()=>property['href']:new self.__dynamic.Function("arg", `return window.location.${t}(arg?${"reload"!==t&&"toString"!==t?"(self.__dynamic).url.encode(arg, new URL('"+property.href+"'))":"arg"}:null)`),
             set: t => t
         })
     });

@@ -18,7 +18,7 @@ export default class js {
 
     if (src.includes('/* dynamic.js */')) return src;
 
-    src = `/* dynamic.js */\n\n${src}`;
+    src = `/* dynamic.js */ \n\n${src}`;
 
     try {
       try {
@@ -27,7 +27,7 @@ export default class js {
         src = this.process(src, config, {module: false, ...this.ctx}, dynamic);
       }
     } catch(e) {
-      console.log(e)
+      console.log(e, src)
     }
     
     if (inject) {

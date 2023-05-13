@@ -11,7 +11,9 @@ export default class css {
   rewrite(this: any, src: any, meta: MetaURL, config:any = {}) {
     const that = this;
 
-    return src.replace(/((@import ['"`]+|url\(['"`]?)(.*?)(['"`]?\)|['"`]+))/gmi, function() {
+    if (!src) return src;
+
+    return src.toString().replace(/((@import ['"`]+|url\(['"`]?)(.*?)(['"`]?\)|['"`]+))/gmi, function() {
       return arguments[0].replace(arguments[3], that.ctx.url.encode(arguments[3], meta));
     });
   }

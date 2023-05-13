@@ -1,8 +1,6 @@
 async function route(this: any, request: Request) {
-  var parsed = this.ctx.modules.url.parse(request.url);
-  var query = this.ctx.modules.querystring.parse(parsed.query);
-
-  var url = query.url;
+  var parsed = new URL(request.url);
+  var url = parsed.searchParams.get('url');
 
   return new Response('', {status: 301, headers: {location: location.origin+this.ctx.config.prefix+url}});
 }

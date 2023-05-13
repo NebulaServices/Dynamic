@@ -21,7 +21,7 @@ export default function encode(this: any, url: any, meta: any) {
         var [_, type, charset, base64, content] = data;
 
         if (base64=='base64')
-          content = (this.ctx.modules.base64.decode(decodeURIComponent(content)));
+          content = (this.ctx.modules.base64.atob(decodeURIComponent(content)));
         else
           content = decodeURIComponent(content);
 
@@ -36,7 +36,7 @@ export default function encode(this: any, url: any, meta: any) {
         }
 
         if (base64=='base64')
-          content = this.ctx.modules.base64.encode(content);
+          content = this.ctx.modules.base64.btoa(content);
         else
           content = encodeURIComponent(content);
 

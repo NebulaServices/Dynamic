@@ -1,33 +1,29 @@
 import mime from './pkg/mime';
 import * as path from 'path-browserify';
 import * as idb from 'idb';
-import * as base64 from 'base-64';
-import * as querystring from 'querystring';
-import { parse as P5parse, serialize as P5serialize } from 'parse5';
-import * as seafox from 'seafox';
+import * as base64 from './pkg/base64';
+import * as acorn from 'acorn';
 import bare from '@tomphttp/bare-client';
-import * as url from 'url';
-import walkParse5 from './pkg/walk-parse5';
-import * as cookie from 'cookie';
-import * as setCookieParser from 'set-cookie-parser';
-import * as dynamic from './pkg/dynamic';
-import * as estree from 'estree-util-to-js'
+import * as cookie from './pkg/cookie';
+import * as setCookieParser from 'set-cookie-parser'
+import * as estree from './pkg/astring';
+import * as htmlparser2 from 'htmlparser2';
+import * as domhandler from 'domhandler';
+import * as domserializer from 'dom-serializer';
 
 class DynamicModules {
   mime = mime;
   idb = idb;
   path = path;
-  walkParse5 = walkParse5;
-  querystring = querystring;
-  url = url;
-  seafox = seafox;
-  parse5 = { parse: P5parse, serialize: P5serialize };
+  acorn = acorn;
   bare = bare;
   base64 = base64;
   estree = estree;
   cookie = {...cookie, serialize: (...args: any) => { try {return cookie.serialize.apply({}, args)} catch(e) {console.log(e);}}};
   setCookieParser = setCookieParser;
-  dynamic = dynamic;
+  htmlparser2 = htmlparser2;
+  domhandler = domhandler;
+  domserializer = domserializer;
 
   ctx;
 

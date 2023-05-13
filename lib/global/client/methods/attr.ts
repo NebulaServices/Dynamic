@@ -124,7 +124,7 @@ export default function attribute(self: any) {
                             } catch {origin = false;};
 
                             if (origin) if (!_window.__dynamic) {
-                                Client(_window, self.__dynamic$config, this.src);
+                                //Client(_window, self.__dynamic$config, this.src);
                             }
 
                             if (!origin && tag == 'contentDocument') return _window.document;
@@ -134,6 +134,7 @@ export default function attribute(self: any) {
                                 return _window.document;
                             }
                             if (tag=='contentWindow') {
+                                console.log(_window.__dynamic$window);
                                 return _window.__dynamic$window;
                             }
                         }
@@ -236,4 +237,19 @@ export default function attribute(self: any) {
             return Reflect.apply(t, g, a);
         }
     });
+
+    var createGetter = (prop: any) => {return {get(this: any): any {return (new URL(this.href||self.__dynamic$location.href) as any)[prop];},set(val: any) {return;}}}
+
+    Object.defineProperties(self.HTMLAnchorElement.prototype, {
+        pathname: createGetter('pathname'),
+        origin: createGetter('origin'),
+        host: createGetter('host'),
+        hostname: createGetter('hostname'),
+        port: createGetter('port'),
+        protocol: createGetter('protocol'),
+        search: createGetter('search'),
+        hash: createGetter('hash'),
+
+        toString: {value: () => {return (new URL(self.__dynamic$location.href) as any).toString();}}
+    })
 }
