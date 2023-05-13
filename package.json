@@ -12,7 +12,7 @@
   "keywords": [],
   "author": "",
   "license": "LGPL-2.0-only",
-  "dependencies": {
+   "dependencies": {  
     "@tomphttp/bare-client": "^1.0.4-build1",
     "@tomphttp/bare-server-node": "^1.0.3-deps2",
     "@types/path-browserify": "^1.0.0",

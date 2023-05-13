@@ -1,7 +1,11 @@
 # Dynamic
-Dynamic is the beginning of a new generation of interception proxy technology, Fully written in TypeScript.
+**A new generation interception proxy of technology**, designed to make the way you interact with the internet effortlessly fast. Built with the latest technologies and fully written in TypeScript, Dynamic brings you a seamless and effortless web browsing experience.
+
+
+Join the revolution today and experience the power of Dynamic.
 
 ## Features
+
 - Customizable and easily configurable
 - Seriously Simple to use
 - Highly supportive, and supports your favorite sites:
@@ -14,20 +18,33 @@ Dynamic is the beginning of a new generation of interception proxy technology, F
 - Written in TypeScript
 ## Getting started (How to run)
 
-1. Install Modules 
-```bash
-npm i && npm i ./bin -g
+
+### The absolute simplest way
+
+Dynamics CLI makes it easy to not only download Dynamic but use it too! 
+
+```
+npm i @greenydeveloper/dynamic-cli -g && dynamic auto --start
 ```
 
-2. Build scripts 
+### The normal way 
 ```bash
-dynamic build
+git clone https://GitHub.com/NebulaServices/dynamic.git && cd Dynamic
+```
+
+2. Install dependencies
+```bash
+npm i 
 ```
 
 3. Run the server
 ```bash
-dynamic start
+npm start
 ```
 ## Authors
 
-- [@EnderKingJ](https://www.github.com/EnderKingJ) 
+- [@EnderKingJ](https://www.github.com/EnderKingJ) - Lead developer
+
+
+Made with ❤️ By Nebula Services 
+
