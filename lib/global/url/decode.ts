@@ -1,4 +1,4 @@
-export default function decode(url: any) {
+export default function decode(this: any, url: any) {
   if (!url) return url;
 
   url = new String(url).toString();

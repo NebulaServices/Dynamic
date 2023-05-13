@@ -2,14 +2,10 @@ import Srcset from './srcset';
 import Node from './nodewrapper';
 import MetaURL from '../../meta/type';
 import generateHead from './generateHead';
-import { Element } from 'parse5/dist/tree-adapters/default';
 
 export default class html {
 
   ctx;
-
-  parse5;
-  iterator;
 
   generateHead = generateHead;
 
@@ -20,49 +16,49 @@ export default class html {
         "action": "css"
       },
       {
-          "elements": ['SCRIPT', 'IFRAME', 'EMBED', 'INPUT', 'TRACK', 'MEDIA', 'SOURCE', 'IMG'],
+          "elements": ['script', 'iframe', 'embed', 'input', 'track', 'media', 'source', 'img'],
           "tags": ['src'],
           "action": "url"
       },
       {
-          "elements": ['SOURCE', 'IMG'],
+          "elements": ['source', 'img'],
           "tags": ['srcset'],
           "action": "srcset"
       },
       {
-          "elements": ['A', 'LINK', 'AREA'],
+          "elements": ['a', 'link', 'area'],
           "tags": ['href'],
           "action": "url"
       },
       {
-          "elements": ['FORM'],
+          "elements": ['form'],
           "tags": ['action'],
           "action": "url"
       }, 
       {
-          "elements": ['OBJECT'],
+          "elements": ['object'],
           "tags": ['data'],
           "action": "url",
       },
       {
-        "elements": ['SCRIPT', 'LINK'],
+        "elements": ['script', 'link'],
         "tags": ['integrity'],
         "action": "rewrite",
         "new": "nointegrity",
       },
       {
-        "elements": ['SCRIPT', 'LINK'],
+        "elements": ['script', 'link'],
         "tags": ['nonce'],
         "action": "rewrite",
         "new": "nononce",
       },
       {
-        "elements": ['META'],
+        "elements": ['meta'],
         "tags": ['http-equiv'],
-        "action": "delete",
+        "action": "http-equiv",
       },
       {
-        "elements": ['IFRAME'],
+        "elements": ['iframe'],
         "tags": ['srcdoc'],
         "action": "html",
       }
@@ -70,9 +66,6 @@ export default class html {
 
   constructor(ctx:any) {
     this.ctx = ctx.ctx;
-
-    this.parse5 = this.ctx.modules.parse5;
-    this.iterator = this.ctx.modules.walkParse5
   }
 
   generateRedirect(url:any) {
@@ -86,6 +79,20 @@ The document has moved
     `
   }
 
+  iterate(_dom: any, cb: any) {
+    function it(dom: any = _dom) {
+      for (var i = 0; i<dom.length; i++) {
+        cb(dom[i], dom[i].parent);
+    
+        if (dom[i].children) if (dom[i].children.length) {
+          it(dom[i].children);
+        };
+      }
+    }
+  
+    it(_dom);
+  }
+
   rewrite(src:any, meta:MetaURL, head: any) {
     const that = this;
 
@@ -93,77 +100,88 @@ The document has moved
 
     src = src.toString();
 
-    var ast = this.parse5.parse(src);
+    var parser = new this.ctx.modules.htmlparser2.Parser(new this.ctx.modules.domhandler.DomHandler(function (error:any, dom:any) {
+        if (dom) {
+            that.iterate(dom, function(node:any) {
+                var _node = new Node(node, that.ctx);
 
-    this.iterator(ast, function(node: Element) {
-      var ProxyNode = new Node(node, that);
+                if (node.name == 'script'&&(!_node.getAttribute('src'))&&(_node.getAttribute('type')!=='application/json')) {
+                    node.childNodes.forEach((e:any)=>{
+                      if (e.type!=='text') return e;
+                      if (_node.getAttribute('type') && _node.getAttribute('type')!=='application/javascript' && _node.getAttribute('type')!=='text/javascript') return e;
 
-      if ((node.tagName=='script'||node.tagName=='SCRIPT')&&(!ProxyNode.getAttribute('src'))&&(ProxyNode.getAttribute('type')!=='application/json')) {
-        node.childNodes.forEach((e:any)=>{
-          if (e.nodeName!=='#text') return e;
-          if (ProxyNode.getAttribute('type') && ProxyNode.getAttribute('type')!=='application/javascript' && ProxyNode.getAttribute('type')!=='text/javascript') return e;
-          e.value = that.ctx.rewrite.js.rewrite(e.value, {type: 'script'}, false, that.ctx);
-        })
-      }
-      if (node.tagName=='style'||node.tagName=='STYLE') {
-        node.childNodes.forEach((e:any)=>{
-          if (e.nodeName!=='#text') return e;
-          e.value = that.ctx.rewrite.css.rewrite(e.value, meta)
-        })
-      }
+                      e.data = that.ctx.rewrite.js.rewrite(e.data, {type: 'script'}, false, that.ctx);
+                    })
+                  }
+                  if (node.name == 'style') {
+                    node.childNodes.forEach((e:any)=>{
+                      if (e.type!=='text') return e;
 
-      that.config.forEach((config:any)=>{
-        if (Array.isArray(config.elements)) if (config.elements.indexOf(node.nodeName.toUpperCase())!==-1) {
-          config.tags.forEach((tag:any) => {
-            if (ProxyNode.getAttribute(tag)) {
-              switch(config.action) {
-                case "url":
-                  ProxyNode.setAttribute(`data-dynamic_${tag}`, ProxyNode.getAttribute(tag));
-                  ProxyNode.setAttribute(tag, that.ctx.url.encode(ProxyNode.getAttribute(tag), that.ctx.meta));
-                  break;
-                case "rewrite":
-                  ProxyNode.setAttribute(config.new, ProxyNode.getAttribute(tag));
-                  ProxyNode.removeAttribute(tag);
-                case "delete":
-                  ProxyNode.removeAttribute(tag);
-                  break;
-                case "html":
-                  ProxyNode.setAttribute(`data-dynamic_${tag}`, ProxyNode.getAttribute(tag));
-                  ProxyNode.removeAttribute(tag);
+                      e.data = that.ctx.rewrite.css.rewrite(e.data, meta)
+                    })
+                  }
 
-                  const blob = new Blob([that.ctx.rewrite.html.rewrite(ProxyNode.getAttribute(tag), meta)], {type: 'text/html'});
+                for (var config of that.config) {
+                    //console.log(config.elements, config.tags, config.action, node.name)
+                    if (config.elements === 'all' || config.elements.indexOf(node.name)>-1) {
+                        for (var tag of config.tags) {
+                            if (!_node.hasAttribute(tag)) continue;
+                            if (config.action === 'url') {
+                                _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
+                                _node.setAttribute(tag, that.ctx.url.encode(_node.getAttribute(tag), meta));
+                            } else if (config.action === 'srcset') {
+                                _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
+                                _node.setAttribute(tag, Srcset.encode(_node.getAttribute(tag), that.ctx));
+                            } else if (config.action === 'rewrite') {
+                                _node.setAttribute(config.new, _node.getAttribute(tag));
+                                _node.removeAttribute(tag);
+                            } else if (config.action === 'html') {
+                                _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
+                                _node.removeAttribute(tag);
+              
+                                const blob = new Blob([that.ctx.rewrite.html.rewrite(_node.getAttribute(tag), meta)], {type: 'text/html'});
+                                _node.setAttribute('src', URL.createObjectURL(blob));
+                            } else if (config.action === 'http-equiv') {
+                                const content = _node.getAttribute('content');
+                                const name = _node.getAttribute('http-equiv');
+              
+                                switch(name.toLowerCase()) {
+                                  case "refresh":
+                                    var time = content.split(';url=')[0], value = content.split(';url=')[1];
+              
+                                    _node.setAttribute('content', `${time};url=${that.ctx.url.encode(value, meta)}`);
+                                    break;
+                                  case "content-security-policy":
+                                    _node.removeAttribute('content');
+                                    _node.removeAttribute('http-equiv');
+                                    break;
+                                  default:
+                                    break;
+                                }
+                            } else if (config.action === 'css') {
+                                _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
+                                _node.setAttribute(tag, that.ctx.rewrite.css.rewrite(_node.getAttribute(tag), meta));
+                            } else if (config.action === 'delete') {
+                                _node.removeAttribute(tag);
+                            }
+                        }
+                    }
+                };
+            });
 
-                  ProxyNode.setAttribute('src', URL.createObjectURL(blob));
-                  break;
-                case "srcset":
-                  ProxyNode.setAttribute(`data-dynamic_${tag}`, ProxyNode.getAttribute(tag));
-                  ProxyNode.setAttribute(tag, Srcset.encode(ProxyNode.getAttribute(tag), that.ctx));
-                  break;
-                case "css":
-                  console.log(ProxyNode);
-                  ProxyNode.setAttribute(`data-dynamic_${tag}`, ProxyNode.getAttribute(tag));
-                  //ProxyNode.setAttribute(tag, that.ctx.rewrite.css.encode(ProxyNode.getAttribute(tag), that.ctx.meta));
-                  break;
-                default:
-                  break;
-              }
+            if (head && dom.length && head.length) {
+                if (dom.length > 0 && !dom.find((e: any) => e.name == 'html')) for (var i = 0; i < head.length; i++)
+                    dom.unshift(head[i]);
+                else if (dom.find((e: any) => e.name == 'html')) for (var i = 0; i < head.length; i++)
+                    dom[dom.findIndex((e: any) => e.name == 'html')].children.unshift(head[i]);
             }
-          })
+
+            src = that.ctx.modules.domserializer.render(dom);
         }
-      })
-    })
+    }));
 
-    if (head) {
-      var HTML = ast.childNodes.find((e:any)=>e.nodeName=='html');
-      var Head = HTML.childNodes.find((e:any)=>e.nodeName=='head');
-
-      Head.childNodes.splice(0,0, head[1]);
-      Head.childNodes.splice(0,0, head[0]);
-      if (head[2]) Head.childNodes.splice(0,0, head[2]);
-      if (head[3]) Head.childNodes.splice(0,0, head[3]);
-    }
-
-    src = this.parse5.serialize(ast, {scriptingEnabled: true});
+    parser.write(src);
+    parser.end();
 
     return src;
   }

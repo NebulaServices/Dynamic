@@ -1,4 +1,3 @@
-import { parseLetIdentOrVarDeclarationStatement } from 'meriyah/dist/src/parser';
 import MetaURL from '../../meta/type';
 import iterate from './iterate';
 import process from './process';
@@ -15,15 +14,20 @@ export default class js {
     this.ctx = ctx.ctx;
   }
 
-  rewrite(src:any, config: any = {}, inject: Boolean = true, dynamic: any = {}) {
+  rewrite(this: any, src:any, config: any = {}, inject: Boolean = true, dynamic: any = {}) {
 
     if (src.includes('/* dynamic.js */')) return src;
 
+    src = `/* dynamic.js */ \n\n${src}`;
+
     try {
-      src = `/* dynamic.js */\n\n${src}`;
-      src = this.process(src, config, this.ctx, dynamic);
+      try {
+        src = this.process(src, config, {module: true, ...this.ctx}, dynamic);
+      } catch {
+        src = this.process(src, config, {module: false, ...this.ctx}, dynamic);
+      }
     } catch(e) {
-      console.log(e)
+      console.log(e, src)
     }
     
     if (inject) {

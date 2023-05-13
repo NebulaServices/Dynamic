@@ -1,6 +1,3 @@
-import { TAG_ID } from "parse5/dist/common/html";
-import { Element } from "parse5/dist/tree-adapters/default";
-
 export default class Node {
     Original:any = null;
     ctx: any;
@@ -12,14 +9,26 @@ export default class Node {
     }
 
     getAttribute(attr: any) {
-        return (this.Original.attrs.find((e:any)=>e.name==attr)||{value:null}).value;
+        if (!this.Original.attribs) return false;
+
+        return this.Original.attribs[attr]||null;
     }
 
     setAttribute(attr: any, value: any) {
-        return this.Original.attrs.find((e:any)=>e.name==attr)?(this.Original.attrs.find((e:any)=>e.name==attr)||{value:null}).value = value:this.Original.attrs.push({name:attr,value:value});
+        if (!this.Original.attribs) return false;
+
+        return this.Original.attribs[attr] = value;
     }
 
     removeAttribute(attr:any) {
-        return this.Original.attrs.splice((this.Original.attrs.findIndex((e:any)=>e.name==attr)||-1), 1);
+        if (!this.Original.attribs) return false;
+
+        return delete this.Original.attribs[attr];
+    }
+
+    hasAttribute(attr:any) {
+        if (!this.Original.attribs) return false;
+
+        return this.Original.attribs.hasOwnProperty(attr);
     }
 }

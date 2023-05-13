@@ -1,7 +1,7 @@
 import Client from '../../../client/client';
 import Srcset from '../../rewrite/html/srcset';
 
-export default function Attribute(self: any) {
+export default function attribute(self: any) {
 
     const ContentWindow: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.HTMLIFrameElement.prototype, 'contentWindow');
     
@@ -14,6 +14,8 @@ export default function Attribute(self: any) {
             if (AttributeList.indexOf(a[0].toLowerCase())==-1) return Reflect.apply(t, g, a);
 
             if (a[0].toLowerCase()=='srcset') {
+                a[1] = Srcset.encode(a[1], self.__dynamic);
+
                 return Reflect.apply(t, g, a);
             }
 
@@ -95,6 +97,11 @@ export default function Attribute(self: any) {
             "elements": [self.HTMLIFrameElement],
             "tags": ['srcdoc'],
             "action": "html",
+        },
+        {
+            "elements": [self.HTMLElement],
+            "tags": ['style'],
+            "action": "css"
         }
     ];
 
@@ -117,7 +124,7 @@ export default function Attribute(self: any) {
                             } catch {origin = false;};
 
                             if (origin) if (!_window.__dynamic) {
-                                Client(_window, self.__dynamic$config, 'about:srcdoc');
+                                //Client(_window, self.__dynamic$config, this.src);
                             }
 
                             if (!origin && tag == 'contentDocument') return _window.document;
@@ -127,8 +134,13 @@ export default function Attribute(self: any) {
                                 return _window.document;
                             }
                             if (tag=='contentWindow') {
+                                console.log(_window.__dynamic$window);
                                 return _window.__dynamic$window;
                             }
+                        }
+
+                        if (config.action=='css') {
+                            return descriptor.get.call(this);
                         }
 
                         try {
@@ -140,7 +152,7 @@ export default function Attribute(self: any) {
                     set(val: any) {
                         if (val && typeof val == 'string') val = val.toString();
                         if (config.action=='html') {
-                            const blob = new Blob([self.__dynamic.rewrite.html.rewrite(val, self.__dynamic.meta)], {type: 'text/html'});
+                            const blob = new Blob([val], {type: 'text/html'});
 
                             this.removeAttribute(tag);
 
@@ -158,7 +170,7 @@ export default function Attribute(self: any) {
                                     }
                                 });
 
-                                sw.postMessage({type: "createBlobHandler", blob, url: self.__dynamic.modules.base64.encode(val.split('').slice(0, 10))});
+                                sw.postMessage({type: "createBlobHandler", blob, url: self.__dynamic.modules.base64.encode(val.toString().split('').slice(0, 10)), location: self.__dynamic.location.href});
 
                                 return;
                             })();
@@ -177,7 +189,7 @@ export default function Attribute(self: any) {
                         }
 
                         if (config.action=='css') {
-                            val = self.__dynamic.rewrite.css(val, self.__dynamic.meta);
+                            val = self.__dynamic.rewrite.css.rewrite(val, self.__dynamic.meta);
                         }
 
                         if (config.action=='url') val = self.__dynamic.url.encode(val, self.__dynamic.meta);
@@ -198,7 +210,7 @@ export default function Attribute(self: any) {
         set(val: any) {
             this.__innerHTML = val;
 
-            if ((this instanceof self.HTMLScriptElement) || (this instanceof self.HTMLStyleElement)) return InnerHTML.set.call(this, val);
+            if ((this instanceof self.HTMLScriptElement) || (this instanceof self.HTMLStyleElement) || (this instanceof self.HTMLTextAreaElement)) return InnerHTML.set.call(this, val);
 
             return InnerHTML.set.call(this, self.__dynamic.rewrite.html.rewrite(val, self.__dynamic.meta));
         }
@@ -212,7 +224,32 @@ export default function Attribute(self: any) {
         set(val: any) {
             this.__outerHTML = val;
 
+            if ((this instanceof self.HTMLScriptElement) || (this instanceof self.HTMLStyleElement) || (this instanceof self.HTMLTextAreaElement)) return OuterHTML.set.call(this, val);
+
             return OuterHTML.set.call(this, self.__dynamic.rewrite.html.rewrite(val, self.__dynamic.meta));
         }
     });
+    
+    self.MutationObserver.prototype.observe = new Proxy(self.MutationObserver.prototype.observe, {
+        apply(t, g, a) {
+            if (a[0]==self.__dynamic$document) a[0] = self.document;
+
+            return Reflect.apply(t, g, a);
+        }
+    });
+
+    var createGetter = (prop: any) => {return {get(this: any): any {return (new URL(this.href||self.__dynamic$location.href) as any)[prop];},set(val: any) {return;}}}
+
+    Object.defineProperties(self.HTMLAnchorElement.prototype, {
+        pathname: createGetter('pathname'),
+        origin: createGetter('origin'),
+        host: createGetter('host'),
+        hostname: createGetter('hostname'),
+        port: createGetter('port'),
+        protocol: createGetter('protocol'),
+        search: createGetter('search'),
+        hash: createGetter('hash'),
+
+        toString: {value: () => {return (new URL(self.__dynamic$location.href) as any).toString();}}
+    })
 }

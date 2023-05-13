@@ -58,5 +58,9 @@ export default [
     {
         name: 'storage',
         function: 'self',
+    },
+    {
+        name: 'style',
+        function: 'self',
     }
 ]

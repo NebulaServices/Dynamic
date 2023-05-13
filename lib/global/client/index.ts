@@ -14,6 +14,7 @@ import reflect from './methods/reflect';
 import niche from './methods/niche';
 import storage from './methods/storage';
 import cookie from './methods/cookie';
+import style from './methods/style';
 
 import DynamicClientMethods from './methods';
 
@@ -35,6 +36,7 @@ export default class DynamicClient {
     niche = niche;
     storage = storage;
     cookie = cookie;
+    style = style;
 
     methods = DynamicClientMethods;
 

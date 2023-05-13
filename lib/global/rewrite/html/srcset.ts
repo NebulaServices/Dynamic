@@ -1,5 +1,8 @@
 export default {
     encode(val:any, dynamic: any) {
+        if (!val) return val;
+        if (!(val.toString())) return val;
+
         return val.split(', ').map((s: any) => {
             return s.split(' ').map((e: any,i: any)=>{
                 if (i == 0) {
@@ -11,6 +14,8 @@ export default {
         }).join(', ');
     },
     decode(val:any) {
-        return ''
+        if (!val) return val;
+
+        return val;
     },
 }

@@ -10,7 +10,13 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
       }
     }
 
-    
+    if (config.destination !== 'worker') if (node.object.type=='Identifier') {
+      node.object = {
+        type: 'CallExpression',
+        callee: {type: 'Identifier', name: '__dynamic$get'},
+        arguments: [node.object]
+      }
+    }
 
     node.object.name+='';
 
@@ -29,10 +35,8 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
       }
     }
 
-    
-
-    //if (node.property.name=='eval') node.property.name = '__dynamic$eval';
-    //if (node.object.name=='eval') node.property.name = '__dynamic$eval';
+    if (node.property.name=='eval') node.property.name = '__dynamic$eval';
+    if (node.object.name=='eval') node.property.name = '__dynamic$eval';
 
     if (config.destination!=='worker') {
       if (node.property.name=='window'&&node.object.name!='top'&&(node.object.name=='self'||node.object.name=='globalThis')) if (parent.type!=='NewExpression'&&(parent.type!=='CallExpression'||((parent.type=='CallExpression')&&node!==parent.callee))) node.property.name = '__dynamic$window';
@@ -48,6 +52,9 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
       if (node.object.name=='self') {
         if (parent.type!=='NewExpression'&&(parent.type!=='CallExpression'||((parent.type=='CallExpression')&&node!==parent.callee))) node.object.name = 'self.__dynamic$window';
       };
+      if (node.object.name=='document') {
+        if (parent.type!=='NewExpression'&&(parent.type!=='CallExpression'||((parent.type=='CallExpression')&&node!==parent.callee))) node.object.name = 'self.__dynamic$document';
+      };
       if (node.object.name=='globalThis') {
         if (parent.type!=='NewExpression'&&(parent.type!=='CallExpression'||((parent.type=='CallExpression')&&node!==parent.callee))) node.object.name = 'self.__dynamic$window';
       };
@@ -57,7 +64,7 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
 
     //if (parent.type=='CallExpression'&&parent.callee==node) return;
 
-    //if (node.object.name=='document') return node.object.name = `__dynamic$get(${node.object.name})`;
+    if (node.object.name=='document') return node.object.name = `__dynamic$get(${node.object.name})`;
 
     //return node.object.name = '__dynamic$'+node.object.name;
 }

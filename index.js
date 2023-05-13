@@ -1,6 +1,5 @@
 import createServer from '@tomphttp/bare-server-node';
 import http from 'http';
-import Webpack from './lib/webpack.js';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import nodeStatic from 'node-static';
@@ -10,10 +9,6 @@ const port = 80;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-var a = new Webpack(join(__dirname, 'static', 'dip'));
-//a.watch();
-//a.bundle();
 
 const bare = createServer('/bare/');
 const serve = new nodeStatic.Server('static/');

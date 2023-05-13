@@ -1,9 +1,9 @@
-import { Node } from "meriyah/dist/src/estree";
 import Identifier from './type/Identifier';
 import MemberExpression from "./type/MemberExpression";
 import Literal from './type/Literal';
 import CallExpression from './type/CallExpression';
 import AssignmentExpression from './type/AssignmentExpression';
+import ThisExpression from './type/ThisExpression';
 import Imports from './type/Imports';
 
 function Emit(node:any, type:any, parent:any = {}, ctx:any = {}, dynamic: any = {}, config: any = {}) {
@@ -23,6 +23,9 @@ function Emit(node:any, type:any, parent:any = {}, ctx:any = {}, dynamic: any = 
             break;
         case "AssignmentExpression":
             AssignmentExpression(node, parent);
+            break;
+        case "ThisExpression":
+            ThisExpression(node, parent);
             break;
         default:
             Imports(node, parent, ctx, dynamic);

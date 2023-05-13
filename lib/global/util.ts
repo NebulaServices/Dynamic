@@ -7,6 +7,7 @@ import Class from './util/class';
 import file from './util/file';
 import edit from './util/edit';
 import error from './util/error';
+import about from './util/about';
 
 class DynamicUtil {
   route = route;
@@ -19,6 +20,7 @@ class DynamicUtil {
   file = file;
   edit = edit;
   error = error;
+  about = about;
 
   ctx;
   

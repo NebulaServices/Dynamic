@@ -1,11 +1,9 @@
-export default function loadMeta(url: URL) {
-  var that = this;
+export default function loadMeta(this: any, url: URL | any) {
+  url = new URL(url.href);
 
-  url = this.ctx.modules.url.parse(url.href);
-  
-  Object.entries(url).map(([name, value]) => {
-    that.ctx.meta[name] = value||'';
-  });
+  for (var prop in url) {
+    this.ctx.meta[prop] = url[prop];
+  }
 
   return true;
 }

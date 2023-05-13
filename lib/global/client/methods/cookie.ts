@@ -15,6 +15,8 @@ export default function cookie(self: any) {
         set(val: any) {
             var parsed = self.__dynamic.modules.setCookieParser.parse(val, {decodeValues: false})[0];
 
+            parsed.name = parsed.name.replace(/^\./g, '');
+
             Promise.resolve(self.__dynamic.cookies.set(self.__dynamic.location.host, self.__dynamic.modules.cookie.serialize(parsed.name, parsed.value, {...parsed, encode: (e:any) => e}))).then(async (e:any)=>{
                 self.__dynamic.cookie.str = await self.__dynamic.cookies.get(self.__dynamic.location.host);
             });
@@ -39,9 +41,7 @@ export default function cookie(self: any) {
             }
 
             if (data.host==self.__dynamic.location.host && data.type == 'cookies') {
-                Promise.resolve().then(async () => {
-                    self.__dynamic.cookie.str = await self.__dynamic.cookies.get(self.__dynamic.location.host);
-                });
+                self.__dynamic.cookie.str = data.cookies;
             }
         };
     } catch {};

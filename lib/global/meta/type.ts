@@ -1,14 +1,14 @@
 export default class MetaURL {
-  host:string;
-  hostname:string;
-  origin:string;
-  pathname:string;
-  search:string;
-  protocol:string;
-  port:string;
-  href:string;
-  hash:string;
-  referrer:string;
+  host:string | any;
+  hostname:string | any;
+  origin:string | any;
+  pathname:string | any;
+  search:string | any;
+  protocol:string | any;
+  port:string | any;
+  href:string | any;
+  hash:string | any;
+  referrer:string | any;
   
   constructor() {};
 }
