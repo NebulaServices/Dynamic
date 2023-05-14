@@ -1,6 +1,4 @@
-Temporary logo!!
-![Frame 1 (3)](https://github.com/NebulaServices/Dynamic/assets/81369743/9b4a2cda-7c0d-4295-b8f0-9a214e1d038c)
-
+![Frame 1 (6)](https://github.com/NebulaServices/Dynamic/assets/81369743/5fbb36d7-67e9-4117-aa23-5b064ed99760)
 Join the revolution today and experience the power of Dynamic.
 
 ## Features
