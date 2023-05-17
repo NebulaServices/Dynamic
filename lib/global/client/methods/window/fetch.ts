@@ -86,9 +86,19 @@ export default function fetch(self: any) {
         }
     });
 
-    self.__dynamic$import = function(url: any) {
-        return self.__dynamic.url.encode(url, self.__dynamic.meta);
-    }
+    self.__dynamic.define(self, '__dynamic$import', {
+        get() {
+            return function(url: any, path: any) {
+                
+                try {
+                    return self.__dynamic.url.encode(url, new URL(path));
+                } catch {
+                    return self.__dynamic.url.encode(url, self.__dynamic.meta);
+                }
+            }
+        },
+        set: () => {},
+    });
 
     if ('serviceWorker' in navigator) {
         self.__dynamic.sw = self.navigator.serviceWorker;

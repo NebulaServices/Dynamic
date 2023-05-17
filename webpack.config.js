@@ -2,6 +2,7 @@ import path, { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import TerserPlugin from "terser-webpack-plugin";
+import WebpackBundleAnalyzer from 'webpack-bundle-analyzer'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -38,4 +39,7 @@ export default {
       }),
     ],
   },
+  plugins: [
+    //new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
+  ]
 };

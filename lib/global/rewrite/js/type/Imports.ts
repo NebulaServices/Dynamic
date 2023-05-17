@@ -7,6 +7,6 @@ export default function Imports(node: any, parent: any = {}, ctx: any = {}, dyna
     }
 
     if (node.type=='ImportExpression') {
-        node.source = {type: 'CallExpression', callee: {type: 'Identifier', name: '__dynamic$import'}, arguments: [node.source]};
+        node.source = {type: 'CallExpression', callee: {type: 'Identifier', name: '__dynamic$import'}, arguments: [node.source, {type: 'Literal', __dynamic: true, value: ctx.meta.href}]};
     }
 }

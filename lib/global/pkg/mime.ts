@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /*!
  * mime-types
  * Copyright(c) 2014 Jonathan Ong
@@ -13,7 +15,7 @@
  */
 
 
-import * as db from 'mime-db';
+import * as db from './mime-db';
 import { extname } from 'path-browserify';
 
 /**

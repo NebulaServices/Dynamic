@@ -127,7 +127,7 @@ The document has moved
                 if (node.name == 'script'&&(!_node.getAttribute('src'))&&(_node.getAttribute('type')!=='application/json')) {
                     node.childNodes.forEach((e:any)=>{
                         if (e.type!=='text') return e;
-                        if (_node.getAttribute('type') && _node.getAttribute('type')!=='application/javascript' && _node.getAttribute('type')!=='text/javascript') return e;
+                        if (_node.getAttribute('type') && _node.getAttribute('type')!=='application/javascript' && _node.getAttribute('type')!=='text/javascript' && _node.getAttribute('type')!=='module') return e;
 
                         e.data = that.ctx.rewrite.js.rewrite(e.data, {type: 'script'}, false, that.ctx);
                     });
