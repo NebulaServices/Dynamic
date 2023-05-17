@@ -7,6 +7,6 @@ export default function CallExpression(node: any, parent: any = {}) {
     if (parent.type == 'CallExpression' && parent.arguments.includes(node)) return;
 
     node.type = 'CallExpression';
-    node.callee = {type: 'Identifier', name: '__dynamic$get'}
+    node.callee = {type: 'Identifier', name: 'dg$'}
     node.arguments = [{type: 'ThisExpression', go: false}];
 }

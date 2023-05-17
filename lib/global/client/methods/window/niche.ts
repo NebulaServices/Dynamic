@@ -138,27 +138,6 @@ export default function niche(self: any) {
         }
     });
 
-    
-
-    self.__dynamic.eval = function() {
-        if (!arguments.length) return;
-        var script = arguments[0].toString();
-
-        script = self.__dynamic.rewrite.js.rewrite(script, {type: 'script'}, false, self.__dynamic);
-
-        return self.eval(script);
-    }
-
-    self.__dynamic.define(self.Object.prototype, '__dynamic$eval', {
-            get() {
-                return this === window ? self.__dynamic.eval : this.eval;
-            },
-            set(val: any) {
-                return val;
-            },
-        }
-    );
-
     self.Function.prototype.apply = new Proxy(self.Function.prototype.apply, {
         apply(t, g, a) {
             if (a[0] == self.__dynamic$window) a[0] = a[0].__dynamic$self;
@@ -196,4 +175,7 @@ export default function niche(self: any) {
 
         document.head.appendChild(link);
     }
+
+    // fix for jquery
+    self.getClientRects = () => '';
 }

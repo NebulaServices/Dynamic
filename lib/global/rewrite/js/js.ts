@@ -23,11 +23,12 @@ export default class js {
     try {
       try {
         src = this.process(src, config, {module: true, ...this.ctx}, dynamic);
-      } catch {
+      } catch(e) {
+        console.log('module failed',e)
         src = this.process(src, config, {module: false, ...this.ctx}, dynamic);
       }
     } catch(e) {
-      console.log(e, src)
+      console.log('backup failed', e)
     }
     
     if (inject) {

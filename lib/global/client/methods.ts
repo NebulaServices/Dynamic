@@ -1,9 +1,5 @@
 export default [
     {
-        name: 'define',
-        function: 'self',
-    },
-    {
         name: 'get',
         function: 'self',
     },
@@ -13,6 +9,14 @@ export default [
     },
     {
         name: 'write',
+        function: 'self',
+    },
+    {
+        name: 'message',
+        function: 'self',
+    },
+    {
+        name: 'reflect',
         function: 'self',
     },
     {
@@ -44,14 +48,6 @@ export default [
         function: 'self',
     },
     {
-        name: 'reflect',
-        function: 'self',
-    },
-    {
-        name: 'message',
-        function: 'self',
-    },
-    {
         name: 'niche',
         function: 'self',
     },
@@ -61,6 +57,10 @@ export default [
     },
     {
         name: 'style',
+        function: 'self',
+    },
+    {
+        name: 'blob',
         function: 'self',
     }
 ]

@@ -1,4 +1,4 @@
-export default function Location(self: any) {
+export default function location(self: any) {
     self.__dynamic$history = {
         apply(t: any, g: any, a: any) {
             if (a[2]) a[2] = self.__dynamic.url.encode(a[2], self.__dynamic.meta);

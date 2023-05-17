@@ -2,8 +2,8 @@ export default function Reflect(self: any) {
     const _set = self.Reflect.set.bind({});
     const _get = self.Reflect.get.bind({});
 
-    self.Reflect.set = new Proxy(self.Reflect.set, {
-        apply(t, g, a) {
+    self.Reflect.set = self.__dynamic.wrap(self.Reflect.set,
+        function(this: any, ...a: any) {
             if (a[0].constructor.name=='Window') {
                 if (a[1]=='location') {
                     a[0].__dynamic$location = a[2];
@@ -18,10 +18,10 @@ export default function Reflect(self: any) {
             
             return _set.apply(this, a);
         }
-    });
+    );
 
-    self.Reflect.get = new Proxy(self.Reflect.get, {
-        apply(t, g, a) {
+    self.Reflect.get = self.__dynamic.wrap(self.Reflect.get,
+        function(this: any, ...a: any) {
             if (a[0].constructor.name=='Window') {
                 if (a[1]=='location') return a[0].__dynamic$location;
 
@@ -34,11 +34,9 @@ export default function Reflect(self: any) {
                 return self.__dynamic$location[a[1]];
             }
 
-            console.log(a);
-
             return _get.apply(this, a);
         }
-    });
+    );
 
     self.__dynamic.Reflect = {
         get: _get,

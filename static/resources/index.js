@@ -1,3 +1,5 @@
+let workerLoaded;
+
 async function worker() {
   return await navigator.serviceWorker.register("/sw.js", {
     scope: "/service",
@@ -6,6 +8,8 @@ async function worker() {
 
 document.addEventListener('DOMContentLoaded', async function(){
   await worker();
+
+  workerLoaded = true;
 })
 
 
@@ -19,7 +23,7 @@ function isUrl(val = "") {
 }
 const inpbox = document.getElementById("uform");
 
-inpbox.addEventListener("submit", (event) => {
+inpbox.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   console.log("Connecting to service -> loading");
@@ -28,6 +32,9 @@ inpbox.addEventListener("submit", (event) => {
     alert(
       "An error occured registering your service worker. Please contact support - discord.gg/unblocker"
     );
+
+  if (!workerLoaded) await worker();
+  
   form = document.querySelector("form");
   const formValue = document.querySelector("form input").value;
   if (!isUrl(formValue)) {

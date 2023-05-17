@@ -1,11 +1,6 @@
-import { parse, serialize } from '../../cookie/parse';
+import { parse, serialize } from '../../../cookie/parse';
 
 export default function cookie(self: any) {
-    self.__dynamic.cookie = {
-        str: self.__dynamic$cookie||'',
-        desc: Object.getOwnPropertyDescriptor(self.Document.prototype, 'cookie')
-    };
-
     delete self.Document.prototype.cookie;
 
     self.__dynamic.define(self.document, 'cookie', {

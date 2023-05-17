@@ -1,4 +1,4 @@
-export default function Storage(self: any) {
+export default function storage(self: any) {
     self.__dynamic.storage = {
         localStorage: self.localStorage,
         sessionStorage: self.sessionStorage,
@@ -76,7 +76,9 @@ export default function Storage(self: any) {
                 return self.__dynamic.storage[storage].getItem('__dynamic$' + self.__dynamic$location.host + '$' + prop);
             },
             set(target, prop: any, value: any): any {
-                return self.__dynamic.storage[storage].setItem('__dynamic$' + self.__dynamic$location.host + '$' + prop, value);
+                self.__dynamic.storage[storage].setItem('__dynamic$' + self.__dynamic$location.host + '$' + prop, value);
+
+                return value || true;
             },
             deleteProperty(target, prop: any): any {
                 return self.__dynamic.storage[storage].removeItem('__dynamic$' + self.__dynamic$location.host + '$' + prop);

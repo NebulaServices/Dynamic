@@ -2,6 +2,8 @@ export default function encode(this: any, url: any, meta: any) {
   if (!url) return url;
   url = new String(url).toString();
 
+  if (url.startsWith('about:blank')) return location.origin + this.ctx.config.prefix + url;
+
   if (!url.match(this.ctx.regex.ProtocolRegex) && url.match(/^([a-zA-Z0-9\-]+)\:\/\//g)) return url;
 
   if (url.match(this.ctx.regex.WeirdRegex)) {

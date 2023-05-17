@@ -1,13 +1,8 @@
 export default function message(self: any) {
-  // @ts-ignore
-  //self.setTimeout = ()=>{};
-
-  const isWorker = (s) => s.constructor.name=='Worker' || s.constructor.name=='MessagePort' || self.constructor.name=='DedicatedWorkerGlobalScope';
+  const isWorker = (s: any) => s.constructor.name=='Worker' || s.constructor.name=='MessagePort' || self.constructor.name=='DedicatedWorkerGlobalScope';
   const getWindow = (name: any, location: any) => Object.keys(window).filter(e=>parseInt(e)>-1).map(e=>parseInt(e)).map(e=>window[e]).find((e: any)=>e.name == name && e.location.href == location);
 
-  self.getWindow = getWindow;
-
-  self.__dynamic$message = function(target: any) {
+  self.__dynamic$message = function(target: any, origin: any = self) {
     if (!target) target = self;
 
     return function Send() {
@@ -20,40 +15,19 @@ export default function message(self: any) {
 
         if (target.__dynamic$self) target = target.__dynamic$self;
 
-        return target.postMessage(...[[args[0], args[1]=='*'?args[1]:self.__dynamic$location.origin, self.location.href, self.name, target !== self], '*', args[2]||[]]);
+        return (target._postMessage || target.postMessage)(...[[args[0], self.__dynamic$location.origin, self.location.href, self.name, target !== self], '*', args[2]||[]]);
     }
   }
 
   /*self.postMessage = new Proxy(self.postMessage, {
     apply(t, g, a): any {
 
-      console.log(t, g, a, self);
-
       if (isWorker(g))
         return Reflect.apply(t, g, a);
 
-      var origin: string = self.__dynamic$location.origin;
-
-      if (a[1].match(/:[0-9]+$/g)) origin+=':'+(self.__dynamic$location.protocol=='https:'?'443':'80');
-
-      return Reflect.apply(t, g, [[a[0], a[1]=='*'?a[1]:origin], '*', a[2]||[]]);
+      return Reflect.apply(t, g, [a[0], '*', a[2]]);
     }
   });*/
-
-  self.__dynamic$channels = [];
-
-  self.MessageChannel = new Proxy(self.MessageChannel, {
-    construct(t, a): any {
-      var channel: any = Reflect.construct(t, a);
-
-      channel.port1.start();
-      channel.port2.start();
-
-      self.__dynamic$channels.push(channel);
-
-      return channel;
-    }
-  });
 
   if (self.addEventListener) self.addEventListener = new Proxy(self.addEventListener, {
     apply(t, g, a) {
@@ -86,6 +60,10 @@ export default function message(self: any) {
 
   function cloneEvent(event: MessageEvent | any) {
       const cloned = self.__dynamic.util.clone(event);
+      
+      let _window: any;
+
+      if (event.source) _window = getWindow(event.data[3], event.data[2]) || event.currentTarget;
 
       for (var i in event) {
         switch(i) {
@@ -115,10 +93,8 @@ export default function message(self: any) {
             break;
           case "source":
             if (!event.source) break;
-            const _window: any = getWindow(event.data[3], event.data[2]);
 
             if (event.source.__dynamic$window) {
-              console.log(event.data[2]);
               Object.defineProperty(cloned, i, {
                 value: _window?.__dynamic$window || (Array.isArray(event.data) && event.data.length == 3 && event.data[2] === true) ? event.source?.__dynamic$window: event.currentTarget.__dynamic$window,
                 writable: true,
