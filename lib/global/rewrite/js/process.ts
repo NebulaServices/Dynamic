@@ -6,7 +6,7 @@ export default function process (this: any, src: any, config: any = {}, ctx: any
     });
 
     src = this.ctx.modules.estree.generate(ast)
-    .replace(`if (d$g_(i).Promise !== d$g_(Ct).ZoneAwarePromise)`, `console.log(i, i.Promise, Ct, Ct.ZoneAwarePromise); if (d$g_(i).Promise !== d$g_(Ct).ZoneAwarePromise)`);
+    .replace(`(s.publish = function (e, t) {`, `console.log(s, a); (s.publish = function (e, t) {`);
 
     return src;
 }

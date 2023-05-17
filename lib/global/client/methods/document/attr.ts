@@ -77,6 +77,7 @@ export default function attributes(self: any) {
                         return descriptor.get.call(this);
                     },
                     set(val: any) {
+                        console.log(this, val);
                         if (val && typeof val == 'string') val = val.toString();
                         if (config.action=='html') {
                             const blob = new Blob([val], {type: 'text/html'});
