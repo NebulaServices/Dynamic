@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
     
 export default {
-  mode: 'development',
+  mode: 'production',
   entry: {
     worker: './'+join('lib', 'worker', 'index.ts'),
     client: './'+join('lib', 'client', 'index.ts'),
@@ -40,6 +40,6 @@ export default {
     ],
   },
   plugins: [
-    new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
+    //new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
   ]
 };

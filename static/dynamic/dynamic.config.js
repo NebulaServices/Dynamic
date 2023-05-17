@@ -1,7 +1,7 @@
 self.__dynamic$config = {
   prefix: '/service/',
   encoding: 'plain',
-  mode: 'development', // development: zero caching, no minification, production: speed-oriented
+  mode: 'production', // development: zero caching, no minification, production: speed-oriented
   rewrite: {
     css: 'regex',
     js: 'acorn',
