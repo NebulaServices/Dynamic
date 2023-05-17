@@ -40,6 +40,6 @@ export default {
     ],
   },
   plugins: [
-    new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
+    //new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
   ]
 };
