@@ -1,7 +1,4 @@
-# Dynamic
-**A new generation interception proxy of technology**, designed to make the way you interact with the internet effortlessly fast. Built with the latest technologies and fully written in TypeScript, Dynamic brings you a seamless and effortless web browsing experience.
-
-
+![Frame 1 (6)](https://github.com/NebulaServices/Dynamic/assets/81369743/5fbb36d7-67e9-4117-aa23-5b064ed99760)
 Join the revolution today and experience the power of Dynamic.
 
 ## Features
