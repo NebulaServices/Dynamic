@@ -1,20 +1,20 @@
-import location from './methods/location';
-import get from './methods/get';
-import window from './methods/window';
-import define from './methods/define';
-import attr from './methods/attr';
-import worker from './methods/worker';
-import history from './methods/history';
-import ws from './methods/ws';
-import fetch from './methods/fetch';
-import message from './methods/message';
-import write from './methods/write';
-import imports from './methods/imports';
-import reflect from './methods/reflect';
-import niche from './methods/niche';
-import storage from './methods/storage';
-import cookie from './methods/cookie';
-import style from './methods/style';
+import location from './methods/core/location';
+import get from './methods/core/get';
+import window from './methods/core/window';
+import attr from './methods/document/attr';
+import worker from './methods/window/worker';
+import history from './methods/window/history';
+import ws from './methods/window/ws';
+import fetch from './methods/window/fetch';
+import message from './methods/window/message';
+import write from './methods/document/write';
+import imports from './methods/window/imports';
+import reflect from './methods/core/reflect';
+import niche from './methods/window/niche';
+import storage from './methods/window/storage';
+import cookie from './methods/document/cookie';
+import style from './methods/document/style';
+import blob from './methods/window/blob';
 
 import DynamicClientMethods from './methods';
 
@@ -23,7 +23,6 @@ export default class DynamicClient {
     location = location;
     get = get;
     window = window;
-    define = define;
     attr = attr;
     worker = worker;
     history = history;
@@ -37,6 +36,10 @@ export default class DynamicClient {
     storage = storage;
     cookie = cookie;
     style = style;
+    blob = blob;
+
+    define: any;
+    wrap: any;
 
     methods = DynamicClientMethods;
 

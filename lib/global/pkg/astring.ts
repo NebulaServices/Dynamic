@@ -241,6 +241,11 @@ var GENERATOR = {
       formatComments(state, node.trailingComments, indent, lineEnd);
     }
   },
+  ParenthesizedExpression: function ParenthesizedExpression(node, state) {
+    state.write('(');
+    this[node.expression.type](node.expression, state);
+    state.write(')');
+  },
   BlockStatement: BlockStatement = function BlockStatement(node, state) {
     var indent = state.indent.repeat(state.indentLevel++);
     var lineEnd = state.lineEnd,
@@ -293,33 +298,6 @@ var GENERATOR = {
   },
   EmptyStatement: function EmptyStatement(node, state) {
     state.write(';');
-  },
-  MemberChain: function MemberChain(node, state) {
-    var generator = state.generator;
-
-    if (node.computed) {
-        state.write('[');
-        generator[node.property.type](node.property, state);
-        state.write(']');
-    } else {
-        state.write('?.');
-        generator[node.property.type](node.property, state);
-    }
-  },
-  CallChain: function CallChain(node, state) {
-    formatSequence(state, node['arguments']);
-  },
-  ChainingExpression: function ChainingExpression(node, state) {
-    var generator = state.generator;
-    var length = node.chain.length;
-
-    generator[node.base.type](node.base, state);
-
-    generator[node.chain[0].type](node.chain[0], state);
-
-    for (var i = 1; i < length; i++) {
-      generator[node.chain[i].type](node.chain[i], state);
-    }
   },
   ExpressionStatement: function ExpressionStatement(node, state) {
     var precedence = state.expressionsPrecedence[node.expression.type];

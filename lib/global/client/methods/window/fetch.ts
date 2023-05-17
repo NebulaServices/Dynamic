@@ -1,16 +1,11 @@
-import Client from '../../../client/client'
+import Client from '../../../../client/client'
 
 export default function fetch(self: any) {
-    const XMLResponseURL: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.XMLHttpRequest.prototype, 'responseURL');
-    const ResponseURL: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(self.Response.prototype, 'url');
-
     self.Request = new Proxy(self.Request, {
         construct(t, a: any): any {
             if (a[0]) a[0] = self.__dynamic.url.encode(a[0], self.__dynamic.meta);
 
             const req: Request | any = Reflect.construct(t, a);
-
-            req._url = a[0];
 
             return req;
         }
@@ -18,7 +13,7 @@ export default function fetch(self: any) {
 
     self.__dynamic.define(self.Request.prototype, 'url', {
         get() {
-            return self.__dynamic.url.decode(this._url);
+            return self.__dynamic.url.decode(self.__dynamic.http.RequestURL.get.call(this));
         },
         set(value: any) {
             return value;
@@ -37,8 +32,11 @@ export default function fetch(self: any) {
 
     self.XMLHttpRequest.prototype.open = new Proxy(self.XMLHttpRequest.prototype.open, {
         apply(t, g, a) {
+            console.log(a);
             if (a[1]) a[1] = self.__dynamic.url.encode(a[1], self.__dynamic.meta);
             if (a[2]===false) a[2] = true;
+
+            console.log(t, g, a);
             
             return Reflect.apply(t, g, a);
         }
@@ -46,7 +44,7 @@ export default function fetch(self: any) {
 
     Object.defineProperty(self.XMLHttpRequest.prototype, 'responseURL', {
         get() {
-            return self.__dynamic.url.decode(XMLResponseURL.get.call(this));
+            return self.__dynamic.url.decode(self.__dynamic.http.XMLResponseURL.get.call(this));
         },
         set(value: any) {
             return value;
@@ -55,7 +53,7 @@ export default function fetch(self: any) {
 
     Object.defineProperty(self.Response.prototype, 'url', {
         get() {
-            return self.__dynamic.url.decode(ResponseURL.get.call(this));
+            return self.__dynamic.url.decode(self.__dynamic.http.ResponseURL.get.call(this));
         },
         set(value: any) {
             return value;
@@ -94,8 +92,6 @@ export default function fetch(self: any) {
 
     if ('serviceWorker' in navigator) {
         self.__dynamic.sw = self.navigator.serviceWorker;
-
-        //self.navigator.serviceWorker.register = () => {};
 
         delete self.navigator.serviceWorker;
         delete self.Navigator.prototype.serviceWorker;

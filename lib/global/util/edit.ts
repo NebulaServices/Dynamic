@@ -1,5 +1,15 @@
+declare const self: any;
+
 export default async function Edit(req: any) {
-    let request = await fetch(req);
+    let request: any;
+
+    if (self.__dynamic$config.mode !== 'development') {
+        var cache = await caches.open('__dynamic$files');
+
+        if (!cache) request = await fetch(req);
+        else 
+            request = await cache.match(req.url) || await fetch(req);
+    } else request = await fetch(req);
     let text = await request.blob();
 
     if (req.url.startsWith(location.origin + '/dynamic/dynamic.config.js') || req.url.startsWith(location.origin + '/dynamic/dynamic.client.js')) {

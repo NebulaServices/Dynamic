@@ -61,6 +61,11 @@ export default class html {
         "elements": ['iframe'],
         "tags": ['srcdoc'],
         "action": "html",
+      },
+      {
+        "elements": ['link'],
+        "tags": ["imagesrcset"],
+        "action": "srcset",
       }
   ];
 
@@ -102,24 +107,39 @@ The document has moved
 
     var parser = new this.ctx.modules.htmlparser2.Parser(new this.ctx.modules.domhandler.DomHandler(function (error:any, dom:any) {
         if (dom) {
-            that.iterate(dom, function(node:any) {
+            let base = meta.href;
+
+            that.iterate(dom, function(node: any) {
+                if (node.name == 'base') {
+                    base = new URL(node.attribs.href, new URL(meta.href)).href;
+
+                    console.log(base);
+
+                    node.attribs.href = that.ctx.url.encode(node.attribs.href, meta);
+                }
+            });
+
+            base = new URL(base);
+
+            that.iterate(dom, function(node: any) {
                 var _node = new Node(node, that.ctx);
 
                 if (node.name == 'script'&&(!_node.getAttribute('src'))&&(_node.getAttribute('type')!=='application/json')) {
                     node.childNodes.forEach((e:any)=>{
-                      if (e.type!=='text') return e;
-                      if (_node.getAttribute('type') && _node.getAttribute('type')!=='application/javascript' && _node.getAttribute('type')!=='text/javascript') return e;
+                        if (e.type!=='text') return e;
+                        if (_node.getAttribute('type') && _node.getAttribute('type')!=='application/javascript' && _node.getAttribute('type')!=='text/javascript') return e;
 
-                      e.data = that.ctx.rewrite.js.rewrite(e.data, {type: 'script'}, false, that.ctx);
-                    })
-                  }
-                  if (node.name == 'style') {
+                        e.data = that.ctx.rewrite.js.rewrite(e.data, {type: 'script'}, false, that.ctx);
+                    });
+                }
+
+                if (node.name == 'style') {
                     node.childNodes.forEach((e:any)=>{
-                      if (e.type!=='text') return e;
+                        if (e.type!=='text') return e;
 
-                      e.data = that.ctx.rewrite.css.rewrite(e.data, meta)
-                    })
-                  }
+                        e.data = that.ctx.rewrite.css.rewrite(e.data, base)
+                    });
+                }
 
                 for (var config of that.config) {
                     //console.log(config.elements, config.tags, config.action, node.name)
@@ -128,7 +148,7 @@ The document has moved
                             if (!_node.hasAttribute(tag)) continue;
                             if (config.action === 'url') {
                                 _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
-                                _node.setAttribute(tag, that.ctx.url.encode(_node.getAttribute(tag), meta));
+                                _node.setAttribute(tag, that.ctx.url.encode(_node.getAttribute(tag), base));
                             } else if (config.action === 'srcset') {
                                 _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
                                 _node.setAttribute(tag, Srcset.encode(_node.getAttribute(tag), that.ctx));
@@ -139,7 +159,7 @@ The document has moved
                                 _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
                                 _node.removeAttribute(tag);
               
-                                const blob = new Blob([that.ctx.rewrite.html.rewrite(_node.getAttribute(tag), meta)], {type: 'text/html'});
+                                const blob = new Blob([that.ctx.rewrite.html.rewrite(_node.getAttribute(tag), base)], {type: 'text/html'});
                                 _node.setAttribute('src', URL.createObjectURL(blob));
                             } else if (config.action === 'http-equiv') {
                                 const content = _node.getAttribute('content');
@@ -149,7 +169,7 @@ The document has moved
                                   case "refresh":
                                     var time = content.split(';url=')[0], value = content.split(';url=')[1];
               
-                                    _node.setAttribute('content', `${time};url=${that.ctx.url.encode(value, meta)}`);
+                                    _node.setAttribute('content', `${time};url=${that.ctx.url.encode(value, base)}`);
                                     break;
                                   case "content-security-policy":
                                     _node.removeAttribute('content');
@@ -160,7 +180,7 @@ The document has moved
                                 }
                             } else if (config.action === 'css') {
                                 _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
-                                _node.setAttribute(tag, that.ctx.rewrite.css.rewrite(_node.getAttribute(tag), meta));
+                                _node.setAttribute(tag, that.ctx.rewrite.css.rewrite(_node.getAttribute(tag), base));
                             } else if (config.action === 'delete') {
                                 _node.removeAttribute(tag);
                             }

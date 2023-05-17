@@ -1,9 +1,26 @@
 import { DynamicBundle } from '../global/bundle';
 
 (function(self: any) {
-  self.addEventListener('install', (event: Event) => {
+  self.addEventListener('install', async (event: Event) => {
     self.skipWaiting();
-    console.log('install sw')
+    console.log('install sw');
+
+    if (self.__dynamic$config.mode == 'development') return;
+
+    const cache = await caches.open('__dynamic$files');
+
+    console.group('Dynamic File Cache:');
+
+    ['dynamic.client.js', 'dynamic.handler.js', 'dynamic.config.js'].forEach(async (url: string, i: number, obj: Array<string>) => {
+      url = new URL(url, new URL(location.origin + self.__dynamic$config.assets.prefix + 'dynamic.worker.js')).href;
+
+      const res = await fetch(url);
+      await cache.put(url, res);
+
+      console.log('Cache Installed: ' + url.split('/').pop(), res);
+
+      if (i == obj.length) console.groupEnd();
+    });
   });
   
   self.addEventListener('activate', (event: any) => {
@@ -22,7 +39,7 @@ import { DynamicBundle } from '../global/bundle';
         }
       });
 
-      var cache = await caches.open('__dynamic');
+      var cache = await caches.open('__dynamic$blob');
       var url = __dynamic.config.prefix + 'caches/' + data.url;
 
       await cache.put(url, res);

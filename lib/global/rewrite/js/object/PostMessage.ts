@@ -8,6 +8,7 @@ export default function PostMessage(node: any, parent: any = {}) {
         },
         arguments: [
             node.object||node,
+            {type: 'Identifier', name: 'self', __dynamic: true}
         ]
     }).forEach(([e,v])=>node[e]=v)
 

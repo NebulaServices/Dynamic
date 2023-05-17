@@ -4,7 +4,7 @@ import { Element, Text } from "domhandler";
 
 export default function GenerateHead(scriptURL: any, configURL: any, cookies: any, script: any = '') {
     if (self.__dynamic$config) {
-        var cache = self.__dynamic$config.mode === 'development';
+        var cache = self.__dynamic$config.mode == 'development';
     } else var cache = false;
 
     var array: Array<Object> = [

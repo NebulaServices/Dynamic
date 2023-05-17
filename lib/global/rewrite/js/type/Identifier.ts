@@ -4,7 +4,9 @@ import PostMessage from '../object/PostMessage';
 export default function Identifier(node: any, parent: any = {}) {
     if (typeof node.name !== 'string') return false;
 
-    if (!['location', 'parent', 'top', 'postMessage', 'opener', 'window', 'self', 'globalThis', 'parent', 'document'].includes(node.name)) return false;
+    if (node.__dynamic === true) return;
+
+    if (!['parent', 'top', 'postMessage', 'opener', 'window', 'self', 'globalThis', 'parent', ''].includes(node.name)) return false;
 
     if (parent.type=='AssignmentExpression'&&parent.left==node&&node.name=='location') return node.name = '__dynamic$location';
 
@@ -30,11 +32,12 @@ export default function Identifier(node: any, parent: any = {}) {
     if (parent.type=='NewExpression') return;
     if (parent?.parent?.type=='NewExpression') return;
     if (parent.type=='UnaryExpression'&&parent.argument==node) return;
+    if (parent.type=='Property' && parent.shorthand == true && parent.value == node) return;
 
-    if (node.name=='location'&&parent.type=='BinaryExpression') node.name = '__dynamic$location'
-    if (node.name == '__dynamic') node.name = 'undefined';
+    //if (node.name=='location') return node.name = '__dynamic$location'
+    if (node.name == '__dynamic') return node.name = 'undefined';
 
-    if (node.name=='eval') return node.name = '__dynamic$eval';
+    if (node.name=='eval' && parent.right !== node) return node.name = '__dynamic$eval';
 
-    node.name = `__dynamic$get(${node.name})`;
+    node.name = `dg$(${node.name})`;
 }

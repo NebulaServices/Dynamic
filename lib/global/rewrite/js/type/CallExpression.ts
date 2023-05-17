@@ -9,7 +9,7 @@ export default function CallExpression(node: any, parent: any = {}) {
             var original = 'undefined'
             node.callee.type = 'CallExpression';
             node.callee.callee = {type: 'Identifier', name: '__dynamic$message'}
-            node.callee.arguments = [{type: 'Identifier', name: original}]
+            node.callee.arguments = [{type: 'Identifier', name: original}, {type: 'Identifier', name: 'self', __dynamic: true}]
     
             return;
         }
@@ -24,13 +24,13 @@ export default function CallExpression(node: any, parent: any = {}) {
             var original: string = node.callee.object;
             node.callee.type = 'CallExpression';
             node.callee.callee = {type: 'Identifier', name: '__dynamic$message'}
-            node.callee.arguments = [original]
+            node.callee.arguments = [original, {type: 'Identifier', name: 'self', __dynamic: true}]
     
             return;
         }
 
-        if (node.callee.property.name=='eval') {
-            node.callee.property.name = '__dynamic$eval';
+        if (node.callee.object.name=='eval') {
+            node.callee.object.name = '__dynamic$eval';
         }
     }
 

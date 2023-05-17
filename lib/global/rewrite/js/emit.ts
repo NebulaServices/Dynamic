@@ -4,9 +4,11 @@ import Literal from './type/Literal';
 import CallExpression from './type/CallExpression';
 import AssignmentExpression from './type/AssignmentExpression';
 import ThisExpression from './type/ThisExpression';
+import Property from './type/Property';
 import Imports from './type/Imports';
 
 function Emit(node:any, type:any, parent:any = {}, ctx:any = {}, dynamic: any = {}, config: any = {}) {
+    if (node.__dynamic) return;
 
     switch(type) {
         case "Identifier":
@@ -26,6 +28,9 @@ function Emit(node:any, type:any, parent:any = {}, ctx:any = {}, dynamic: any = 
             break;
         case "ThisExpression":
             ThisExpression(node, parent);
+            break;
+        case "Property":
+            Property(node, parent);
             break;
         default:
             Imports(node, parent, ctx, dynamic);
