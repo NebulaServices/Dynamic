@@ -1,11 +1,19 @@
-export default function init(self: any) {
-    if (self.Document) self.__dynamic.elements = {
+export default function init(self: Window | any, __dynamic: any) {
+    if (!__dynamic) __dynamic = self.__dynamic;
+
+    if (self.document) __dynamic.elements = {
         attributes: ['src', 'href', 'srcset', 'action', 'data', 'integrity', 'nonce', 'imagesrcset'],
         iframeSrc: Object.getOwnPropertyDescriptor(self.HTMLIFrameElement.prototype, 'src'),
         contentWindow: Object.getOwnPropertyDescriptor(self.HTMLIFrameElement.prototype, 'contentWindow'),
         innerHTML: Object.getOwnPropertyDescriptor(self.Element.prototype, 'innerHTML'),
         outerHTML: Object.getOwnPropertyDescriptor(self.Element.prototype, 'outerHTML'),
 
+        setAttribute: self.Element.prototype.setAttribute,
+        getAttribute: self.Element.prototype.getAttribute,
+        removeAttribute: self.Element.prototype.removeAttribute,
+        hasAttribute: self.Element.prototype.hasAttribute,
+        cloneNode: self.Node.prototype.cloneNode,
+        
         config: [
             {
                 "elements": [self.HTMLScriptElement, self.HTMLIFrameElement, self.HTMLEmbedElement, self.HTMLInputElement, self.HTMLTrackElement, self.HTMLMediaElement,self.HTMLSourceElement, self.Image, self.HTMLImageElement],
@@ -18,7 +26,7 @@ export default function init(self: any) {
                 "action": "srcset"
             },
             {
-                "elements": [self.HTMLAnchorElement, self.HTMLLinkElement, self.HTMLAreaElement],
+                "elements": [self.HTMLAnchorElement, self.HTMLLinkElement, self.HTMLAreaElement, self.SVGImageElement, self.HTMLBaseElement],
                 "tags": ['href'],
                 "action": "url"
             },
@@ -73,20 +81,21 @@ export default function init(self: any) {
                 "elements": [self.HTMLLinkElement],
                 "tags": ['imageSrcset'],
                 "action": "srcset"
-            }
+            },
         ],
 
         createGetter: (prop: any) => {return {get(this: any): any {return (new URL(this.href||self.__dynamic$location.href) as any)[prop];},set(val: any) {return;}}}
     };
 
-    if (self.Document) self.__dynamic.cookie = {
+    if (self.document) __dynamic.cookie = {
         str: self.__dynamic$cookie||'',
         desc: Object.getOwnPropertyDescriptor(self.Document.prototype, 'cookie')
     };
 
-    self.__dynamic.http = {
+    if (self.XMLHttpRequest) __dynamic.http = {
         XMLResponseURL: Object.getOwnPropertyDescriptor(self.XMLHttpRequest.prototype, 'responseURL'),
         ResponseURL: Object.getOwnPropertyDescriptor(self.Response.prototype, 'url'),
         RequestURL: Object.getOwnPropertyDescriptor(self.Request.prototype, 'url'),
+        XMLHttpRequest: self.XMLHttpRequest,
     }
 }

@@ -1,7 +1,6 @@
 import { encodeProtocol as encode_protocol } from "../core/protocol";
 
-export default function websocket(self: any) {
-  const websockets: any[] = [];
+export default function websocket(self: Window | any) {
   const target = () =>
     `${self.location.protocol.replace("http", "ws")}//${
       self.location.hostname
@@ -25,7 +24,8 @@ export default function websocket(self: any) {
 
   self.WebSocket = self.__dynamic.wrap(
     self.WebSocket,
-    (e: any, [o, t]: any) => {
+    (e: any, o: any, t: any) => {
+      console.log(o);
       const url = new URL(o);
 
       const r = {
@@ -52,10 +52,10 @@ export default function websocket(self: any) {
         ],
       };
 
-      return self.__dynamic.Reflect.construct(e, [
+      return [
         target(),
-        ["bare", JSON.stringify(r)],
-      ]);
+        ["bare", encode_protocol(JSON.stringify(r))],
+      ];
     }
   );
 }

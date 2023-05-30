@@ -34,5 +34,22 @@ export default function CallExpression(node: any, parent: any = {}) {
         }
     }
 
+    if (node.arguments.length > 0 && node.arguments.length < 4) {
+        // fallback postmessage rewriting
+        /*if (node.callee?.object?.type !== 'Literal')
+            if (node.arguments[1] && node.arguments[1].type == "Literal" && node.arguments[1].value == '*') {
+                node.callee = {
+                    type: 'CallExpression',
+                    callee: {
+                        type: 'Identifier',
+                        name: 'dg$',
+                        __dynamic: true,
+                    },
+                    arguments: [ node.callee ],
+                    __dynamic: true,
+                }
+            }*/
+    }
+
     try {} catch {}
 }

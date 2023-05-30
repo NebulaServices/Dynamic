@@ -1,7 +1,7 @@
 import Client from '../../../../client/client';
 import Srcset from '../../../rewrite/html/srcset';
 
-export default function attributes(self: any) {
+export default function attributes(self: Window | any) {
     self.HTMLElement.prototype.setAttribute = new Proxy(self.HTMLElement.prototype.setAttribute, {
         apply(t: any, g: any, a: any) {
             if (self.__dynamic.elements.attributes.indexOf(a[0].toLowerCase())==-1) return Reflect.apply(t, g, a);
@@ -19,7 +19,30 @@ export default function attributes(self: any) {
             }
 
             g.dataset['dynamic_'+a[0]] = a[1];
-            a[1] = self.__dynamic.url.encode(a[1], self.__dynamic.meta);
+            a[1] = self.__dynamic.url.encode(a[1], self.__dynamic.baseURL || self.__dynamic.meta);
+
+            return Reflect.apply(t, g, a);
+        }
+    });
+
+    self.HTMLElement.prototype.setAttributeNS = new Proxy(self.HTMLElement.prototype.setAttributeNS, {
+        apply(t: any, g: any, a: any) {
+            if (self.__dynamic.elements.attributes.indexOf(a[0].toLowerCase())==-1) return Reflect.apply(t, g, a);
+
+            if (a[1].toLowerCase()=='srcset' || a[1].toLowerCase() == 'imagesrcset') {
+                a[2] = Srcset.encode(a[2], self.__dynamic);
+
+                return Reflect.apply(t, g, a);
+            }
+
+            if (a[0].toLowerCase()=='integrity'||a[0].toLowerCase()=='nonce') {
+                g.removeAttribute(a[1]);
+
+                return Reflect.apply(t, g, ['nointegrity', a[2]]);
+            }
+
+            g.dataset['dynamic_'+a[1]] = a[2];
+            a[2] = self.__dynamic.url.encode(a[2], self.__dynamic.baseURL || self.__dynamic.meta);
 
             return Reflect.apply(t, g, a);
         }
@@ -30,6 +53,18 @@ export default function attributes(self: any) {
             if (g.dataset[`dynamic_${a[0]}`]) return g.dataset[`dynamic_${a[0]}`];
 
             return Reflect.apply(t, g, a);
+        }
+    });
+
+    self.document.createElement = new Proxy(self.document.createElement, {
+        apply(t: any, g: any, a: any) {
+            const element: any = Reflect.apply(t, g, a);
+
+            if (a[0].toLowerCase()=='script') element.onerror = console.log
+
+            if (a[0].toLowerCase()=='iframe') (element.src = 'about:blank', element.loading = 'lazy');
+
+            return element;
         }
     });
 
@@ -52,7 +87,7 @@ export default function attributes(self: any) {
                             } catch {origin = false;};
 
                             if (origin) if (!_window.__dynamic) {
-                                Client(_window, self.__dynamic$config, this.src);
+                                Client(_window, self.__dynamic$config, decodeURIComponent(this.src));
                             }
 
                             if (!origin && tag == 'contentDocument') return _window.document;
@@ -77,26 +112,11 @@ export default function attributes(self: any) {
                         return descriptor.get.call(this);
                     },
                     set(val: any) {
-                        console.log(this, val);
                         if (val && typeof val == 'string') val = val.toString();
                         if (config.action=='html') {
-                            const blob = new Blob([val], {type: 'text/html'});
-
                             this.removeAttribute(tag);
 
-                            (async () => {
-                                const sw = (await self.__dynamic.sw.ready).active;
-                                
-                                self.__dynamic.sw.addEventListener('message', ({ data: {url} }: MessageEvent) => {
-                                    if (url) {
-                                        self.__dynamic.elements.iframeSrc.set.call(this, url);
-                                    }
-                                }, {once: true});
-
-                                sw.postMessage({type: "createBlobHandler", blob, url: self.__dynamic.modules.base64.encode(val.toString().split('').slice(0, 10)), location: self.__dynamic.location.href});
-
-                                return;
-                            })();
+                            Promise.resolve(self.__dynamic.createBlobHandler(new Blob([val], {type: 'text/html'}), this, val)).then((url: string) => {this.setAttribute(tag, url);});
 
                             return val;
                         }
@@ -115,7 +135,7 @@ export default function attributes(self: any) {
                             val = self.__dynamic.rewrite.css.rewrite(val, self.__dynamic.meta);
                         }
 
-                        if (config.action=='url') val = self.__dynamic.url.encode(val, self.__dynamic.meta);
+                        if (config.action=='url') val = self.__dynamic.url.encode(val, self.__dynamic.baseURL || self.__dynamic.meta);
 
                         return descriptor.set.call(this, val);
                     }
@@ -129,9 +149,12 @@ export default function attributes(self: any) {
             return (this.__innerHTML||self.__dynamic.elements.innerHTML.get.call(this)).toString(); 
         },
         set(val: any) {
-            this.__innerHTML = val;
+            this.__innerHTML = new DOMParser().parseFromString(val, 'text/html').body.innerHTML
 
-            if ((this instanceof self.HTMLScriptElement) || (this instanceof self.HTMLStyleElement) || (this instanceof self.HTMLTextAreaElement)) return self.__dynamic.elements.innerHTML.set.call(this, val);
+
+            if (this instanceof self.HTMLTextAreaElement) return self.__dynamic.elements.innerHTML.set.call(this, val);
+            if (this instanceof self.HTMLScriptElement) return self.__dynamic.elements.innerHTML.set.call(this, self.__dynamic.rewrite.js.rewrite(val, {type: 'script'}));
+            if (this instanceof self.HTMLStyleElement) return self.__dynamic.elements.innerHTML.set.call(this, self.__dynamic.rewrite.css.rewrite(val, self.__dynamic.meta));
 
             return self.__dynamic.elements.innerHTML.set.call(this, self.__dynamic.rewrite.html.rewrite(val, self.__dynamic.meta));
         }
@@ -143,9 +166,11 @@ export default function attributes(self: any) {
             return (this.__outerHTML||self.__dynamic.elements.outerHTML.get.call(this)).toString();
         },
         set(val: any) {
-            this.__outerHTML = val;
+            this.__outerHTML = new DOMParser().parseFromString(val, 'text/html').body.innerHTML
 
-            if ((this instanceof self.HTMLScriptElement) || (this instanceof self.HTMLStyleElement) || (this instanceof self.HTMLTextAreaElement)) return self.__dynamic.elements.outerHTML.set.call(this, val);
+            if (this instanceof self.HTMLTextAreaElement) return self.__dynamic.elements.outerHTML.set.call(this, val);
+            if (this instanceof self.HTMLScriptElement) return self.__dynamic.elements.outerHTML.set.call(this, self.__dynamic.rewrite.js.rewrite(val, {type: 'script'}));
+            if (this instanceof self.HTMLStyleElement) return self.__dynamic.elements.outerHTML.set.call(this, self.__dynamic.rewrite.css.rewrite(val, self.__dynamic.meta));
 
             return self.__dynamic.elements.outerHTML.set.call(this, self.__dynamic.rewrite.html.rewrite(val, self.__dynamic.meta));
         }
@@ -169,19 +194,36 @@ export default function attributes(self: any) {
         search: self.__dynamic.elements.createGetter('search'),
         hash: self.__dynamic.elements.createGetter('hash'),
 
-        toString: {value: () => {return (new URL(self.__dynamic$location.href) as any).toString();}}
+        toString: {get: function() {return this.__toString || (() => this.href?(new URL(this.href) as any).toString():'')}, set: function(v: Function) {this.__toString = v;}},
     });
 
     self.HTMLElement.prototype.insertAdjacentHTML = new Proxy(self.HTMLElement.prototype.insertAdjacentHTML, {
         apply(t, g, a) {
+            if (g instanceof self.HTMLStyleElement) return Reflect.apply(t, g, [a[0], self.__dynamic.rewrite.css.rewrite(a[1], self.__dynamic.meta)])
             return Reflect.apply(t, g, [a[0], self.__dynamic.rewrite.html.rewrite(a[1], self.__dynamic.meta)]);
         }
     });
 
+    [[self.Node, 'textContent'], [self.HTMLElement, 'innerText']].forEach(([el, attr]: any) => {
+        var desc: any = Object.getOwnPropertyDescriptor(el.prototype, attr);
+
+        self.__dynamic.define(self.HTMLStyleElement.prototype, attr, {
+            get() {
+                return this['__'+attr] || desc.get.call(this);
+            },
+            set(val: any) {
+                this['__'+attr] = val;
+
+                return desc.set.call(this, self.__dynamic.rewrite.css.rewrite(val, self.__dynamic.meta));
+            }
+        });
+    });
+
     var int = setInterval(() => {
+        if (!self.document?.head) return;
+
         if (self.document.head.querySelector('base')) {
-            self.__dynamic.meta.load(new URL(self.__dynamic.url.decode(self.document.head.querySelector('base').href)));
-            self.__dynamic.baseURL = new URL(self.__dynamic.url.decode(self.document.head.querySelector('base').href));
+            self.__dynamic.baseURL = new URL(self.document.head.querySelector('base').href);
         }
     }, 0);
 

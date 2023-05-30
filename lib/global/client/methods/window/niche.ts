@@ -93,16 +93,32 @@ export default function niche(self: any) {
 
     var _toString = self.Function.prototype.toString;
 
-    self.__dynamic.define(self.Function.prototype, 'toString', {
-        value: function(this: any) {
-            var string: string = Reflect.apply(_toString, this, []);
-            if (string.includes('[native code]')) {
-                return `function ${this.name}() { [native code] }`;
-            }
-
-            return string;
+    self.__dynamic.define(self.Function.prototype, '_toString', {
+        get(this: any) {
+            return _toString;
         },
-        writable: true,
+        set: () => {}
+    });
+
+    self.__dynamic.define(self.Function.prototype, 'toString', {
+        get(this: any) {
+            if (this.__toString) return this.__toString;
+
+            return () => {
+                try {
+                    var string: string | any = Reflect.apply(_toString, this, []);
+                } catch(e) {
+                    console.log(e, this);
+                }
+
+                if (string.includes('[native code]')) {
+                    return `function ${this.name}() { [native code] }`;
+                }
+
+                return string;
+            }
+        },
+        set(val: any) { this.__toString = val; } 
     });
 
     self.Function.prototype.bind = new Proxy(self.Function.prototype.bind, {
@@ -156,11 +172,11 @@ export default function niche(self: any) {
         }
     });
 
-    /*self.onerror = function() {
+    self.onerror = function() {
         console.log(arguments);
         throw "";
         try {throw new Error("ErrorStackTrace")} catch(e) {console.error(e)};
-    }*/
+    }
 
     /* favicon request emulation */
     if (!document.querySelector('link[rel="icon"], link[rel="shortcut icon"]') && self.__dynamic$location.pathname == "/") {

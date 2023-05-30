@@ -5,6 +5,7 @@ export default function encode(this: any, url: any, meta: any) {
   if (url.startsWith('about:blank')) return location.origin + this.ctx.config.prefix + url;
 
   if (!url.match(this.ctx.regex.ProtocolRegex) && url.match(/^([a-zA-Z0-9\-]+)\:\/\//g)) return url;
+  if (url.startsWith('chrome-extension://')) return url;
 
   if (url.match(this.ctx.regex.WeirdRegex)) {
     var data = this.ctx.regex.WeirdRegex.exec(url);
@@ -13,7 +14,7 @@ export default function encode(this: any, url: any, meta: any) {
   }
 
   if (url.startsWith(location.origin+this.ctx.config.prefix) || url.startsWith(this.ctx.config.prefix)) return url;
-  if (url.includes('/dynamic/dynamic.')) return url;
+  if (url.startsWith(location.origin+this.ctx.config.assets.prefix+'dynamic.')) return url;
   if (url.match(this.ctx.regex.BypassRegex)) return url;
 
   if (url.match(this.ctx.regex.DataRegex)) {

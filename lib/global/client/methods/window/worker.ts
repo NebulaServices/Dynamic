@@ -9,7 +9,7 @@ export default function worker(self: any) {
                     const xhr = new XHR;
                     xhr.open('GET', a[0], false);
                     xhr.send();
-                    const script = self.__dynamic.rewrite.js.rewrite(xhr.responseText);
+                    const script = self.__dynamic.rewrite.js.rewrite(xhr.responseText, { type: 'worker' }, true);
                     const blob = new Blob([ script ], { type: 'application/javascript' });
                     a[0] = URL.createObjectURL(blob);
                 } else {

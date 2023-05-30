@@ -2,6 +2,7 @@ import Srcset from './srcset';
 import Node from './nodewrapper';
 import MetaURL from '../../meta/type';
 import generateHead from './generateHead';
+import { Element } from 'parse5/dist/tree-adapters/default';
 
 export default class html {
 
@@ -66,6 +67,11 @@ export default class html {
         "elements": ['link'],
         "tags": ["imagesrcset"],
         "action": "srcset",
+      },
+      {
+        "elements": 'all',
+        "tags": ['onclick'],
+        "action": "js",
       }
   ];
 
@@ -86,11 +92,11 @@ The document has moved
 
   iterate(_dom: any, cb: any) {
     function it(dom: any = _dom) {
-      for (var i = 0; i<dom.length; i++) {
-        cb(dom[i], dom[i].parent);
+      for (var i = 0; i<dom.childNodes.length; i++) {
+        cb(dom.childNodes[i]);
     
-        if (dom[i].children) if (dom[i].children.length) {
-          it(dom[i].children);
+        if (dom.childNodes[i].childNodes) if (dom.childNodes[i].childNodes.length) {
+          it(dom.childNodes[i]);
         };
       }
     }
@@ -98,110 +104,125 @@ The document has moved
     it(_dom);
   }
 
-  rewrite(src:any, meta:MetaURL, head: any) {
+  rewrite(src:any, meta:MetaURL, head: any = []) {
     const that = this;
 
     if (Array.isArray(src)) src = src[0];
 
+    //return src = `${head.join(``)}\n${src.toString()}`;
     src = src.toString();
 
-    var parser = new this.ctx.modules.htmlparser2.Parser(new this.ctx.modules.domhandler.DomHandler(function (error:any, dom:any) {
-        if (dom) {
-            let base = meta.href;
+    var ast = this.ctx.modules.parse5.parse(src, {});
 
-            that.iterate(dom, function(node: any) {
-                if (node.name == 'base') {
-                    base = new URL(node.attribs.href, new URL(meta.href)).href;
+    var nodes: Array<Element | any> = [];
 
-                    console.log(base);
+    this.iterate(ast, (node: Element) => nodes.push(node));
 
-                    node.attribs.href = that.ctx.url.encode(node.attribs.href, meta);
-                }
-            });
+    nodes = nodes.map((e: any) => (e.attribs = {}, e.attrs?e.attrs.map(({name, value}: any)=>e.attribs[name]=value):null, e));
 
-            base = new URL(base);
+    if (nodes.find(e=>e.nodeName=='base')) {
+      var base: URL | string = new URL(nodes.find(e=>e.nodeName=='base').attribs['href'], new URL(meta.href)).href;
+    } else {
+      var base: URL | string = meta.href;
+    }
 
-            that.iterate(dom, function(node: any) {
-                var _node = new Node(node, that.ctx);
+    base = new URL(base);
 
-                if (node.name == 'script'&&(!_node.getAttribute('src'))&&(_node.getAttribute('type')!=='application/json')) {
-                    node.childNodes.forEach((e:any)=>{
-                        if (e.type!=='text') return e;
-                        if (_node.getAttribute('type') && _node.getAttribute('type')!=='application/javascript' && _node.getAttribute('type')!=='text/javascript' && _node.getAttribute('type')!=='module') return e;
+    for (var node of nodes) {
+      var rewritten = new Node(node, that.ctx);
 
-                        e.data = that.ctx.rewrite.js.rewrite(e.data, {type: 'script'}, false, that.ctx);
-                    });
-                }
+      if (node.nodeName == 'base') {
+        rewritten.setAttribute('data-dynamic_base', rewritten.getAttribute('href'));
+        rewritten.setAttribute('href', this.ctx.url.encode(rewritten.getAttribute('href'), meta));
+      }
 
-                if (node.name == 'style') {
-                    node.childNodes.forEach((e:any)=>{
-                        if (e.type!=='text') return e;
+      if (node.nodeName == 'script') {
+          if (meta.href == 'about:blank') node.attribs.defer = "true";
 
-                        e.data = that.ctx.rewrite.css.rewrite(e.data, base)
-                    });
-                }
+          if (!rewritten.getAttribute('src') && (rewritten.getAttribute('type') !== 'application/json')) {
+              node.childNodes.forEach(( script: Element & { value: string } ) => {
+                  if (script.nodeName!=='#text') return script;
+                  if (rewritten.getAttribute('type') && rewritten.getAttribute('type')!=='application/javascript' && rewritten.getAttribute('type')!=='text/javascript' && rewritten.getAttribute('type')!=='module') return e;
 
-                for (var config of that.config) {
-                    //console.log(config.elements, config.tags, config.action, node.name)
-                    if (config.elements === 'all' || config.elements.indexOf(node.name)>-1) {
-                        for (var tag of config.tags) {
-                            if (!_node.hasAttribute(tag)) continue;
-                            if (config.action === 'url') {
-                                _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
-                                _node.setAttribute(tag, that.ctx.url.encode(_node.getAttribute(tag), base));
-                            } else if (config.action === 'srcset') {
-                                _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
-                                _node.setAttribute(tag, Srcset.encode(_node.getAttribute(tag), that.ctx));
-                            } else if (config.action === 'rewrite') {
-                                _node.setAttribute(config.new, _node.getAttribute(tag));
-                                _node.removeAttribute(tag);
-                            } else if (config.action === 'html') {
-                                _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
-                                _node.removeAttribute(tag);
-              
-                                const blob = new Blob([that.ctx.rewrite.html.rewrite(_node.getAttribute(tag), base)], {type: 'text/html'});
-                                _node.setAttribute('src', URL.createObjectURL(blob));
-                            } else if (config.action === 'http-equiv') {
-                                const content = _node.getAttribute('content');
-                                const name = _node.getAttribute('http-equiv');
-              
-                                switch(name.toLowerCase()) {
-                                  case "refresh":
-                                    var time = content.split(';url=')[0], value = content.split(';url=')[1];
-              
-                                    _node.setAttribute('content', `${time};url=${that.ctx.url.encode(value, base)}`);
-                                    break;
-                                  case "content-security-policy":
-                                    _node.removeAttribute('content');
-                                    _node.removeAttribute('http-equiv');
-                                    break;
-                                  default:
-                                    break;
-                                }
-                            } else if (config.action === 'css') {
-                                _node.setAttribute(`data-dynamic_${tag}`, _node.getAttribute(tag));
-                                _node.setAttribute(tag, that.ctx.rewrite.css.rewrite(_node.getAttribute(tag), base));
-                            } else if (config.action === 'delete') {
-                                _node.removeAttribute(tag);
-                            }
-                        }
-                    }
-                };
-            });
+                  script.value = that.ctx.rewrite.js.rewrite(script.value, {type: 'script'}, false, that.ctx);
+              });
+          }
+      }
 
-            if (head && dom.length && head.length) {
-                if (dom.length > 0 && !dom.find((e: any) => e.name == 'html')) for (var i = 0; i < head.length; i++)
-                    dom.unshift(head[i]);
-                else if (dom.find((e: any) => e.name == 'html')) for (var i = 0; i < head.length; i++)
-                    dom[dom.findIndex((e: any) => e.name == 'html')].children.unshift(head[i]);
+      if (node.nodeName == 'style') {
+          node.childNodes.forEach(( style: Element & { value: string } )=>{
+              if (style.nodeName !== '#text') return e;
+
+              style.value = that.ctx.rewrite.css.rewrite(style.value, base);
+          });
+      }
+
+      for (var config of that.config) {
+        if (config.elements === 'all' || config.elements.indexOf(node.nodeName) > -1) {
+          for (var tag of config.tags) {
+            if (!rewritten.hasAttribute(tag) || !rewritten.getAttribute(tag)) continue;
+
+            if (config.action === 'url') {
+              rewritten.setAttribute(`data-dynamic_${tag}`, rewritten.getAttribute(tag));
+              if (!rewritten.getAttribute(tag).match(that.ctx.regex.ProtocolRegex) && rewritten.getAttribute(tag).match(/^([a-zA-Z0-9\-]+)\:\/\//g)) continue;
+              rewritten.setAttribute(tag, that.ctx.url.encode(rewritten.getAttribute(tag), base));
+            } else if (config.action === 'srcset') {
+              rewritten.setAttribute(`data-dynamic_${tag}`, rewritten.getAttribute(tag));
+              rewritten.setAttribute(tag, Srcset.encode(rewritten.getAttribute(tag), that.ctx));
+            } else if (config.action === 'rewrite') {
+              rewritten.setAttribute(config.new, rewritten.getAttribute(tag));
+              rewritten.removeAttribute(tag);
+            } else if (config.action === 'html') {
+              rewritten.setAttribute(`data-dynamic_${tag}`, rewritten.getAttribute(tag));
+              rewritten.removeAttribute(tag);
+
+              const blob = new Blob([that.ctx.rewrite.html.rewrite(rewritten.getAttribute(tag), base)], {type: 'text/html'});
+              rewritten.setAttribute('src', URL.createObjectURL(blob));
+            } else if (config.action === 'http-equiv') {
+              const content = rewritten.getAttribute('content');
+              const name = rewritten.getAttribute('http-equiv');
+
+              switch(name.toLowerCase()) {
+                case "refresh":
+                  var time = content.split(';url=')[0], value = content.split(';url=')[1];
+
+                  rewritten.setAttribute('content', `${time};url=${that.ctx.url.encode(value, base)}`);
+                  break;
+                case "content-security-policy":
+                  rewritten.removeAttribute('content');
+                  rewritten.removeAttribute('http-equiv');
+                  break;
+                default:
+                  break;
+              }
+            } else if (config.action === 'css') {
+              rewritten.setAttribute(`data-dynamic_${tag}`, rewritten.getAttribute(tag));
+              rewritten.setAttribute(tag, that.ctx.rewrite.css.rewrite(rewritten.getAttribute(tag), base));
+            } else if (config.action === 'delete') {
+              rewritten.removeAttribute(tag);
+            } else if (config.action === 'js') {
+              rewritten.setAttribute(tag, that.ctx.rewrite.js.rewrite(rewritten.getAttribute(tag), {type: 'script'}, false, that.ctx));
             }
-
-            src = that.ctx.modules.domserializer.render(dom);
+          }
         }
-    }));
+      };
+    }
 
-    parser.write(src);
-    parser.end();
+    if (head && ast.childNodes.length && head.length) {
+      var html = ast.childNodes.find((e: any) => e.nodeName == 'html');
+      // copilot :)
+
+      for (var e = 0; e < head.length; e++) {
+        if (html) {
+          html.childNodes.unshift(head[e]);
+          continue;
+        }
+
+        ast.childNodes.unshift(head[e]);
+      }
+    }
+    
+    src = that.ctx.modules.parse5.serialize(ast);
 
     return src;
   }

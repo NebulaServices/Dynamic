@@ -5,8 +5,9 @@ import wrap from '../global/client/methods/wrap';
 
 export default function(self: any, config: any = {}, altURL: string = '') {
   if (self.hasOwnProperty("__dynamic")) return false;
+  if (!self.hasOwnProperty("__dynamic$config")) self.__dynamic$config = config;
 
-  const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config || config);
+  const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config);
 
   __dynamic.parent = self.parent;
   __dynamic.top = self.top;
@@ -17,12 +18,14 @@ export default function(self: any, config: any = {}, altURL: string = '') {
 
   self.__dynamic.meta.load(new URL(self.__dynamic$baseURL));
 
-  init(self), wrap(self);
+  init(self, null), wrap(self);
 
   for (var method of self.__dynamic.client.methods) {
     const name: any = method.name;
     const func: any = Object.entries(self.__dynamic.client).find(e=>e[0]==name);
 
     if (method.function=='self') func[1](self);
+
+    continue;
   }; 
 };

@@ -14,7 +14,9 @@ export default class css {
     if (!src) return src;
 
     return src.toString().replace(/((@import ['"`]+|url\(['"`]?)(.*?)(['"`]?\)|['"`]+))/gmi, function() {
-      return arguments[0].replace(arguments[3], that.ctx.url.encode(arguments[3], meta));
+      try {
+        return arguments[0].replace(arguments[3], that.ctx.url.encode(arguments[3], meta));
+      } catch {}
     });
   }
 }

@@ -93,7 +93,7 @@ The document has moved
     src = src.toString();
 
     var ast = this.parse5.parse(src);
-
+    
     this.iterator(ast, function(node: Element) {
       var ProxyNode = new Node(node, that);
 

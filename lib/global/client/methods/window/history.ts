@@ -1,19 +1,14 @@
-export default function location(self: any) {
-    self.__dynamic$history = {
-        apply(t: any, g: any, a: any) {
-            if (a[2]) a[2] = self.__dynamic.url.encode(a[2], self.__dynamic.meta);
+export default function history(self: Window | any) {
+    self.__dynamic$history = function(this: History, target: Function, ...args: Array<string | null>) {
+        if (args[2]) args[2] = self.__dynamic.url.encode(args[2], self.__dynamic.meta);
 
-            var moved = Reflect.apply(t, g, a);
+        self.__dynamic.Reflect.apply(target, this, args) as undefined;
 
-            self.__dynamic.client.location(self);
+        self.__dynamic.client.location(self, true, false);
 
-            return moved;
-        }
+        return true;
     }
     
-    self.history.pushState = new Proxy(self.history.pushState, self.__dynamic$history);
-    self.history.replaceState = new Proxy(self.history.replaceState, self.__dynamic$history);
-
-    self.history.pushState = new Proxy(self.history.pushState, self.__dynamic$history);
-    self.history.replaceState = new Proxy(self.history.replaceState, self.__dynamic$history);
+    self.History.prototype.pushState = self.__dynamic.wrap(self.History.prototype.pushState, self.__dynamic$history);
+    self.History.prototype.replaceState = self.__dynamic.wrap(self.History.prototype.replaceState, self.__dynamic$history);
 }

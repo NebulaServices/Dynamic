@@ -12,9 +12,11 @@ import imports from './methods/window/imports';
 import reflect from './methods/core/reflect';
 import niche from './methods/window/niche';
 import storage from './methods/window/storage';
+import navigator from './methods/window/navigator';
 import cookie from './methods/document/cookie';
 import style from './methods/document/style';
 import blob from './methods/window/blob';
+import mutation from './methods/document/mutation';
 
 import DynamicClientMethods from './methods';
 
@@ -34,9 +36,11 @@ export default class DynamicClient {
     reflect = reflect;
     niche = niche;
     storage = storage;
+    navigator = navigator;
     cookie = cookie;
     style = style;
     blob = blob;
+    mutation = mutation;
 
     define: any;
     wrap: any;

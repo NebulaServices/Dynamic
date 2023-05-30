@@ -6,7 +6,7 @@ export default function Identifier(node: any, parent: any = {}) {
 
     if (node.__dynamic === true) return;
 
-    if (!['parent', 'top', 'postMessage', 'opener', 'window', 'self', 'globalThis', 'parent', ''].includes(node.name)) return false;
+    if (!['parent', 'top', 'postMessage', 'opener', 'self', 'globalThis', 'parent', ''].includes(node.name)) return false;
 
     if (parent.type=='AssignmentExpression'&&parent.left==node&&node.name=='location') return node.name = '__dynamic$location';
 

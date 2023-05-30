@@ -1,4 +1,4 @@
-export default function Get(self: any) {
+export default function Get(self: Window | any) {
     self.__dynamic$get = function(object: any) {
 
         if (object==self.parent) object = self.parent.__dynamic$window;
@@ -10,36 +10,43 @@ export default function Get(self: any) {
 
         if (object == self) object = self.__dynamic$window;
 
-        //if (typeof object == 'function') return new Proxy(object, {apply(t, g, a) {return Reflect.apply(t, g, a)}});
-
-        /*if (object && object.postMessage && object.addEventListener) {
-            const _postMessage = object.postMessage;
-
-            return new Proxy(object, {
-                get(obj, prop) {
-                    if (prop == 'postMessage') {
-                        return self.__dynamic$message(obj, self);
-                    }
-
-                    if (prop == '_postMessage') return _postMessage.bind(obj);
-
-                    if (obj[prop] instanceof Function) return new Proxy(obj[prop], {
-                        apply(t, g, a) {
-                            if (object == self.__dynamic$window || obj == self) return self.__dynamic$window[prop](...a);
-
-                            return Reflect.apply(t, g, a);
-                        }
-                    });
-
-                    return obj[prop];
-                },
-                set(obj, prop, value) {
-                    return Reflect.set(obj, prop, value);
-                }
-            });
-        }*/
+        if (typeof object == 'function') {
+            if (object.name == '__d$Send') object = self.__dynamic$message(object.target, self);
+        }
 
         return object;
+    }
+
+    self.__dynamic$property = function(prop: any, obj: any) {
+        return prop;
+        if (typeof prop !== "string" || (prop !== "location" && prop !== "postMessage")) {
+            return prop;
+        }
+
+        if (prop == "location") {
+            if (obj == self.document || obj == self.dynamic$document || obj == self || obj == self.__dynamic$window) {
+                prop = "__dynamic$location"
+            }
+        }
+
+        if (prop == "postMessage" && self.constructor.name == "Window") {
+            // fallback to fallback postmessage rewriting
+            if (obj.__dynamic) obj.__dynamic.postIterate++;
+
+            var name = "_".repeat(obj.__dynamic?.postIterate || 2) + "postMessage";
+
+            obj[name] = function() {
+                var e = 
+
+                delete obj.___postMessage;
+
+                return e;
+            }
+
+            prop = name;
+        }
+
+        return prop;
     }
 
     self.__dynamic$set = function(object: any, value: any, operator: any) {
@@ -48,7 +55,7 @@ export default function Get(self: any) {
 
     self.dg$ = self.__dynamic$get;
     self.ds$ = self.__dynamic$set;
-    
+    self.dp$ = self.__dynamic$property;
     self.d$g_ = self.__dynamic$get;
     self.d$s_ = self.__dynamic$set;
 }

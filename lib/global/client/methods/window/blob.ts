@@ -1,28 +1,15 @@
-export default function blob(self: any) {
-    self.Blob = self.__dynamic.wrap(self.Blob,
-        function (this: any, ...args: any) {
-            console.log(this, args);
-            args[0][0]+=`console.log(window)`;
-            const blob: any = new Blob(args[0], { type: args[1].type });
-
-            return blob;
-        }
-    );
-
-    self.URL.createObjectURL = self.__dynamic.wrap(self.URL.createObjectURL, 
-        function (this: any, ...args: any) {
-            const url: any = args[0];
-
-            console.log(url);
-    
-            if (url instanceof Blob) {
-                const blob: any = new Blob([url], { type: url.type });
-                const blobURL: any = self.URL.createObjectURL(blob);
-    
-                return blobURL;
+export default function blob(self: Window | any) {
+    self.__dynamic.createBlobHandler = async function (blob: Blob, element: HTMLIFrameElement, val: string) {
+        const sw = (await self.__dynamic.sw.ready).active;
+        
+        self.__dynamic.sw.addEventListener('message', ({ data: {url} }: MessageEvent) => {
+            if (url) {
+                self.__dynamic.elements.iframeSrc.set.call(element, url);
             }
-    
-            return;
-        }
-    )
+        }, {once: true});
+
+        sw.postMessage({type: "createBlobHandler", blob, url: self.__dynamic.modules.base64.encode(val.toString().split('').slice(0, 10)), location: self.__dynamic.location.href});
+
+        return;
+    }
 }

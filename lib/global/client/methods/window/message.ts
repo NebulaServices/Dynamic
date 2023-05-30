@@ -1,35 +1,28 @@
-export default function message(self: any) {
+export default function message(self: Window | any) {
   const isWorker = (s: any) => s.constructor.name=='Worker' || s.constructor.name=='MessagePort' || self.constructor.name=='DedicatedWorkerGlobalScope';
-  const getWindow = (name: any, location: any) => Object.keys(window).filter(e=>parseInt(e)>-1).map(e=>parseInt(e)).map(e=>window[e]).find((e: any)=>e.name == name && e.location.href == location);
+  const isTarget = (s: any) => s.constructor.name=="Window" || s.constructor.name=='global';
+  const getWindow = (name: any, location: any) => Object.keys(window || {}).map(e=>parseInt(e)).filter(e=>isFinite(e)).map(e=>window[e]).filter(e=>e||false).find((e: any)=>e.name == name && e.location.href == location);
 
-  self.__dynamic$message = function(target: any, origin: any = self) {
+  self.__dynamic$message = function(target: any, origin: any = top) {
     if (!target) target = self;
 
-    return function Send() {
+    function __d$Send() {
         var args = arguments;
 
-        if (isWorker(target)) {
-          if (typeof target.start == 'function') target.start();
-          return target.postMessage(...args);
-        }
+        console.log(target, origin, args)
+
+        if (isWorker(target) || !isTarget(target))
+          return target.postMessage.call(target, ...args);
 
         if (target.__dynamic$self) target = target.__dynamic$self;
 
-        return (target._postMessage || target.postMessage)(...[[args[0], self.__dynamic$location.origin, self.location.href, self.name, target !== self], '*', args[2]||[]]);
+        return (target._postMessage || target.postMessage).call(target, ...[[args[0], origin.__dynamic$location.origin, origin.location.href, origin.name, origin !== self], '*', args[2]||[]]);
     }
+
+    return __d$Send;
   }
 
-  /*self.postMessage = new Proxy(self.postMessage, {
-    apply(t, g, a): any {
-
-      if (isWorker(g))
-        return Reflect.apply(t, g, a);
-
-      return Reflect.apply(t, g, [a[0], '*', a[2]]);
-    }
-  });*/
-
-  if (self.addEventListener) self.addEventListener = new Proxy(self.addEventListener, {
+  if (self.addEventListener && self.constructor.name == 'Window') self.addEventListener = new Proxy(self.addEventListener, {
     apply(t, g, a) {
       if (g==self.__dynamic$window) g = self;
       if (!a[1] || !a[0] || typeof a[1] != 'function') return Reflect.apply(t, g, a);
@@ -39,6 +32,14 @@ export default function message(self: any) {
 
         a[1] = function(event: MessageEvent | any) {
           return o(cloneEvent(event));
+        }
+      }
+
+      if (a[0] == 'error') {
+        var o = a[1].bind({});
+        a[1] = function(event: ErrorEvent | any) {
+          console.log(event);
+          return o(event);
         }
       }
 
@@ -53,14 +54,14 @@ export default function message(self: any) {
     set(val: any) {
       if (self._onmessage) {self.removeEventListener('message', self._onmessage)}
 
-      self._onmessage = self.addEventListener('message', val);;
-      return self._onmessage;
+      self.addEventListener('message', val);;
+      return self._onmessage = val;
     }
   });
 
   function cloneEvent(event: MessageEvent | any) {
       const cloned = self.__dynamic.util.clone(event);
-      
+
       let _window: any;
 
       if (event.source) _window = getWindow(event.data[3], event.data[2]) || event.currentTarget;
@@ -94,9 +95,9 @@ export default function message(self: any) {
           case "source":
             if (!event.source) break;
 
-            if (event.source.__dynamic$window) {
+            if (_window) {
               Object.defineProperty(cloned, i, {
-                value: _window?.__dynamic$window || (Array.isArray(event.data) && event.data.length == 3 && event.data[2] === true) ? event.source?.__dynamic$window: event.currentTarget.__dynamic$window,
+                value: _window?.__dynamic$window || _window,
                 writable: true,
               });
             } else {

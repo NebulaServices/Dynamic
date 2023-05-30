@@ -5,8 +5,7 @@ export default function process (this: any, src: any, config: any = {}, ctx: any
       this.emit(node, node.type, parent, ctx, dynamic, config);
     });
 
-    src = this.ctx.modules.estree.generate(ast)
-    .replace(`(s.publish = function (e, t) {`, `console.log(s, a); (s.publish = function (e, t) {`);
+    src = this.ctx.modules.estree.generate(ast);
 
     return src;
 }

@@ -83,4 +83,10 @@ export default function location(self: any, doc: boolean = true) {
         configurable: true,
       });
     }
+
+    if (!self.__dynamic.hashchange) self.__dynamic.hashchange = (self.addEventListener("hashchange", ( event: HashChangeEvent ) => {
+      property["hash"] = "#" + (event.newURL.split("#")[1] || "");
+    }), true);
+
+    return self.__dynamic.location;
   }

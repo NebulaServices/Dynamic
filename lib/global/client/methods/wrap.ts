@@ -1,4 +1,4 @@
-export default function wrap(self: any) {
+export default function wrap(self: Window | any) {
     self.__dynamic.native = {};
 
     self.__dynamic.define = new self.Proxy(self.Object.defineProperty, {
@@ -11,39 +11,44 @@ export default function wrap(self: any) {
         }
     });
 
-    self.__dynamic.wrap = function(target: any, handler: any) {
-        self.__dynamic.native[target.name] = target;
-
-        if (self.__dynamic.native[target.name]) return self.__dynamic.native[target.name];
-
+    self.__dynamic.wrap = function(target: any, handler: any, result: any) {
         if (target.toString().includes('{ [native code] }') && !target.prototype) {
-            return function(this: any, ...args: any[]) {
-                var handled = handler.apply(this, args);
-
-                if (handled) return handled;
-
-                return target.apply(this, args);
+            var g = handler;
+            var t = target;
+            var f: any = function(this: any, ...a: any[]) {
+                var v = g.call(this, t, ...a);
+                return v;
             }
+
+            var func: any = function(this: any, ...a: any[]) {return f.call(this, ...a)};
+
+            func.__dynamic$target = target;
+
+            func.toString = () => {return `function ${target.name}() { [native code] }`}
+
+            return func;
         } else {
             try {
-                self.__dynamic.t = class t extends target {
+                const p = class extends target {
                     constructor(...args: any[]) {
-                        handler.apply({}, args);
+                        var og = [...args];
+
+                        var handled = handler.call(target, target, ...args);
+
+                        if (handled) args = handled;
 
                         super(...args);
+
+                        if (result) result(this, og)
                     }
                 }
 
-                console.log(self.__dynamic.t)
+                Object.defineProperty(p, 'name', {
+                    value: target.name,
+                    writable: false,
+                });
 
-                self.__dynamic.native.eval(`self.__dynamic.r = (class ${target.name} extends self.__dynamic.t {constructor(...args) {super(...args)}})`);
-
-                var a = self.__dynamic.r;
-
-                delete self.__dynamic.r;
-                delete self.__dynamic.t;
-
-                return a;
+                return p;
             } catch(e) {
                 console.log(target, handler, e);
 

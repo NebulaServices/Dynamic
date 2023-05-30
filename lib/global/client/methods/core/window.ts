@@ -1,6 +1,6 @@
 const __window: any = globalThis;
 
-export default function window(self: any) {
+export default function window(self: Window | any) {
     const _postMessage = self.postMessage;
 
     self.__dynamic.util.CreateDocumentProxy = function CreateDocumentProxy(document: any) {
@@ -26,13 +26,13 @@ export default function window(self: any) {
                         if (document.defaultView.__dynamic) document.defaultView.__dynamic.Reflect.set(obj, prop, value);
                         else obj[prop] = value;
                     } catch(e) {
-                        return value||true;
+                        return false;
                     }
         
-                    return value||true;
+                    return value || true;
                 } catch(e) {
                     console.log(e);
-                    return value || false;
+                    return false;
                 }
             }
         });
@@ -59,9 +59,8 @@ export default function window(self: any) {
                 if (prop == '_postMessage') 
                     return _postMessage.bind(obj);
 
-                //if (window.document) if (prop=='document') return window.__dynamic.util.CreateDocumentProxy(val);
                 if (prop=='location') return window.__dynamic$location;
-                if (prop=='parent') return window.top.__dynamic$window;
+                if (prop=='parent') return window.parent.__dynamic$window;
                 if (prop=='top') return window.top.__dynamic$window;
                 if (prop=='self') return window.__dynamic$window;
                 if (prop=='globalThis') return window.__dynamic$window;
@@ -69,12 +68,14 @@ export default function window(self: any) {
                 if (prop == "NaN") return NaN;
 
                 if (!val) return val;
-
-                if (typeof val == 'function' && val.toString == self.Object.toString) return new Proxy(val, {apply(t, g, a) {if (a[0] == self.__dynamic$window) a[0] = window; return val.apply(window, a)}});
+                
+                // Check if the value is a native function to the window, and rewrite it if it is
+                if (typeof val == 'function' /*&& val.toString == self.Object.toString && val.toString().includes('[native code]')*/) return new Proxy(val, {apply(t, g, a) {if (a[0] == self.__dynamic$window) a[0] = window; return val.apply(window, a)}, set(obj, prop, value) {return self.__dynamic.Reflect.set(obj, prop, value)}});
 
                 return val;
             },
             set(obj, prop, value): any {
+                if (prop == 'onerror') return value;
                 try {
                     if (obj.hasOwnProperty('undefined') && obj[prop]+''==prop) return obj[prop];
                     if (prop=='location') return window.__dynamic$location = value;
@@ -83,12 +84,12 @@ export default function window(self: any) {
                         if (window.__dynamic) window.__dynamic.Reflect.set(obj, prop, value);
                         else obj[prop] = value;
                     } catch(e) {
-                        return value||true;
+                        return false;
                     }
 
                     return value||true;
                 } catch(e) {
-                    return obj[prop];
+                    return false;
                 }
             },
         })
@@ -108,8 +109,10 @@ export default function window(self: any) {
         writable: false,
     });
 
-    self.__dynamic$globalThis = self.__dynamic$window;
-    self.__dynamic$self = self.__dynamic$window;
+    if (typeof self.globalThis !== 'undefined') self.__dynamic$globalThis = self.__dynamic$window;
+    if (typeof self.self !== 'undefined') self.__dynamic$self = self.__dynamic$window;
+    if (typeof self.parent !== 'undefined') self.__dynamic$parent = self.parent.__dynamic$window;
+    if (typeof self.top !== 'undefined') self.__dynamic$top = self.top.__dynamic$window;
 
     self.__dynamic.eval = self.__dynamic.wrap(eval, function() {
         if (!arguments.length) return;
@@ -133,6 +136,22 @@ export default function window(self: any) {
     self.__dynamic.define(self, 'origin', {
         get() {
             return self.__dynamic$location.origin;
+        }
+    });
+
+    if (self.MouseEvent) self.MouseEvent.prototype.initMouseEvent = new Proxy(self.MouseEvent.prototype.initMouseEvent, {
+        apply(t, g, a) {
+            if (a.length) a = a.map(e=>e==self.__dynamic$window?self:e);
+
+            return Reflect.apply(t, g, a);
+        }
+    });
+
+    if (self.KeyboardEvent) self.KeyboardEvent.prototype.initKeyboardEvent = new Proxy(self.KeyboardEvent.prototype.initKeyboardEvent, {
+        apply(t, g, a) {
+            if (a.length) a = a.map(e=>e==self.__dynamic$window?self:e);
+
+            return Reflect.apply(t, g, a);
         }
     });
 }

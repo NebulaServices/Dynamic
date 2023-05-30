@@ -12,7 +12,7 @@ import wrap from '../global/client/methods/wrap';
 
   __dynamic.meta.load(new URL(__dynamic$baseURL));
 
-  init(self), wrap(self);
+  init(self, null), wrap(self);
 
   __dynamic.client.message(self);
   __dynamic.client.location(self, false);

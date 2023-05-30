@@ -1,46 +1,62 @@
 import Client from '../../../../client/client'
 
-export default function fetch(self: any) {
-    self.Request = new Proxy(self.Request, {
-        construct(t, a: any): any {
-            if (a[0]) a[0] = self.__dynamic.url.encode(a[0], self.__dynamic.meta);
-
-            const req: Request | any = Reflect.construct(t, a);
-
-            return req;
+export default function fetch(self: Window | any) {
+    self.Request = self.__dynamic.wrap(self.Request,
+        function(target: Function, ...args: Array<Request>) {
+          if (args[0] instanceof target) {
+            const request: Request | any = Reflect.construct(target, args);
+    
+            if (args[0].mode === 'navigate') {
+              request.mode = 'same-origin';
+            }
+    
+            return request as Request;
+          }
+    
+          if (args[0]) {
+            args[0] = self.__dynamic.url.encode(args[0], self.__dynamic.meta);
+          }
+    
+          return args as Array<any>;
         }
-    });
+    );
 
     self.__dynamic.define(self.Request.prototype, 'url', {
         get() {
             return self.__dynamic.url.decode(self.__dynamic.http.RequestURL.get.call(this));
         },
-        set(value: any) {
+        set(value: string) {
             return value;
         }
     });
+    
+    self.fetch = self.__dynamic.wrap(self.fetch,
+        function(this: Window, target: Function, ...args: Array<string | Request>) {
+            if (args[0].constructor.name === 'Request' || args[0] instanceof self.Request) {
+                return Reflect.apply(target, self, args) as Promise<Response>;
+            }
 
-    self.fetch = new Proxy(self.fetch, {
-        apply(t, g, a): any {
-            if (a[0]) if (a[0].constructor.name == 'Request') return Reflect.apply(t, g, a);
+            if (args[0]) {
+                args[0] = self.__dynamic.url.encode(args[0], self.__dynamic.meta);
+            }
 
-            if (a[0]) a[0] = self.__dynamic.url.encode(a[0], self.__dynamic.meta);
-            
-            return Reflect.apply(t, g, a);
+            return Reflect.apply(target, self, args) as Promise<Response>;
         }
-    });
+    );
 
-    self.XMLHttpRequest.prototype.open = new Proxy(self.XMLHttpRequest.prototype.open, {
-        apply(t, g, a) {
-            console.log(a);
-            if (a[1]) a[1] = self.__dynamic.url.encode(a[1], self.__dynamic.meta);
-            if (a[2]===false) a[2] = true;
+    self.XMLHttpRequest.prototype.open = self.__dynamic.wrap(self.XMLHttpRequest.prototype.open,
+        function(this: XMLHttpRequest, target: Function, ...args: Array<string | boolean>) {
+            if (args[1]) {
+                args[1] = self.__dynamic.url.encode(args[1], self.__dynamic.meta);
+            }
 
-            console.log(t, g, a);
-            
-            return Reflect.apply(t, g, a);
+            if (args[2] === false) {
+                args[2] = true;
+            }
+
+            return Reflect.apply(target, this, args) as undefined;
         }
-    });
+    );
 
     Object.defineProperty(self.XMLHttpRequest.prototype, 'responseURL', {
         get() {
@@ -60,31 +76,32 @@ export default function fetch(self: any) {
         }
     });
 
-    self.Navigator.prototype.sendBeacon = new Proxy(self.Navigator.prototype.sendBeacon, {
-        apply(t, g, a) {
-            if (a[0]) a[0] = self.__dynamic.url.encode(a[0], self.__dynamic.meta);
-
-            return Reflect.apply(t, g, a);
+    self.open = self.__dynamic.wrap(self.open,
+        function(this: Window, target: Function, ...args: Array<string | URL>) {
+          if (args[0] !== '') {
+            if (args[0]) {
+              args[0] = self.__dynamic.url.encode(args[0], self.__dynamic.meta);
+            }
+          }
+    
+          if (args[0] === '') {
+            args[0] = 'about:blank';
+          }
+    
+          const win: Window | any = Reflect.apply(target, this, args);
+    
+          win.opener = self.__dynamic$window;
+          if (new URL(args[0]).protocol === 'about:') {
+            win.__dynamic$url = 'about:srcdoc';
+          } else {
+            win.__dynamic$url = self.__dynamic.url.decode(args[0]);
+          }
+    
+          Client(win, self.__dynamic$config);
+    
+          return win.__dynamic$window as Window;
         }
-    });
-
-    self.open = new Proxy(open, {
-        apply(t, g, a) {
-            if (a[0]!='') if (a[0]) a[0] = self.__dynamic.url.encode(a[0], self.__dynamic.meta);
-
-            if (a[0]=='') a[0] = 'about:blank';
-
-            const win = Reflect.apply(t, g, a);
-
-            win.opener = self.__dynamic$window;
-            if (new URL(a[0]).protocol == 'about:') win.__dynamic$url = 'about:srcdoc';
-            else win.__dynamic$url = self.__dynamic.url.decode(a[0]);
-
-            Client(win, self.__dynamic$config);
-
-            return self.__dynamic.util.CreateWindowProxy(win);
-        }
-    });
+    );
 
     self.__dynamic.define(self, '__dynamic$import', {
         get() {
@@ -99,11 +116,4 @@ export default function fetch(self: any) {
         },
         set: () => {},
     });
-
-    if ('serviceWorker' in navigator) {
-        self.__dynamic.sw = self.navigator.serviceWorker;
-
-        delete self.navigator.serviceWorker;
-        delete self.Navigator.prototype.serviceWorker;
-    }
 }

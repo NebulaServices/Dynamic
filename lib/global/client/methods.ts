@@ -7,6 +7,10 @@ export default [
         name: 'location',
         function: 'self',
     },
+    /*{
+        name: 'mutation',
+        function: 'self',
+    },*/
     {
         name: 'write',
         function: 'self',
@@ -61,6 +65,10 @@ export default [
     },
     {
         name: 'blob',
+        function: 'self',
+    },
+    {
+        name: 'navigator',
         function: 'self',
     }
 ]
