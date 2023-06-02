@@ -8,6 +8,7 @@ import HeaderData from './headers';
 import DynamicTypeFunctions from './istype';
 import DynamicClient from './client/index';
 import DynamicCookies from './cookie';
+import * as DynamicEncoding from './codec';
 
 class DynamicBundle {
   modules = new DynamicModules(this);
@@ -19,6 +20,7 @@ class DynamicBundle {
   is = new DynamicTypeFunctions(this);
   cookies = new DynamicCookies(this);
   client = new DynamicClient(this);
+  encoding = DynamicEncoding;
   headers = HeaderData;
 
   parent:Window | any;

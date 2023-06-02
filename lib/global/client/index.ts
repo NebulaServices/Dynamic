@@ -17,6 +17,8 @@ import cookie from './methods/document/cookie';
 import style from './methods/document/style';
 import blob from './methods/window/blob';
 import mutation from './methods/document/mutation';
+import _eval from './methods/core/eval';
+import func from './methods/core/function';
 
 import DynamicClientMethods from './methods';
 
@@ -41,6 +43,8 @@ export default class DynamicClient {
     style = style;
     blob = blob;
     mutation = mutation;
+    eval = _eval;
+    func = func;
 
     define: any;
     wrap: any;

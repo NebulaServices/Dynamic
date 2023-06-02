@@ -6,6 +6,7 @@ import AssignmentExpression from './type/AssignmentExpression';
 import ThisExpression from './type/ThisExpression';
 import Property from './type/Property';
 import Imports from './type/Imports';
+import VariableDeclarator from './type/VariableDeclaractor';
 
 function Emit(node:any, type:any, parent:any = {}, ctx:any = {}, dynamic: any = {}, config: any = {}) {
     if (node.__dynamic) return;
@@ -31,6 +32,9 @@ function Emit(node:any, type:any, parent:any = {}, ctx:any = {}, dynamic: any = 
             break;
         case "Property":
             Property(node, parent);
+            break;
+        case "VariableDeclarator":
+            VariableDeclarator(node, parent);
             break;
         default:
             Imports(node, parent, ctx, dynamic);

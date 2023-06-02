@@ -1,92 +1,112 @@
-export default function location(self: any, doc: boolean = true) {
-    delete self.__dynamic$location;
-  
-    const url =
-      self.__dynamic$baseURL ||
-      self.location.pathname + self.location.search + self.location.hash;
+export default function Location(self: any, doc: Boolean = true) {
+  const cloneAncestor: Function = (ancestor: DOMStringList) => {
+    let cloned = self.__dynamic.util.clone(ancestor);
 
-    const property: any = new URL(self.__dynamic.url.decode(url));
-    self.__dynamic.meta.load(property);
-  
-    self.__dynamic.location = self.__dynamic.util.clone(self.location);
-  
-    const props = [
-      "href",
-      "host",
-      "hash",
-      "origin",
-      "hostname",
-      "port",
-      "pathname",
-      "protocol",
-      "search",
-    ];
-
-    const descriptor = { configurable: true };
-  
-    props.forEach((t) => {
-      Object.defineProperty(self.__dynamic.location, t, {
-        ...descriptor,
-        get: () => property[t],
-        set: (e: any) =>
-          (self.location[t] = self.__dynamic.url.encode(
-            self.__dynamic.meta.href.replace(property[t], e),
-            property
-          )),
-      });
-    });
-  
-    const funcs = ["assign", "replace", "toString", "reload"];
-  
-    funcs.forEach((t) => {
-      Object.defineProperty(self.__dynamic.location, t, {
-        ...descriptor,
-        get: () =>
-          t === "toString"
-            ? () => property["href"]
-            : new self.__dynamic.Function(
-                "arg",
-                `return window.location.${t}(arg?${
-                  "reload" !== t && "toString" !== t
-                    ? "(self.__dynamic).url.encode(arg, new URL('${property.href}'))"
-                    : "arg"
-                }:null)`
-              ),
-        set: () => {},
-      });
-    });
-  
-    self.__dynamic.define(self, "__dynamic$location", {
-      get() {
-        return self.__dynamic.location;
-      },
-      set(value: any) {
-        self.__dynamic.location =
-          value instanceof self.Location
-            ? value
-            : (self.__dynamic.location.href = value);
-      },
-      configurable: true,
-    });
-  
-    if (doc) {
-      self.__dynamic.define(self.document, "__dynamic$location", {
-        get() {
-          return self.__dynamic.location;
-        },
-        set(value: any) {
-          self.__dynamic.location =
-            value instanceof self.Location
-              ? value
-              : (self.__dynamic.location.href = value);
-        },
+    for (var i = 0; i < ancestor.length; i++) {
+      self.__dynamic.define(cloned, i, {
+        value: self.top.__dynamic$location.origin,
         configurable: true,
+        enumerable: true,
+        writable: false
       });
     }
 
-    if (!self.__dynamic.hashchange) self.__dynamic.hashchange = (self.addEventListener("hashchange", ( event: HashChangeEvent ) => {
-      property["hash"] = "#" + (event.newURL.split("#")[1] || "");
-    }), true);
-
-    return self.__dynamic.location;
+    return cloned;
   }
+
+  const ancestor: DOMStringList | Array<string> = self.location.ancestorOrigins || [];
+
+  const descriptors: Array<Window & { prototype: object | any } | Location & { prototype: object | any } | Document & { prototype: object | any } > = [
+    self.Window,
+    self.Location,
+    self.WorkerLocation,
+    self.Document
+  ].filter(object => object);
+
+  descriptors.forEach(object => {
+    delete object['prototype']['__dynamic$location'];
+  });
+
+  const descriptor: PropertyDescriptor = {
+    get() {
+        return self.__dynamic.location;
+    },
+    set(value: any) {
+        if (value instanceof self.Location) return self.__dynamic.location = value;
+
+        self.__dynamic.location.href = value;
+    },
+    configurable: true,
+  };
+
+  const props: Array<string> = [
+    "href",
+    "host",
+    "hash",
+    "origin",
+    "hostname",
+    "port",
+    "pathname",
+    "protocol",
+    "search",
+  ];
+
+  const funcs: Array<string> = [
+    "assign",
+    "replace",
+    "toString",
+    "reload"
+  ];
+
+  try {
+      var property: any = new URL(self.__dynamic$url || self.__dynamic.url.decode(self.location.pathname+self.location.search+self.location.hash));
+  } catch {
+      self.__dynamic$url = 'about:blank'
+      var property: any = new URL('about:blank');
+  }
+
+  self.__dynamic.property = property;
+
+  self.__dynamic.meta.load(property as URL);
+
+  self.__dynamic.location = self.__dynamic.util.clone(self.location) as Location
+
+  props.forEach(prop => {
+      self.__dynamic.define(self.__dynamic.location, prop, {
+          get: () => 
+            property[prop] as string,
+          set: (e:any) => 
+            (self.location[prop] = self.__dynamic.url.encode(self.__dynamic.meta.href.replace(property[prop], e), property)) as string
+      });
+  });
+
+  funcs.forEach(func => {
+      self.__dynamic.define(self.__dynamic.location, func, {
+          get: () => {
+            if (func == 'toString') return () => property['href'] as string;
+
+            return (func=='toString'&&(()=>property['href']))||new self.__dynamic.Function("arg", `return window.location.${func}(arg?${"reload"!==func&&"toString"!==func?"(self.__dynamic).url.encode(arg, new URL('"+property.href+"'))":"arg"}:null)`) as Function;
+          },
+          set: () => null
+      });
+  });
+
+  if (ancestor.length) {
+    self.__dynamic.define(self.__dynamic.location, 'ancestorOrigins', {
+      get: () => cloneAncestor(ancestor) as DOMStringList,
+      set: () => null
+    });
+  }
+
+  descriptors.forEach((object: Location & { prototype: Object } | Window & { prototype: Object } | Document & { prototype: Object }) => {
+    self.__dynamic.define(object.prototype, '__dynamic$location', descriptor);
+  });
+
+  if (!self.__dynamic.hashchange) self.__dynamic.hashchange = (self.addEventListener("hashchange", ( event: HashChangeEvent ) => {
+    property["hash"] = "#" + (event.newURL.split("#")[1] || "");
+
+    self.history.pushState(null, null, self.__dynamic.location.href);
+  }), true);
+
+  return self.__dynamic.location;
+};

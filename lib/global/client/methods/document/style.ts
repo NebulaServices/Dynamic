@@ -1,13 +1,13 @@
 export default function style(self: any) {
     self.CSSStyleDeclaration.prototype._setProperty = self.CSSStyleDeclaration.prototype.setProperty;
 
-    self.CSSStyleDeclaration.prototype.setProperty = new Proxy(self.CSSStyleDeclaration.prototype.setProperty, {
-        apply(t, g, a) {
-            if (a[0]=='background-image'||a[0]=='background') a[1] = self.__dynamic.rewrite.css.rewrite(a[1], self.__dynamic.meta);
+    self.CSSStyleDeclaration.prototype.setProperty = self.__dynamic.wrap(self.CSSStyleDeclaration.prototype.setProperty,
+        function(this: CSSStyleDeclaration, handler: Function, ...args: Array<string>) {
+            if (args[0]=='background-image'||args[0]=='background') args[1] = self.__dynamic.rewrite.css.rewrite(args[1], self.__dynamic.meta);
 
-            return Reflect.apply(t, g, a);
+            return handler.apply(this, args);
         }
-    });
+    );
 
     self.__dynamic.define(self.CSSStyleDeclaration.prototype, 'background', {
         get() {

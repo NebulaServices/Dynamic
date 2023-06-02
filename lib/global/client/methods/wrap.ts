@@ -1,16 +1,4 @@
 export default function wrap(self: Window | any) {
-    self.__dynamic.native = {};
-
-    self.__dynamic.define = new self.Proxy(self.Object.defineProperty, {
-        apply(t: any, g: any, a: any) {
-            try {
-                return Reflect.apply(t, g, a);
-            } catch {
-                return a[2];
-            }
-        }
-    });
-
     self.__dynamic.wrap = function(target: any, handler: any, result: any) {
         if (target.toString().includes('{ [native code] }') && !target.prototype) {
             var g = handler;
@@ -21,6 +9,11 @@ export default function wrap(self: Window | any) {
             }
 
             var func: any = function(this: any, ...a: any[]) {return f.call(this, ...a)};
+
+            self.__dynamic.define(func, 'name', {
+                value: target.name,
+                writable: false,
+            });
 
             func.__dynamic$target = target;
 

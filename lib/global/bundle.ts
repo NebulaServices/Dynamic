@@ -10,6 +10,7 @@ import HeaderData from './headers';
 import BareClient from '@tomphttp/bare-client';
 import DynamicTypeFunctions from './istype';
 import DynamicCookies from './cookie';
+import * as DynamicEncoding from './codec';
 
 class DynamicBundle {
   modules = new DynamicModules(this);
@@ -22,6 +23,7 @@ class DynamicBundle {
   cookies = new DynamicCookies(this);
   regex = new DynamicRegex(this);
   headers = HeaderData;
+  encoding = DynamicEncoding;
   bare: BareClient | any;
 
   middleware = new DynamicMiddleware(this);

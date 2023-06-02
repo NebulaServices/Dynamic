@@ -1,21 +1,21 @@
 export default function write(self: any) {
-    self.document.write = new Proxy(self.document.write, {
-        apply(t, g, a) {
-            for (var arg in a) {
-                a[arg] = self.__dynamic.rewrite.html.rewrite(a[arg], self.__dynamic.meta);
+    self.document.write = self.__dynamic.wrap(self.document.write,
+        function(this: Document, handler: Function, ...args: Array<string>) {
+            for (var arg in args) {
+                args[arg] = self.__dynamic.rewrite.html.rewrite(args[arg], self.__dynamic.meta);
             }
 
-            return Reflect.apply(t, g, a);
+            return handler.apply(this, args);
         }
-    });
+    );
 
-    self.document.writeln = new Proxy(self.document.writeln, {
-        apply(t, g, a) {
-            for (var arg in a) {
-                a[arg] = self.__dynamic.rewrite.html.rewrite(a[arg], self.__dynamic.meta);
+    self.document.writeln = self.__dynamic.wrap(self.document.writeln,
+        function(this: Document, handler: Function, ...args: Array<string>) {
+            for (var arg in args) {
+                args[arg] = self.__dynamic.rewrite.html.rewrite(args[arg], self.__dynamic.meta);
             }
 
-            return Reflect.apply(t, g, a);
+            return handler.apply(this, args);
         }
-    });
+    );
 }

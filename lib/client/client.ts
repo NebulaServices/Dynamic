@@ -7,10 +7,14 @@ export default function(self: any, config: any = {}, altURL: string = '') {
   if (self.hasOwnProperty("__dynamic")) return false;
   if (!self.hasOwnProperty("__dynamic$config")) self.__dynamic$config = config;
 
+  if (self.location.href == 'about:blank') altURL = 'about:blank';
+
   const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config);
 
-  __dynamic.parent = self.parent;
-  __dynamic.top = self.top;
+  __dynamic.encoding = {
+    ...__dynamic.encoding,
+    ...(__dynamic.encoding as any)[__dynamic.config.encoding || 'none']
+  };
 
   self.__dynamic$baseURL = altURL || self.__dynamic$url || __dynamic.url.decode(location.pathname + location.search + location.hash) || "";
 

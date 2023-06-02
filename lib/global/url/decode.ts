@@ -10,9 +10,9 @@ export default function decode(this: any, url: any) {
   if(index == -1)
     return url;
 
-  url = url.slice(index + this.ctx.config.prefix.length)
+  url = this.ctx.encoding.decode(url.slice(index + this.ctx.config.prefix.length)
     .replace('https://', 'https:/')
-    .replace('https:/', 'https://');
+    .replace('https:/', 'https://'));
 
   return url;
 }

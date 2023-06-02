@@ -1,6 +1,6 @@
-importScripts('./dynamic/dynamic.worker.js');
+importScripts('/dynamic/dynamic.worker.js');
 
-const sw = new DynamicSW();
+const sw = new Dynamic();
 
 self.addEventListener('fetch', event =>
     event.respondWith(

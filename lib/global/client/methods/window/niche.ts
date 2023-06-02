@@ -1,52 +1,56 @@
 export default function niche(self: any) {
+    // self explanatory
+
     self.__dynamic.define(self.document, 'origin', {
-        value: self.__dynamic$location.origin,
+        value: self.__dynamic$location.origin as string,
         configurable: false,
         enumerable: false,
     });
 
     self.__dynamic.define(self.document, 'referrer', {
-        value: self.__dynamic$location.href,
+        value: self.__dynamic$location.href as string,
         configurable: false,
         enumerable: false,
     });
 
     self.__dynamic.define(self.document, 'domain', {
-        value: self.__dynamic$location.hostname,
+        value: self.__dynamic$location.hostname as string,
         configurable: false,
         enumerable: false,
     });
 
     self.__dynamic.define(self.document, 'URL', {
-        value: self.__dynamic$location.toString(),
+        value: self.__dynamic$location.toString() as string,
         configurable: false,
         enumerable: false,
     });
 
     self.__dynamic.define(self.document, 'documentURI', {
-        value: self.__dynamic$location.toString(),
+        value: self.__dynamic$location.toString() as string,
         configurable: false,
         enumerable: false,
     });
 
     self.__dynamic.define(self.document, 'baseURI', {
-        value: self.__dynamic$location.toString(),
+        value: self.__dynamic$location.toString() as string,
         configurable: false,
         enumerable: false,
     });
 
     self.__dynamic.define(self.HTMLElement.prototype, 'baseURI', {
-        value: self.__dynamic$location.toString(),
+        value: self.__dynamic$location.toString() as string,
         configurable: false,
         enumerable: false,
     });
+
+    // storage.getEntries can leak page location
 
     ['getEntries', 'getEntriesByName', 'getEntriesByType'].forEach(prop => {
         self.performance[prop] = new Proxy(self.performance[prop], {
             apply(t, g, a) {
                 return (Reflect.apply(t, g, a) as any).filter((e:any)=>!e.name?.includes(self.location.origin+'/dynamic/dynamic.')).filter((e:any)=>!e.name.includes(self.location.origin+self.__dynamic.config.prefix+'caches/')).map((e:any)=>{
                     if (e.name) {
-                        var cloned = self.__dynamic.util.clone(e);
+                        var cloned: PerformanceEntry | any = self.__dynamic.util.clone(e);
                         
                         cloned.__defineGetter__('name', function(this: any) {
                             return this._name;
@@ -64,7 +68,7 @@ export default function niche(self: any) {
                         });
 
                         self.__dynamic.define(cloned, 'name', {
-                            value: cloned._name,
+                            value: cloned._name as string,
                             writable: false,
                         });
 
@@ -85,113 +89,49 @@ export default function niche(self: any) {
                         e = cloned;
                     }
 
-                    return e;
+                    return e as PerformanceEntry;
                 });
             }
         });
     });
 
-    var _toString = self.Function.prototype.toString;
+    // initEvent things
 
-    self.__dynamic.define(self.Function.prototype, '_toString', {
-        get(this: any) {
-            return _toString;
-        },
-        set: () => {}
-    });
+    if (self.MouseEvent) self.MouseEvent.prototype.initMouseEvent = self.__dynamic.wrap(self.MouseEvent.prototype.initMouseEvent,
+        function(this: MouseEvent, target: Function, ...args: Array<string | Symbol | any>) {
+            if (args.length) args = args.map(e=>e==self.__dynamic$window?self:e);
 
-    self.__dynamic.define(self.Function.prototype, 'toString', {
-        get(this: any) {
-            if (this.__toString) return this.__toString;
+            return Reflect.apply(target, this, args);
+        }
+    );
 
-            return () => {
-                try {
-                    var string: string | any = Reflect.apply(_toString, this, []);
-                } catch(e) {
-                    console.log(e, this);
+    if (self.KeyboardEvent) self.KeyboardEvent.prototype.initKeyboardEvent = self.__dynamic.wrap(self.KeyboardEvent.prototype.initKeyboardEvent,
+        function(this: KeyboardEvent, target: Function, ...args: Array<string | Symbol | any>) {
+            if (args.length) args = args.map(e=>e==self.__dynamic$window?self:e);
+
+            return Reflect.apply(target, this, args);
+        }
+   );
+
+    if (self.StorageEvent) self.StorageEvent.prototype.initStorageEvent = self.__dynamic.wrap(self.StorageEvent.prototype.initStorageEvent,
+        function(this: StorageEvent, target: Function, ...args: Array<string | Symbol | any>) {
+            if (args.length) args = args.map(e=>e==self.localStorage?self.__dynamic.storage.localStorage:e==self.sessionStorage?self.__dynamic.storage.sessionStorage:e);
+
+            return Reflect.apply(target, this, args);
+        }
+    );
+
+    self.Object.defineProperty = self.__dynamic.wrap(self.Object.defineProperty,
+        function(this: any, target: Function, ...args: Array<string | Symbol | any>) {
+            try {
+                return Reflect.apply(target, this, args);
+            } catch(e: any) {
+                if (e.toString().includes('Cannot redefine property:')) {
+                    if (!args[0].__defined) args[0].__defined = {};
+
+                    args[0].__defined[args[1]] = args[2];
                 }
-
-                if (string.includes('[native code]')) {
-                    return `function ${this.name}() { [native code] }`;
-                }
-
-                return string;
             }
-        },
-        set(val: any) { this.__toString = val; } 
-    });
-
-    self.Function.prototype.bind = new Proxy(self.Function.prototype.bind, {
-        apply(t, g, a) {
-            if (a[0] == self.__dynamic$window) a[0] = a[0].__dynamic$self;
-
-            return Reflect.apply(t, g, a);
         }
-    });
-
-    self.__dynamic.Function = self.Function.bind({});
-
-    self.Function = new Proxy(self.Function, {
-        apply(t, g, a: any) {
-            var args: any = [...a];
-            var body: any = args.pop();
-
-            body = `(function anonymous(${args.toString()}) {${body}})`;
-
-            body = self.__dynamic.rewrite.js.rewrite(body, {type: 'script'}, false, self.__dynamic);
-
-            return self.eval(body);
-        },
-        construct(t, a: any) {
-            var args: any = [...a];
-            var body: any = args.pop();
-
-            body = `(function anonymous(${args.toString()}) {${body}})`;
-
-            body = self.__dynamic.rewrite.js.rewrite(body, {type: 'script'}, false, self.__dynamic);
-
-            return self.eval(body);
-        }
-    });
-
-    self.Function.prototype.apply = new Proxy(self.Function.prototype.apply, {
-        apply(t, g, a) {
-            if (a[0] == self.__dynamic$window) a[0] = a[0].__dynamic$self;
-            if (a[0] == self.__dynamic$document) a[0] = self.document;
-
-            return Reflect.apply(t, g, a);
-        }
-    });
-
-    self.Function.prototype.call = new Proxy(self.Function.prototype.call, {
-        apply(t, g, a) {
-            if (a[0] == self.__dynamic$window) a[0] = a[0].__dynamic$self;
-            if (a[0] == self.__dynamic$document) a[0] = self.document;
-
-            return Reflect.apply(t, g, a);
-        }
-    });
-
-    self.onerror = function() {
-        console.log(arguments);
-        throw "";
-        try {throw new Error("ErrorStackTrace")} catch(e) {console.error(e)};
-    }
-
-    /* favicon request emulation */
-    if (!document.querySelector('link[rel="icon"], link[rel="shortcut icon"]') && self.__dynamic$location.pathname == "/") {
-        var link = document.createElement('link');
-        link.rel = 'icon';
-        link.href = '/favicon.ico';
-
-        link.dataset['dynamic_hidden'] = 'true';
-
-        link.onerror = () => link.remove();
-        link.onload = () => link.remove();
-
-        document.head.appendChild(link);
-    }
-
-    // fix for jquery
-    self.getClientRects = () => '';
+    );
 }

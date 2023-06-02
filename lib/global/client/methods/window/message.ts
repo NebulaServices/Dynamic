@@ -1,15 +1,13 @@
 export default function message(self: Window | any) {
   const isWorker = (s: any) => s.constructor.name=='Worker' || s.constructor.name=='MessagePort' || self.constructor.name=='DedicatedWorkerGlobalScope';
   const isTarget = (s: any) => s.constructor.name=="Window" || s.constructor.name=='global';
-  const getWindow = (name: any, location: any) => Object.keys(window || {}).map(e=>parseInt(e)).filter(e=>isFinite(e)).map(e=>window[e]).filter(e=>e||false).find((e: any)=>e.name == name && e.location.href == location);
+  const getWindow = (name: any, location: any) => Object.keys(window || {}).map(e=>parseInt(e)).filter(e=>isFinite(e)).map(e=>window[e]).filter(e=>e||false).find((e: any)=>{try{return e.name == name && e.location.href == location} catch {return false;}});
 
   self.__dynamic$message = function(target: any, origin: any = top) {
     if (!target) target = self;
 
     function __d$Send() {
         var args = arguments;
-
-        console.log(target, origin, args)
 
         if (isWorker(target) || !isTarget(target))
           return target.postMessage.call(target, ...args);
@@ -38,7 +36,6 @@ export default function message(self: Window | any) {
       if (a[0] == 'error') {
         var o = a[1].bind({});
         a[1] = function(event: ErrorEvent | any) {
-          console.log(event);
           return o(event);
         }
       }

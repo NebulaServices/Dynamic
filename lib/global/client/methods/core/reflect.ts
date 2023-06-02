@@ -24,16 +24,18 @@ export default function reflect(self: Window | any) {
     self.Reflect.get = self.__dynamic.wrap(self.Reflect.get,
         function(this: any, target: any, ...a: any) {
             if (!a[0]) console.log(a);
-            if (a[0].constructor.name=='Window') {
-                if (a[1]=='location') return a[0].__dynamic$location;
+            if (typeof a[0] == 'object') {
+                if (a[0].constructor.name=='Window') {
+                    if (a[1]=='location') return a[0].__dynamic$location;
 
-                if (a[0][a[1]].constructor.name=='Window') {
-                    return a[0][a[1]].__dynamic$window;
+                    if (a[0][a[1]].constructor.name=='Window') {
+                        return a[0][a[1]].__dynamic$window;
+                    }
                 }
-            }
 
-            if (a[0].constructor.name=='Location') {
-                return self.__dynamic$location[a[1]];
+                if (a[0].constructor.name=='Location') {
+                    return self.__dynamic$location[a[1]];
+                }
             }
 
             return _get.apply(this, a);

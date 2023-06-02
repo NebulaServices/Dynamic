@@ -28,6 +28,10 @@ export default [
         function: 'self',
     },
     {
+        name: 'eval',
+        function: 'self',
+    },
+    {
         name: 'attr',
         function: 'self',
     },
@@ -53,6 +57,10 @@ export default [
     },
     {
         name: 'niche',
+        function: 'self',
+    },
+    {
+        name: 'func',
         function: 'self',
     },
     {

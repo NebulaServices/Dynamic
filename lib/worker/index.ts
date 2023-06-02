@@ -3,7 +3,7 @@ import { DynamicBundle } from '../global/bundle';
 (function(self: ServiceWorker | any) {
   self.skipWaiting();
 
-  self.addEventListener('install', async (event: Event) => {
+  self.addEventListener('install', async (event: Event, cl: any) => {
     
     console.groupCollapsed('Dynamic Install Sequence:');
 
@@ -11,13 +11,15 @@ import { DynamicBundle } from '../global/bundle';
 
     console.log('Configuration Loaded:', self.__dynamic$config);
 
+    await self.skipWaiting();
+
     if (self.__dynamic$config.mode == 'development') return console.groupEnd();
 
     const cache = await caches.open('__dynamic$files');
 
     console.groupCollapsed('Dynamic File Cache:');
 
-    for await (var url of ['dynamic.client.js', 'dynamic.handler.js', 'dynamic.config.js', 'dynamic.mutation.js']) {
+    for await (var url of self.__dynamic$config.assets.files) {
       url = new URL(url, new URL(location.origin + self.__dynamic$config.assets.prefix + 'dynamic.worker.js')).href;
 
       const res = await fetch(url);
@@ -76,14 +78,19 @@ import { DynamicBundle } from '../global/bundle';
 
   __dynamic.bare = new __dynamic.modules.bare(__dynamic.config.bare.path, null, 'v'+__dynamic.config.bare.version);
   
-  return self.DynamicSW = class {
+  __dynamic.encoding = {
+    ...__dynamic.encoding,
+    ...self.__dynamic.encoding[__dynamic.config.encoding || 'none']
+  };
+
+  return self.Dynamic = class {
     constructor() {}
 
     middleware = __dynamic.middleware;
   
     async fetch(event: Event | any) {
       const { request } = event;
-      
+
       //try {
         if (!!__dynamic.util.file(request)) return await __dynamic.util.edit(request);
         if (!!__dynamic.util.path(request)) return await fetch(request);
@@ -92,6 +99,11 @@ import { DynamicBundle } from '../global/bundle';
         if (request.mode !== 'navigate') request.client = (await self.clients.matchAll()).find((e:any)=>e.id==event.clientId);
 
         const Dynamic: DynamicBundle = new DynamicBundle(__dynamic.config);
+
+        Dynamic.encoding = {
+          ...Dynamic.encoding,
+          ...(Dynamic.encoding as any)[__dynamic.config.encoding || 'none']
+        };
 
         if (request.url.startsWith(location.origin + __dynamic.config.prefix + 'caches/')) {
           const cache: Response | any = await caches.open('__dynamic');

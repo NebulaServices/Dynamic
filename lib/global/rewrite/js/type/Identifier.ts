@@ -6,9 +6,9 @@ export default function Identifier(node: any, parent: any = {}) {
 
     if (node.__dynamic === true) return;
 
-    if (!['parent', 'top', 'postMessage', 'opener', 'self', 'globalThis', 'parent', ''].includes(node.name)) return false;
+    if (!['parent', 'top', 'postMessage', 'opener', 'window', 'self', 'globalThis', 'parent', 'location'].includes(node.name)) return false;
 
-    if (parent.type=='AssignmentExpression'&&parent.left==node&&node.name=='location') return node.name = '__dynamic$location';
+    if (parent.type=='AssignmentExpression'&&parent.left==node&&node.name=='location') return; //node.name = '__dynamic$location'
 
     if (parent.type=='CallExpression'&&(parent.callee==node)) return;
     if (parent.type=='MemberExpression'&&(parent.object!==node&&(parent.object.name!=='document'||parent.object.name!=='window'||parent.object.name!=='self'||parent.object.name!=='globalThis'))) return;

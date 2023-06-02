@@ -112,6 +112,8 @@ The document has moved
     //return src = `${head.join(``)}\n${src.toString()}`;
     src = src.toString();
 
+    if (!src.match(/<(html|script|style)[^>]*>/g) && src.match(/<\!DOCTYPE[^>]*>/gi)) return src;
+
     var ast = this.ctx.modules.parse5.parse(src, {});
 
     var nodes: Array<Element | any> = [];
@@ -132,7 +134,7 @@ The document has moved
       var rewritten = new Node(node, that.ctx);
 
       if (node.nodeName == 'base') {
-        rewritten.setAttribute('data-dynamic_base', rewritten.getAttribute('href'));
+        rewritten.setAttribute('data-dynamic_href', rewritten.getAttribute('href'));
         rewritten.setAttribute('href', this.ctx.url.encode(rewritten.getAttribute('href'), meta));
       }
 
@@ -161,6 +163,13 @@ The document has moved
         if (config.elements === 'all' || config.elements.indexOf(node.nodeName) > -1) {
           for (var tag of config.tags) {
             if (!rewritten.hasAttribute(tag) || !rewritten.getAttribute(tag)) continue;
+
+            if (node.tagName == 'link' && (rewritten.getAttribute('rel') == 'icon' || rewritten.getAttribute('rel') == 'shortcut') && this.ctx.config.tab?.icon) {
+              rewritten.setAttribute(`data-dynamic_${tag}`, rewritten.getAttribute(tag));
+              rewritten.setAttribute('href', this.ctx.url.encode(this.ctx.config.tab.icon, base));
+
+              continue;
+            }
 
             if (config.action === 'url') {
               rewritten.setAttribute(`data-dynamic_${tag}`, rewritten.getAttribute(tag));

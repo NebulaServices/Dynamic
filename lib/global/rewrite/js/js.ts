@@ -28,7 +28,7 @@ export default class js {
         src = this.process(src, config, {module: false, ...this.ctx}, dynamic);
       }
     } catch(e) {
-      console.log('backup failed', e)
+      console.log('backup failed', e, src)
     }
     
     if (inject) {

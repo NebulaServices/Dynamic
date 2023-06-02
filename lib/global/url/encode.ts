@@ -66,5 +66,5 @@ export default function encode(this: any, url: any, meta: any) {
     url = new URL(url, new URL(this.ctx.parent.__dynamic.meta.href)).href
   );
 
-  return (this.ctx._location?.origin||(location.origin=='null'?location.ancestorOrigins[0]:location.origin))+this.ctx.config.prefix+new URL(url, meta.href).href;
+  return (this.ctx._location?.origin||(location.origin=='null'?location.ancestorOrigins[0]:location.origin))+this.ctx.config.prefix+this.ctx.encoding.encode(new URL(url, meta.href).href);
 }

@@ -1,5 +1,3 @@
-import Client from '../../../../client/client'
-
 export default function fetch(self: Window | any) {
     self.Request = self.__dynamic.wrap(self.Request,
         function(target: Function, ...args: Array<Request>) {
@@ -51,7 +49,7 @@ export default function fetch(self: Window | any) {
             }
 
             if (args[2] === false) {
-                args[2] = true;
+                //args[2] = true;
             }
 
             return Reflect.apply(target, this, args) as undefined;
@@ -78,26 +76,31 @@ export default function fetch(self: Window | any) {
 
     self.open = self.__dynamic.wrap(self.open,
         function(this: Window, target: Function, ...args: Array<string | URL>) {
-          if (args[0] !== '') {
+          if (args[0] != '') {
             if (args[0]) {
               args[0] = self.__dynamic.url.encode(args[0], self.__dynamic.meta);
             }
           }
     
-          if (args[0] === '') {
+          if (args[0] == '') {
             args[0] = 'about:blank';
           }
     
           const win: Window | any = Reflect.apply(target, this, args);
     
           win.opener = self.__dynamic$window;
-          if (new URL(args[0]).protocol === 'about:') {
+          
+          try {
+            if (new URL(args[0]).protocol === 'about:') {
+                win.__dynamic$url = 'about:srcdoc';
+            } else {
+                win.__dynamic$url = self.__dynamic.url.decode(args[0]);
+            }
+          } catch {
             win.__dynamic$url = 'about:srcdoc';
-          } else {
-            win.__dynamic$url = self.__dynamic.url.decode(args[0]);
           }
     
-          Client(win, self.__dynamic$config);
+          self.__dynamic.elements.client(win, self.__dynamic$config, win.__dynamic$url);
     
           return win.__dynamic$window as Window;
         }

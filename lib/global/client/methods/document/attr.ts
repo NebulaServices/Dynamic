@@ -1,72 +1,5 @@
-import Client from '../../../../client/client';
-import Srcset from '../../../rewrite/html/srcset';
-
 export default function attributes(self: Window | any) {
-    self.HTMLElement.prototype.setAttribute = new Proxy(self.HTMLElement.prototype.setAttribute, {
-        apply(t: any, g: any, a: any) {
-            if (self.__dynamic.elements.attributes.indexOf(a[0].toLowerCase())==-1) return Reflect.apply(t, g, a);
-
-            if (a[0].toLowerCase()=='srcset' || a[0].toLowerCase() == 'imagesrcset') {
-                a[1] = Srcset.encode(a[1], self.__dynamic);
-
-                return Reflect.apply(t, g, a);
-            }
-
-            if (a[0].toLowerCase()=='integrity'||a[0].toLowerCase()=='nonce') {
-                g.removeAttribute(a[0]);
-
-                return Reflect.apply(t, g, ['nointegrity', a[1]]);
-            }
-
-            g.dataset['dynamic_'+a[0]] = a[1];
-            a[1] = self.__dynamic.url.encode(a[1], self.__dynamic.baseURL || self.__dynamic.meta);
-
-            return Reflect.apply(t, g, a);
-        }
-    });
-
-    self.HTMLElement.prototype.setAttributeNS = new Proxy(self.HTMLElement.prototype.setAttributeNS, {
-        apply(t: any, g: any, a: any) {
-            if (self.__dynamic.elements.attributes.indexOf(a[0].toLowerCase())==-1) return Reflect.apply(t, g, a);
-
-            if (a[1].toLowerCase()=='srcset' || a[1].toLowerCase() == 'imagesrcset') {
-                a[2] = Srcset.encode(a[2], self.__dynamic);
-
-                return Reflect.apply(t, g, a);
-            }
-
-            if (a[0].toLowerCase()=='integrity'||a[0].toLowerCase()=='nonce') {
-                g.removeAttribute(a[1]);
-
-                return Reflect.apply(t, g, ['nointegrity', a[2]]);
-            }
-
-            g.dataset['dynamic_'+a[1]] = a[2];
-            a[2] = self.__dynamic.url.encode(a[2], self.__dynamic.baseURL || self.__dynamic.meta);
-
-            return Reflect.apply(t, g, a);
-        }
-    });
-
-    self.HTMLElement.prototype.getAttribute = new Proxy(self.HTMLElement.prototype.getAttribute, {
-        apply(t: any, g: any, a: any) {
-            if (g.dataset[`dynamic_${a[0]}`]) return g.dataset[`dynamic_${a[0]}`];
-
-            return Reflect.apply(t, g, a);
-        }
-    });
-
-    self.document.createElement = new Proxy(self.document.createElement, {
-        apply(t: any, g: any, a: any) {
-            const element: any = Reflect.apply(t, g, a);
-
-            if (a[0].toLowerCase()=='script') element.onerror = console.log
-
-            if (a[0].toLowerCase()=='iframe') (element.src = 'about:blank', element.loading = 'lazy');
-
-            return element;
-        }
-    });
+    const sanitize = (html: string) => new DOMParser().parseFromString(html, 'text/html').body.innerHTML;
 
     self.__dynamic.elements.config.forEach((config: any) => {
         config.elements.forEach((element: any) => {
@@ -74,6 +7,87 @@ export default function attributes(self: Window | any) {
                 var descriptor: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(element.prototype, tag);
 
                 if (!descriptor) descriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, tag);
+
+                if (typeof element.prototype.setAttribute.__dynamic$target == 'undefined') {
+                    element.prototype.setAttribute = self.__dynamic.wrap(element.prototype.setAttribute,
+                        function(this: any, target: Function, ...args: Array<string>) {
+                            if (this instanceof HTMLLinkElement && self.__dynamic$icon) {
+                                if (args[0].toLowerCase() == 'href' && (this.rel == 'icon' || this.rel == 'shortcut icon')) {
+                                    args[1] = self.__dynamic$icon;
+
+                                    return Reflect.apply(target, this, args);
+                                }
+                            }
+
+                            if (self.__dynamic.elements.attributes.indexOf(args[0].toLowerCase())==-1) return Reflect.apply(target, this, args);
+
+                            if (args[0].toLowerCase()=='srcset' || args[0].toLowerCase() == 'imagesrcset') {
+                                args[1] = self.__dynamic.rewrite.srcset.encode(args[1], self.__dynamic);
+
+                                return Reflect.apply(target, this, args);
+                            }
+
+                            if (args[0].toLowerCase()=='integrity'||args[0].toLowerCase()=='nonce') {
+                                this.removeAttribute(args[0]);
+
+                                return Reflect.apply(target, this, ['nointegrity', args[1]]);
+                            }
+
+                            this.dataset[`dynamic_${args[0]}`] = args[1];
+                            args[1] = self.__dynamic.url.encode(args[1], self.__dynamic.baseURL || self.__dynamic.meta);
+
+                            return Reflect.apply(target, this, args);
+                        }
+                    );
+
+                    element.prototype.setAttributeNS = self.__dynamic.wrap(element.prototype.setAttributeNS,
+                        function(this: any, target: Function, ...args: Array<string>) {
+                            if (this instanceof HTMLLinkElement && self.__dynamic$icon) {
+                                if (args[1].toLowerCase() == 'href' && (this.rel == 'icon' || this.rel == 'shortcut icon')) {
+                                    args[2] = self.__dynamic$icon;
+
+                                    return Reflect.apply(target, this, args);
+                                }
+                            }
+
+                            if (self.__dynamic.elements.attributes.indexOf(args[1].toLowerCase())==-1) return Reflect.apply(target, this, args);
+
+                            if (args[1].toLowerCase()=='srcset' || args[1].toLowerCase() == 'imagesrcset') {
+                                args[2] = self.__dynamic.rewrite.srcset.encode(args[2], self.__dynamic);
+
+                                return Reflect.apply(target, this, args);
+                            }
+
+                            if (args[0].toLowerCase()=='integrity'||args[0].toLowerCase()=='nonce') {
+                                this.removeAttribute(args[1]);
+
+                                return Reflect.apply(target, this, ['nointegrity', args[2]]);
+                            }
+
+                            this.dataset[`dynamic_${args[1]}`] = args[2];
+                            args[2] = self.__dynamic.url.encode(args[2], self.__dynamic.baseURL || self.__dynamic.meta);
+
+                            return Reflect.apply(target, this, args);
+                        }
+                    );
+
+                    element.prototype.getAttribute = self.__dynamic.wrap(element.prototype.getAttribute,
+                        function(this: any, target: Function, ...args: Array<string>) {
+                            if (this.dataset[`dynamic_${args[0]}`]) return this.dataset[`dynamic_${args[0]}`];
+
+                            return Reflect.apply(target, this, args);
+                        }
+                    );
+
+                    element.prototype.getAttributeNS = self.__dynamic.wrap(element.prototype.getAttributeNS, 
+                        function(this: any, target: Function, ...args: Array<string>) {
+                            if (this.dataset[`dynamic_${args[1]}`]) return this.dataset[`dynamic_${args[1]}`];
+
+                            return Reflect.apply(target, this, args);
+                        }
+                    );
+                }
+
 
                 self.__dynamic.define(element.prototype, tag, {
                     get() {
@@ -87,17 +101,14 @@ export default function attributes(self: Window | any) {
                             } catch {origin = false;};
 
                             if (origin) if (!_window.__dynamic) {
-                                Client(_window, self.__dynamic$config, decodeURIComponent(this.src));
+                                self.__dynamic.elements.client(_window, self.__dynamic$config, decodeURIComponent(this.src));
                             }
-
-                            if (!origin && tag == 'contentDocument') return _window.document;
-                            if (!origin && tag == 'contentWindow') return _window;
 
                             if (tag=='contentDocument') {
                                 return _window.document;
                             }
                             if (tag=='contentWindow') {
-                                return _window.__dynamic$window || _window;
+                                return origin ? (_window.__dynamic$window || _window) : _window;
                             }
                         }
 
@@ -113,16 +124,19 @@ export default function attributes(self: Window | any) {
                     },
                     set(val: any) {
                         if (val && typeof val == 'string') val = val.toString();
-                        if (config.action=='html') {
-                            this.removeAttribute(tag);
 
+                        if (tag == 'href' && this instanceof HTMLLinkElement && self.__dynamic$icon && (this.rel == 'icon' || this.rel == 'shortcut icon')) {
+                            val = self.__dynamic$icon;
+                        }
+
+                        if (config.action=='html') {
                             Promise.resolve(self.__dynamic.createBlobHandler(new Blob([val], {type: 'text/html'}), this, val)).then((url: string) => {this.setAttribute(tag, url);});
 
                             return val;
                         }
 
                         if (config.action=='srcset') {
-                            val = Srcset.encode(val, self.__dynamic);
+                            val = self.__dynamic.rewrite.srcset.encode(val, self.__dynamic);
                         }
 
                         if (config.action=='rewrite') {
@@ -149,7 +163,7 @@ export default function attributes(self: Window | any) {
             return (this.__innerHTML||self.__dynamic.elements.innerHTML.get.call(this)).toString(); 
         },
         set(val: any) {
-            this.__innerHTML = new DOMParser().parseFromString(val, 'text/html').body.innerHTML
+            this.__innerHTML = sanitize(val);
 
 
             if (this instanceof self.HTMLTextAreaElement) return self.__dynamic.elements.innerHTML.set.call(this, val);
@@ -166,7 +180,7 @@ export default function attributes(self: Window | any) {
             return (this.__outerHTML||self.__dynamic.elements.outerHTML.get.call(this)).toString();
         },
         set(val: any) {
-            this.__outerHTML = new DOMParser().parseFromString(val, 'text/html').body.innerHTML
+            this.__outerHTML = sanitize(val);
 
             if (this instanceof self.HTMLTextAreaElement) return self.__dynamic.elements.outerHTML.set.call(this, val);
             if (this instanceof self.HTMLScriptElement) return self.__dynamic.elements.outerHTML.set.call(this, self.__dynamic.rewrite.js.rewrite(val, {type: 'script'}));
@@ -176,13 +190,29 @@ export default function attributes(self: Window | any) {
         }
     });
     
-    self.MutationObserver.prototype.observe = new Proxy(self.MutationObserver.prototype.observe, {
-        apply(t, g, a) {
-            if (a[0]==self.__dynamic$document) a[0] = self.document;
+    self.MutationObserver.prototype.observe = self.__dynamic.wrap(self.MutationObserver.prototype.observe,
+        function(this: any, target: Function, ...args: Array<string>) {
+            if (args[0]==self.__dynamic$document) args[0] = self.document;
 
-            return Reflect.apply(t, g, a);
+            return Reflect.apply(target, this, args);
         }
-    });
+    );
+
+    self.ResizeObserver.prototype.observe = self.__dynamic.wrap(self.ResizeObserver.prototype.observe,
+        function(this: any, target: Function, ...args: Array<string>) {
+            if (args[0]==self.__dynamic$document) args[0] = self.document;
+
+            return Reflect.apply(target, this, args);
+        }
+    );
+
+    self.IntersectionObserver.prototype.observe = self.__dynamic.wrap(self.IntersectionObserver.prototype.observe,
+        function(this: any, target: Function, ...args: Array<string>) {
+            if (args[0]==self.__dynamic$document) args[0] = self.document;
+
+            return Reflect.apply(target, this, args);
+        }
+    );
 
     Object.defineProperties(self.HTMLAnchorElement.prototype, {
         pathname: self.__dynamic.elements.createGetter('pathname'),
@@ -197,12 +227,15 @@ export default function attributes(self: Window | any) {
         toString: {get: function() {return this.__toString || (() => this.href?(new URL(this.href) as any).toString():'')}, set: function(v: Function) {this.__toString = v;}},
     });
 
-    self.HTMLElement.prototype.insertAdjacentHTML = new Proxy(self.HTMLElement.prototype.insertAdjacentHTML, {
-        apply(t, g, a) {
-            if (g instanceof self.HTMLStyleElement) return Reflect.apply(t, g, [a[0], self.__dynamic.rewrite.css.rewrite(a[1], self.__dynamic.meta)])
-            return Reflect.apply(t, g, [a[0], self.__dynamic.rewrite.html.rewrite(a[1], self.__dynamic.meta)]);
+    self.HTMLElement.prototype.insertAdjacentHTML = self.__dynamic.wrap(self.HTMLElement.prototype.insertAdjacentHTML,
+        function(this: any, target: Function, ...args: Array<string>) {
+            if (this instanceof self.HTMLStyleElement) return Reflect.apply(target, this, [args[0], self.__dynamic.rewrite.css.rewrite(args[1], self.__dynamic.meta)]);
+            if (this instanceof self.HTMLScriptElement) return Reflect.apply(target, this, [args[0], self.__dynamic.rewrite.js.rewrite(args[1], {type: 'script'}, false, self.__dynamic)]);
+            if (this instanceof self.HTMLTextAreaElement) return Reflect.apply(target, this, args);
+
+            return Reflect.apply(target, this, [args[0], self.__dynamic.rewrite.html.rewrite(args[1], self.__dynamic.meta)]);
         }
-    });
+    );
 
     [[self.Node, 'textContent'], [self.HTMLElement, 'innerText']].forEach(([el, attr]: any) => {
         var desc: any = Object.getOwnPropertyDescriptor(el.prototype, attr);
@@ -217,6 +250,17 @@ export default function attributes(self: Window | any) {
                 return desc.set.call(this, self.__dynamic.rewrite.css.rewrite(val, self.__dynamic.meta));
             }
         });
+
+        self.__dynamic.define(self.HTMLScriptElement.prototype, attr, {
+            get() {
+                return this['__'+attr] || desc.get.call(this);
+            },
+            set(val: any) {
+                this['__'+attr] = val;
+
+                return desc.set.call(this, self.__dynamic.rewrite.js.rewrite(val, {type: 'script'}, false, self.__dynamic));
+            }
+        });
     });
 
     var int = setInterval(() => {
@@ -224,10 +268,43 @@ export default function attributes(self: Window | any) {
 
         if (self.document.head.querySelector('base')) {
             self.__dynamic.baseURL = new URL(self.document.head.querySelector('base').href);
+
+            clearInterval(int);
         }
     }, 0);
 
     self.document.addEventListener('DOMContentLoaded', () => {
         clearInterval(int);
     });
+
+    self.TrustedTypePolicy.prototype.createScript = self.__dynamic.wrap(self.TrustedTypePolicy.prototype.createScript,
+        function(this: any, target: Function, ...args: Array<string>) {
+            return Reflect.apply(target, this, [self.__dynamic.rewrite.js.rewrite(args[0], {type: 'script'}, false, self.__dynamic)]);
+        }
+    );
+
+    self.document.createElement = self.__dynamic.wrap(self.document.createElement,
+        function(this: any, target: Function, ...args: Array<string>) {
+            var element: HTMLElement & { src: any } = Reflect.apply(target, this, args);
+
+            if (args[0].toLowerCase() == 'iframe') {
+                element.src = 'about:blank';
+            }
+
+            return element;
+        }
+    );
+
+    if (!document.querySelector('link[rel="icon"], link[rel="shortcut icon"]')) {
+        var link = document.createElement('link');
+        link.href = self.__dynamic$icon || '/favicon.ico';
+        link.rel = 'icon';
+
+        link.dataset['dynamic_hidden'] = 'true';
+
+        link.onerror = () => link.remove();
+        link.onload = () => link.remove();
+
+        document.head.appendChild(link);
+    }
 }

@@ -15,7 +15,8 @@ export default function CallExpression(node: any, parent: any = {}) {
         }
 
         if (node.callee.name=='eval') {
-            node.callee.name = '__dynamic$eval';
+            //node.callee.name = '__dynamic$eval';
+            Eval(node);
         }
     }
 
@@ -30,7 +31,8 @@ export default function CallExpression(node: any, parent: any = {}) {
         }
 
         if (node.callee.object.name=='eval') {
-            node.callee.object.name = '__dynamic$eval';
+            //node.callee.object.name = '__dynamic$eval';
+            Eval(node);
         }
     }
 

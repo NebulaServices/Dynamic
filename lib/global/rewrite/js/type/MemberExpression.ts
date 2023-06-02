@@ -2,6 +2,21 @@ import Eval from '../object/Eval';
 import PostMessage from '../object/PostMessage';
 
 export default function MemberExpression(node: any, parent: any = {}, config: any = {}) {
+    /*if (config.destination !== 'worker') if (node.object.type!=='Identifier') {
+      if (node.object.type == 'MemberExpression') return node.object = {
+        type: 'CallExpression',
+        callee: {type: 'Identifier', name: '__dynamic$get'},
+        arguments: [node.object]
+      }
+    }
+
+    if (config.destination !== 'worker') if (node.object.type=='Identifier') {
+      node.object = {
+        type: 'CallExpression',
+        callee: {type: 'Identifier', name: '__dynamic$get'},
+        arguments: [node.object]
+      }
+    }*/
 
     node.object.name+='';
 
@@ -22,11 +37,11 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
       }
     }
 
-    //if (node.property.name=='eval') node.property.name = '__dynamic$eval';
-    //if (node.object.name=='eval') node.object.name = '__dynamic$eval';
+    if (node.property.name=='eval') node.property.name = '__dynamic$eval';
+    if (node.object.name=='eval') node.object.name = '__dynamic$eval';
 
     if (config.destination!=='worker') {
-      //if (node.property.name=='window'&&node.object.name!='top'&&(node.object.name=='self'||node.object.name=='globalThis')) if (parent.type!=='NewExpression'&&(parent.type!=='CallExpression'||((parent.type=='CallExpression')&&node!==parent.callee))) node.property.name = '__dynamic$window';
+      if (node.property.name=='window'&&node.object.name!='top'&&(node.object.name=='self'||node.object.name=='globalThis')) if (parent.type!=='NewExpression'&&(parent.type!=='CallExpression'||((parent.type=='CallExpression')&&node!==parent.callee))) node.property.name = '__dynamic$window';
       if (node.object.name=='top') if (parent.type!=='NewExpression'&&(parent.type!=='CallExpression'||((parent.type=='CallExpression')&&node!==parent.callee))) node.object.name = 'top.__dynamic$window';
       if (node.property.name=='top'&&(node.object.name=='self'||node.object.name=='globalThis')) if (parent.type!=='NewExpression'&&(parent.type!=='CallExpression'||((parent.type=='CallExpression')&&node!==parent.callee))) node.property.name = 'top.__dynamic$window';
       if (parent.type!=='NewExpression'&&(parent.type!=='CallExpression'||((parent.type=='CallExpression')&&node!==parent.callee))) {
@@ -94,12 +109,12 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
     }
 
     if (node.computed && node.property.type == 'CallExpression') {
-      node.property = {
+      /*node.property = {
         type: "CallExpression",
         callee: {type: 'Identifier', name: 'dp$'},
         arguments: [node.property, node.object],
         __dynamic: true,
-      }
+      }*/
     }
 
     //if (!['self', 'globalThis'].includes(node.object.name)) return false;

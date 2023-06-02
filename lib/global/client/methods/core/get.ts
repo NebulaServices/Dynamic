@@ -1,17 +1,25 @@
 export default function Get(self: Window | any) {
     self.__dynamic$get = function(object: any) {
 
-        if (object==self.parent) object = self.parent.__dynamic$window;
-        if (object==self.top) object = self.top.__dynamic$window;
+        if (object==self.parent) return self.parent.__dynamic$window;
+        if (object==self.top) return self.top.__dynamic$window;
 
         if (object == self.location) {
             return self.__dynamic$location;
         }
 
-        if (object == self) object = self.__dynamic$window;
+        if (object instanceof (self.Location || self.WorkerLocation)) {
+            return self.__dynamic$location;
+        }
+
+        if (self.Document) if (object instanceof self.Document) {
+            return self.__dynamic$document;
+        }
+
+        if (object == self) return self.__dynamic$window;
 
         if (typeof object == 'function') {
-            if (object.name == '__d$Send') object = self.__dynamic$message(object.target, self);
+            if (object.name == '__d$Send') return self.__dynamic$message(object.target, self);
         }
 
         return object;
@@ -49,8 +57,10 @@ export default function Get(self: Window | any) {
         return prop;
     }
 
-    self.__dynamic$set = function(object: any, value: any, operator: any) {
-        
+    self.__dynamic$set = function(object: any, value: any) {
+        if (!object) return value;
+
+        return self.__dynamic.url.encode(self.__dynamic.meta.href.replace(self.__dynamic.property['href'], value), self.__dynamic.property);
     }
 
     self.dg$ = self.__dynamic$get;

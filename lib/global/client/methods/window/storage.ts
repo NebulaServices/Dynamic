@@ -1,16 +1,4 @@
 export default function storage(self: Window | any) {
-    self.__dynamic.storage = {
-        localStorage: self.localStorage,
-        sessionStorage: self.sessionStorage,
-        keys: {
-            localStorage: Object.keys(self.localStorage),
-            sessionStorage: Object.keys(self.sessionStorage)
-        },
-        methods: ['getItem', 'setItem', 'removeItem', 'clear', 'length', 'keys', 'values', 'entries', 'forEach', 'hasOwnProperty', 'toString', 'toLocaleString', 'valueOf', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor', 'key'],
-    }, self.__dynamic.storage.cloned = {
-        localStorage: self.__dynamic.util.clone(self.__dynamic.storage.localStorage),
-        sessionStorage: self.__dynamic.util.clone(self.__dynamic.storage.sessionStorage)
-    };
 
     self.Storage.prototype.setItem = self.__dynamic.wrap(self.Storage.prototype.setItem,
         function(this: Storage, target: Function, ...args: Array<string | Symbol>) {

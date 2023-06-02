@@ -1,3 +1,5 @@
+import { Element } from "domhandler";
+
 declare const self: any;
 
 export default function GenerateHead(scriptURL: any, configURL: any, mutationURL: any, cookies: any, script: any = '') {
@@ -30,9 +32,8 @@ export default function GenerateHead(scriptURL: any, configURL: any, mutationURL
 
     return head;
 
-    /*
-
-    var array: Array<Object> = [
+    
+    /*var array: Array<Object> = [
         new Element('script', {src: scriptURL+(cache?'?'+Math.floor(Math.random()*(99999-10000)+10000):'')}),
         new Element('script', {src: configURL+(cache?'?'+Math.floor(Math.random()*(99999-10000)+10000):'')}),
     ]

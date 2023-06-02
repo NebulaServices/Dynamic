@@ -6,16 +6,6 @@ export default function navigator(self: Window | any) {
         delete self.Navigator.prototype.serviceWorker;
     }
 
-    if (self.__dynamic$config) if ('tab' in self.__dynamic$config) {
-        if ('ua' in self.__dynamic$config.tab) {
-            self.__dynamic.define(self.navigator, 'userAgent', {
-                get() {
-                    return self.__dynamic$config.tab.ua;
-                }
-            });
-        }
-    }
-
     self.navigator.sendBeacon = self.__dynamic.wrap(self.navigator.sendBeacon,
         function(this: Navigator, target: Function, ...args: Array<string>) {
             if (args[0]) {
