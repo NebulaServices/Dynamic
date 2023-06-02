@@ -55,7 +55,7 @@ export default function Header(this: any, headers: any, meta: any, request: any,
     }
 
     if (this.ctx.config.tab) {
-        if ('ua' in this.ctx.config.tab) {
+        if (this.ctx.config.tab.ua) {
             delete headers['user-agent'];
             delete headers['User-Agent'];
             
