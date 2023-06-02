@@ -130,7 +130,7 @@ export default function init(self: Window | any, __dynamic: any) {
     });
 
     if (self.__dynamic$config.tab) {
-        if ('title' in self.__dynamic$config.tab) {
+        if (self.__dynamic$config.tab['title']) {
             document.title = self.__dynamic$config.tab.title;
             self.__dynamic.define(self.document, 'title', {
                 get() {
@@ -142,11 +142,11 @@ export default function init(self: Window | any, __dynamic: any) {
             });
         }
 
-        if ('icon' in self.__dynamic$config.tab) {
+        if (self.__dynamic$config.tab['icon']) {
             self.__dynamic$icon = self.__dynamic$config.tab.icon;
         }
 
-        if ('ua' in self.__dynamic$config.tab) {
+        if (self.__dynamic$config.tab['ua']) {
             self.__dynamic.define(self.navigator, 'userAgent', {
                 get() {
                     return self.__dynamic$config.tab.ua;
