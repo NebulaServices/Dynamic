@@ -267,7 +267,7 @@ export default function attributes(self: Window | any) {
         if (!self.document?.head) return;
 
         if (self.document.head.querySelector('base')) {
-            self.__dynamic.baseURL = new URL(self.document.head.querySelector('base').href);
+            self.__dynamic.baseURL = new URL(self.document.head.querySelector('base').dataset['dynamic_href']);
 
             clearInterval(int);
         }
@@ -297,8 +297,8 @@ export default function attributes(self: Window | any) {
 
     if (!document.querySelector('link[rel="icon"], link[rel="shortcut icon"]')) {
         var link = document.createElement('link');
-        link.href = self.__dynamic$icon || '/favicon.ico';
         link.rel = 'icon';
+        link.href = (self.__dynamic$icon || '/favicon.ico') + '?dynamic';
 
         link.dataset['dynamic_hidden'] = 'true';
 

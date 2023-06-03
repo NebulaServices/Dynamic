@@ -136,13 +136,13 @@ import { DynamicBundle } from '../global/bundle';
 
         Dynamic.meta.load(new URL(Dynamic.url.decode(new URL(request.url))));
 
-        if (request.url.split('?')[1]&&Dynamic.config.encoding!=='plain') {
+        /*if (request.url.split('?')[1]&&Dynamic.config.encoding!=='plain') {
           var ResponseURL = Dynamic.url.encode(Dynamic.meta.href+'?'+request.url.split('?')[1], Dynamic.meta);
 
           var headers: any = {Location: ResponseURL};
     
           return new Response(new Blob([Dynamic.rewrite.html.generateRedirect(ResponseURL)]), {status: 301, statusText: 'Moved Permanently', headers: headers});
-        }
+        }*/
 
         const Cookies = Dynamic.cookies;
 
@@ -171,6 +171,8 @@ import { DynamicBundle } from '../global/bundle';
         }
 
         const ResHeaders: Headers = await Dynamic.util.resHeader(BareRequest.rawHeaders, Dynamic.meta, Cookies);
+
+        console.log('Dynamic Fetch:', Dynamic.meta.href, BareRequest.status, BareRequest.statusText, ResHeaders.get('content-type')||'text/plain; charset=utf-8');
 
         var Clients = await self.clients.matchAll();
 

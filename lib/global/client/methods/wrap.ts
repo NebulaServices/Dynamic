@@ -1,5 +1,7 @@
 export default function wrap(self: Window | any) {
     self.__dynamic.wrap = function(target: any, handler: any, result: any) {
+        if (target.__dynamic$target) return target;
+        
         if (target.toString().includes('{ [native code] }') && !target.prototype) {
             var g = handler;
             var t = target;

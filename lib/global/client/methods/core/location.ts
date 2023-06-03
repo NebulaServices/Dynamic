@@ -74,7 +74,7 @@ export default function Location(self: any, doc: Boolean = true) {
   props.forEach(prop => {
       self.__dynamic.define(self.__dynamic.location, prop, {
           get: () => 
-            property[prop] as string,
+            (prop == 'hash' || prop == 'search') ? location[prop] : property[prop] as string,
           set: (e:any) => 
             (self.location[prop] = self.__dynamic.url.encode(self.__dynamic.meta.href.replace(property[prop], e), property)) as string
       });
@@ -103,9 +103,9 @@ export default function Location(self: any, doc: Boolean = true) {
   });
 
   if (!self.__dynamic.hashchange) self.__dynamic.hashchange = (self.addEventListener("hashchange", ( event: HashChangeEvent ) => {
-    property["hash"] = "#" + (event.newURL.split("#")[1] || "");
+    //property["hash"] = "#" + (event.newURL.split("#")[1] || "");
 
-    self.history.pushState(null, null, self.__dynamic.location.href);
+    //self.history.pushState(null, null, self.__dynamic.location.href);
   }), true);
 
   return self.__dynamic.location;
