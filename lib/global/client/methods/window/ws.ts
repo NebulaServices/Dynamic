@@ -2,9 +2,9 @@ import { encodeProtocol as encode_protocol } from "../core/protocol";
 
 export default function websocket(self: Window | any) {
   const target = () =>
-    `${self.location.protocol.replace("http", "ws")}//${
-      self.location.hostname
-    }/bare/v1/`;
+    location.protocol.replace('http', 'ws') + new URL((self.__dynamic$config.bare.path + '/' || '/bare/') + 'v1/', new URL(location.origin)).href
+      .replace(/https?:\/\//g, '')
+      .replace(/\/\//g, '/') as string;
 
   const WSUrl: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(
     self.WebSocket.prototype,
@@ -15,7 +15,7 @@ export default function websocket(self: Window | any) {
     get() {
       const url = WSUrl.get.call(this);
 
-      return self.__dynamic.url.decode(url);
+      return self.__dynamic.url.decode(url) as string;
     },
     set(val: any) {
       return false;
@@ -24,11 +24,11 @@ export default function websocket(self: Window | any) {
 
   self.WebSocket = self.__dynamic.wrap(
     self.WebSocket,
-    (e: any, o: any, t: any) => {
-      console.log(o);
-      const url = new URL(o);
+    (e: any, ...args: Array<string | Array<string>>) => {
+      console.log(args);
+      const url: URL = new URL(args[0] as string);
 
-      const r = {
+      const r: any = {
         remote: {
           host: url.hostname,
           port: url.port || (url.protocol === "wss:" ? "443" : "80"),
@@ -36,7 +36,7 @@ export default function websocket(self: Window | any) {
           protocol: url.protocol,
         },
         headers: {
-          Host: url.hostname,
+          Host: url.hostname + (url.port ? ":" + url.port : ""),
           Origin: self.__dynamic$location.origin,
           Pragma: "no-cache",
           "Cache-Control": "no-cache",
@@ -49,8 +49,13 @@ export default function websocket(self: Window | any) {
           "sec-websocket-extensions",
           "sec-websocket-key",
           "sec-websocket-version",
+          "sec-websocket-accept",
         ],
       };
+
+      if (args[1]) {
+        r.headers["sec-websocket-protocol"] = args[1].toString();
+      }
 
       return [
         target(),

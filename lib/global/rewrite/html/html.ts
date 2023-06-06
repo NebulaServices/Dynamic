@@ -164,7 +164,7 @@ The document has moved
           for (var tag of config.tags) {
             if (!rewritten.hasAttribute(tag) || !rewritten.getAttribute(tag)) continue;
 
-            if (node.tagName == 'link' && (rewritten.getAttribute('rel') == 'icon' || rewritten.getAttribute('rel') == 'shortcut') && this.ctx.config.tab?.icon) {
+            if (node.tagName == 'link' && (rewritten.getAttribute('rel') == 'icon' || rewritten.getAttribute('rel') == 'shortcut icon') && this.ctx.config.tab?.icon) {
               rewritten.setAttribute(`data-dynamic_${tag}`, rewritten.getAttribute(tag));
               rewritten.setAttribute('href', this.ctx.url.encode(this.ctx.config.tab.icon, base));
 
@@ -193,7 +193,7 @@ The document has moved
 
               switch(name.toLowerCase()) {
                 case "refresh":
-                  var time = content.split(';url=')[0], value = content.split(';url=')[1];
+                  var time = content.split('url=')[0].split(';')[0], value = content.split('url=')[1];
 
                   rewritten.setAttribute('content', `${time};url=${that.ctx.url.encode(value, base)}`);
                   break;
@@ -219,7 +219,6 @@ The document has moved
 
     if (head && ast.childNodes.length && head.length) {
       var html = ast.childNodes.find((e: any) => e.nodeName == 'html');
-      // copilot :)
 
       for (var e = 0; e < head.length; e++) {
         if (html) {
@@ -231,7 +230,7 @@ The document has moved
       }
     }
     
-    src = that.ctx.modules.parse5.serialize(ast);
+    src = that.ctx.modules.parse5.serialize(ast as object) as string;
 
     return src;
   }

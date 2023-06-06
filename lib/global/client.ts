@@ -29,7 +29,7 @@ class DynamicBundle {
   define:any;
   config;
   
-  constructor(config:any) {if (config&&!this.config) this.config = config;};
+  constructor(config:any) {if (config&&!this.config) this.config = config; if (config) this.util.encode(self)};
 }
 
 export { DynamicBundle, DynamicModules, DynamicRewrites, DynamicUtil, DynamicMeta, DynamicUrlRewriter };

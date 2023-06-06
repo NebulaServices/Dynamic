@@ -5,6 +5,7 @@ export default function cookie(self: any) {
 
     self.__dynamic.define(self.document, 'cookie', {
         get() {
+            self.__dynamic.cookies.update(self.__dynamic.location.host);
             return self.__dynamic.cookie.str || self.__dynamic.cookie.desc.get.call(this) || '';
         },
         set(val: any) {
@@ -13,6 +14,7 @@ export default function cookie(self: any) {
             parsed.name = parsed.name.replace(/^\./g, '');
 
             Promise.resolve(self.__dynamic.cookies.set(self.__dynamic.location.host, self.__dynamic.modules.cookie.serialize(parsed.name, parsed.value, {...parsed, encode: (e:any) => e}))).then(async (e:any)=>{
+                await self.__dynamic.cookies.update(self.__dynamic.location.host)
                 self.__dynamic.cookie.str = await self.__dynamic.cookies.get(self.__dynamic.location.host);
             });
 

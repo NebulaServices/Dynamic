@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index",
+    "start": "node --max-http-header-size=50000 index",
     "build": "webpack",
     "_webpack": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1"

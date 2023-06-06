@@ -20,4 +20,8 @@ export default class Cookie {
     async open() {
         await DB.open();
     }
+    async update(host: any) {
+        if (!this._db) this._db = this.db.open();
+        return await DB.update(host, this._db);
+    }
 }

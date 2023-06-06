@@ -8,6 +8,7 @@ import file from './util/file';
 import edit from './util/edit';
 import error from './util/error';
 import about from './util/about';
+import encode from './util/encode';
 
 class DynamicUtil {
   route = route;
@@ -20,6 +21,7 @@ class DynamicUtil {
   file = file;
   edit = edit;
   error = error;
+  encode = encode;
   about = about;
 
   ctx;

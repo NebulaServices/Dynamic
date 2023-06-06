@@ -30,11 +30,11 @@ export default function fetch(self: Window | any) {
     
     self.fetch = self.__dynamic.wrap(self.fetch,
         function(this: Window, target: Function, ...args: Array<string | Request>) {
-            if (args[0].constructor.name === 'Request' || args[0] instanceof self.Request) {
+            if (self.Request) if (args[0].constructor.name === 'Request' || args[0] instanceof self.Request) {
                 return Reflect.apply(target, self, args) as Promise<Response>;
             }
 
-            if (args[0]) {
+            if (args[0] && self.__dynamic) {
                 args[0] = self.__dynamic.url.encode(args[0], self.__dynamic.meta);
             }
 

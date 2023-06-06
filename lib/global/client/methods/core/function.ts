@@ -43,7 +43,6 @@ export default function Function(self: Window | any) {
 
     self.Function = new Proxy(self.Function, {
         apply(t, g, a: any) {
-            console.log(t, g, a);
             var args: any = [...a];
             var body: any = args.pop();
 

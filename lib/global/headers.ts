@@ -11,7 +11,6 @@ export default {
         'strict-transport-security',
         'upgrade-insecure-requests',
         'x-content-type-options',
-        'x-download-options',
         'x-frame-options',
         'x-permitted-cross-domain-policies',
         'x-powered-by',

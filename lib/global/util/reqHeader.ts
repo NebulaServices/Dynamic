@@ -12,8 +12,8 @@ export default function Header(this: any, headers: any, meta: any, request: any,
         if (headers[header]) delete headers[header];
     });
 
-    headers['Origin'] = `${meta.protocol}//${meta.host}`;
-    headers['Host'] = meta.host;
+    headers['Origin'] = `${meta.protocol}//${meta.host}${meta.port ? ':'+meta.port : ''}`;
+    headers['Host'] = meta.host + (meta.port ? ':'+meta.port : '');
     headers['Referer'] = meta.href;
 
     if (request.referrerPolicy == 'strict-origin-when-cross-origin') headers['Referer'] = `${meta.protocol}//${meta.host}/`;

@@ -19,6 +19,7 @@ import blob from './methods/window/blob';
 import mutation from './methods/document/mutation';
 import _eval from './methods/core/eval';
 import func from './methods/core/function';
+import rtc from './methods/window/rtc';
 
 import DynamicClientMethods from './methods';
 
@@ -45,6 +46,7 @@ export default class DynamicClient {
     mutation = mutation;
     eval = _eval;
     func = func;
+    rtc = rtc;
 
     define: any;
     wrap: any;

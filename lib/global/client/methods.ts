@@ -72,6 +72,10 @@ export default [
         function: 'self',
     },
     {
+        name: 'rtc',
+        function: 'self',
+    },
+    {
         name: 'blob',
         function: 'self',
     },

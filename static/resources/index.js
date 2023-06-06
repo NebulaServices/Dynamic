@@ -47,7 +47,7 @@ inpbox.addEventListener("submit", async (event) => {
   }
 });
 
-console.log("epicness ");
+// test: navigator.registerProtocolHandler("web+proxy", location.origin+"/route?url=%s", "web query");
 
 
 //utils

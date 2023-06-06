@@ -11,11 +11,6 @@ export default function(self: any, config: any = {}, altURL: string = '') {
 
   const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config);
 
-  __dynamic.encoding = {
-    ...__dynamic.encoding,
-    ...(__dynamic.encoding as any)[__dynamic.config.encoding || 'none']
-  };
-
   self.__dynamic$baseURL = altURL || self.__dynamic$url || __dynamic.url.decode(location.pathname + location.search + location.hash) || "";
 
   self.__dynamic = __dynamic;

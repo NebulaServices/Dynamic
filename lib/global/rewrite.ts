@@ -7,11 +7,10 @@ import srcset from './rewrite/html/srcset';
 class DynamicRewrites {
 
   html;
+  srcset;
   js;
   css;
   man;
-  srcset;
-
   ctx;
 
   constructor(ctx: any) {

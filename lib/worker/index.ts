@@ -1,4 +1,6 @@
+import { BareError } from '@tomphttp/bare-client';
 import { DynamicBundle } from '../global/bundle';
+import Cookie from '../global/cookie';
 
 (function(self: ServiceWorker | any) {
   self.skipWaiting();
@@ -36,6 +38,7 @@ import { DynamicBundle } from '../global/bundle';
   });
   
   self.addEventListener('activate', (event: Event | any) => {
+    self.skipWaiting();
     event.waitUntil(self.clients.claim());
   });
 
@@ -64,11 +67,11 @@ import { DynamicBundle } from '../global/bundle';
     }
   });
 
-  const __dynamic: DynamicBundle = new DynamicBundle(null);
+  importScripts('/dynamic/dynamic.config.js');
+
+  const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config);
 
   self.__dynamic = __dynamic;
-  
-  importScripts('/dynamic/dynamic.config.js');
 
   self.Object.defineProperty(self.WindowClient.prototype, '__dynamic$location', {get() { return new URL(__dynamic.url.decode(this.url)) }});
 
@@ -77,11 +80,6 @@ import { DynamicBundle } from '../global/bundle';
   __dynamic.config.bare.path = typeof __dynamic.config.bare.path === 'string' ? [ new URL(__dynamic.config.bare.path, self.location) ][0] : __dynamic.config.bare.path.map((str:any) => new URL(str, self.location));
 
   __dynamic.bare = new __dynamic.modules.bare(__dynamic.config.bare.path, null, 'v'+__dynamic.config.bare.version);
-  
-  __dynamic.encoding = {
-    ...__dynamic.encoding,
-    ...self.__dynamic.encoding[__dynamic.config.encoding || 'none']
-  };
 
   return self.Dynamic = class {
     constructor() {}
@@ -99,11 +97,6 @@ import { DynamicBundle } from '../global/bundle';
         if (request.mode !== 'navigate') request.client = (await self.clients.matchAll()).find((e:any)=>e.id==event.clientId);
 
         const Dynamic: DynamicBundle = new DynamicBundle(__dynamic.config);
-
-        Dynamic.encoding = {
-          ...Dynamic.encoding,
-          ...(Dynamic.encoding as any)[__dynamic.config.encoding || 'none']
-        };
 
         if (request.url.startsWith(location.origin + __dynamic.config.prefix + 'caches/')) {
           const cache: Response | any = await caches.open('__dynamic');
@@ -136,23 +129,16 @@ import { DynamicBundle } from '../global/bundle';
 
         Dynamic.meta.load(new URL(Dynamic.url.decode(new URL(request.url))));
 
-        /*if (request.url.split('?')[1]&&Dynamic.config.encoding!=='plain') {
-          var ResponseURL = Dynamic.url.encode(Dynamic.meta.href+'?'+request.url.split('?')[1], Dynamic.meta);
-
-          var headers: any = {Location: ResponseURL};
-    
-          return new Response(new Blob([Dynamic.rewrite.html.generateRedirect(ResponseURL)]), {status: 301, statusText: 'Moved Permanently', headers: headers});
-        }*/
-
-        const Cookies = Dynamic.cookies;
+        const Cookies = Dynamic.cookies as Cookie;
 
         await Cookies.open();
+        await Cookies.update(Dynamic.meta.host);
 
         const RawHeaders: Object = Object.fromEntries(request.headers.entries());
 
         const ReqHeaders: Headers = __dynamic.util.reqHeader(RawHeaders, Dynamic.meta, request, await Cookies.get(request.client ? request.client.__dynamic$location.host : Dynamic.meta.host));
 
-        const Request: any = new __dynamic.http.Request(Dynamic.meta.href, {
+        const Request: any = new __dynamic.http.Request(Dynamic.meta.href as string, {
           headers: ReqHeaders,
           redirect: 'manual',
           method: request.method,
@@ -171,8 +157,6 @@ import { DynamicBundle } from '../global/bundle';
         }
 
         const ResHeaders: Headers = await Dynamic.util.resHeader(BareRequest.rawHeaders, Dynamic.meta, Cookies);
-
-        console.log('Dynamic Fetch:', Dynamic.meta.href, BareRequest.status, BareRequest.statusText, ResHeaders.get('content-type')||'text/plain; charset=utf-8');
 
         var Clients = await self.clients.matchAll();
 
@@ -208,12 +192,12 @@ import { DynamicBundle } from '../global/bundle';
             ResponseBody = new Blob([Dynamic.rewrite.man.rewrite(await BareRequest.text(), Dynamic.meta)], {type: BareRequest.headers.get('content-type')||'application/json'})
             break;
           default: {
-            let ResponseBlob = await BareRequest.blob();
-            let ResponseText = await ResponseBlob.text();
+            let ResponseBlob = await BareRequest.blob() as Blob;
+            let ResponseText = await ResponseBlob.text() as string;
 
             if (Dynamic.is.html(Dynamic.meta, BareRequest.headers.get('content-type'), ResponseText)) {
 
-              const HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+'/dynamic/dynamic.client.js', location.origin+'/dynamic/dynamic.config.js', location.origin+'/dynamic/dynamic.mutation.js', await Cookies.get(Dynamic.meta.host));
+              const HeaderInject: Array<any> = Dynamic.rewrite.html.generateHead(location.origin+'/dynamic/dynamic.client.js', location.origin+'/dynamic/dynamic.config.js', location.origin+'/dynamic/dynamic.mutation.js', await Cookies.get(Dynamic.meta.host));
 
               ResponseBody = new Blob([Dynamic.rewrite.html.rewrite(ResponseText, Dynamic.meta, HeaderInject)], {type: BareRequest.headers.get('content-type')||'text/html; charset=utf-8'});
 

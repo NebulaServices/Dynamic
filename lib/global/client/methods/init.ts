@@ -23,6 +23,7 @@ export default function init(self: Window | any, __dynamic: any) {
         contentWindow: Object.getOwnPropertyDescriptor(self.HTMLIFrameElement.prototype, 'contentWindow'),
         innerHTML: Object.getOwnPropertyDescriptor(self.Element.prototype, 'innerHTML'),
         outerHTML: Object.getOwnPropertyDescriptor(self.Element.prototype, 'outerHTML'),
+        attrValue: Object.getOwnPropertyDescriptor(self.Attr.prototype, 'value'),
 
         setAttribute: self.Element.prototype.setAttribute,
         getAttribute: self.Element.prototype.getAttribute,
@@ -116,7 +117,7 @@ export default function init(self: Window | any, __dynamic: any) {
         XMLHttpRequest: self.XMLHttpRequest,
     }
 
-    if (self.Storage) (self.__dynamic.storage = {
+    if (self.Storage) (__dynamic.storage = {
         localStorage: self.localStorage,
         sessionStorage: self.sessionStorage,
         keys: {
@@ -124,13 +125,19 @@ export default function init(self: Window | any, __dynamic: any) {
             sessionStorage: Object.keys(self.sessionStorage)
         },
         methods: ['getItem', 'setItem', 'removeItem', 'clear', 'length', 'keys', 'values', 'entries', 'forEach', 'hasOwnProperty', 'toString', 'toLocaleString', 'valueOf', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor', 'key'],
-    }, self.__dynamic.storage.cloned = {
-        localStorage: self.__dynamic.util.clone(self.__dynamic.storage.localStorage),
-        sessionStorage: self.__dynamic.util.clone(self.__dynamic.storage.sessionStorage)
+    }, __dynamic.storage.cloned = {
+        localStorage: self.__dynamic.util.clone(__dynamic.storage.localStorage),
+        sessionStorage: self.__dynamic.util.clone(__dynamic.storage.sessionStorage)
     });
 
+    if (self.RTCPeerConnection) __dynamic.webrtc = {
+        endpoints: [
+            'stun:stun.webice.org'
+        ]
+    }
+
     if (self.__dynamic$config.tab) {
-        if (self.__dynamic$config.tab['title']) {
+        if (self.Document && self.__dynamic$config.tab['title']) {
             document.title = self.__dynamic$config.tab.title;
             self.__dynamic.define(self.document, 'title', {
                 get() {
@@ -146,8 +153,8 @@ export default function init(self: Window | any, __dynamic: any) {
             self.__dynamic$icon = self.__dynamic$config.tab.icon;
         }
 
-        if (self.__dynamic$config.tab['ua']) {
-            self.__dynamic.define(self.navigator, 'userAgent', {
+        if (self.Navigator && self.__dynamic$config.tab['ua']) {
+            __dynamic.define(self.navigator, 'userAgent', {
                 get() {
                     return self.__dynamic$config.tab.ua;
                 },

@@ -37,10 +37,10 @@ function Emit(node:any, type:any, parent:any = {}, ctx:any = {}, dynamic: any = 
             VariableDeclarator(node, parent);
             break;
         default:
-            Imports(node, parent, ctx, dynamic);
             break;
     }
-
+    
+    Imports(node, parent, ctx, dynamic);
 }
 
 export default Emit;

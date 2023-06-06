@@ -7,9 +7,6 @@ import bare from '@dynamic-pkg/bare-client';
 import * as cookie from '@dynamic-pkg/cookie';
 import * as setCookieParser from 'set-cookie-parser'
 import { generate } from '@dynamic-pkg/astring';
-import * as htmlparser2 from 'htmlparser2';
-import * as domhandler from 'domhandler';
-import * as domserializer from 'dom-serializer';
 import * as parse5 from 'parse5';
 //import mutation from '@dynamic-pkg/mutation';
 

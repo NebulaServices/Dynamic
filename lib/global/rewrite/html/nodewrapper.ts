@@ -14,11 +14,11 @@ export default class Node {
                 that.Original.attrs = Object.keys(target).map((key:any) => {
                     return {
                         name: key,
-                        value: target[key]
+                        value: target[key] + ''
                     }
                 });
 
-                return a;
+                return a || (a + ' ');
             },
             deleteProperty: (target:any, prop:any): any => {
                 var a = delete target[prop];
@@ -40,7 +40,7 @@ export default class Node {
     getAttribute(attr: any) {
         if (!this.Original.attribs) return false;
 
-        return this.Original.attribs[attr]||null;
+        return (typeof this.Original.attribs[attr] == 'undefined' ? null : this.Original.attribs[attr].trim());
     }
 
     setAttribute(attr: any, value: any) {

@@ -258,6 +258,8 @@ export default function attributes(self: Window | any) {
             set(val: any) {
                 this['__'+attr] = val;
 
+                if (this.type !== null || this.type !== 'application/javascript' || this.type !== 'text/javascript' || this.type !== 'application/x-javascript') return desc.set.call(this, val);
+
                 return desc.set.call(this, self.__dynamic.rewrite.js.rewrite(val, {type: 'script'}, false, self.__dynamic));
             }
         });
@@ -267,7 +269,7 @@ export default function attributes(self: Window | any) {
         if (!self.document?.head) return;
 
         if (self.document.head.querySelector('base')) {
-            self.__dynamic.baseURL = new URL(self.document.head.querySelector('base').dataset['dynamic_href']);
+            self.__dynamic.baseURL = new URL(self.document.head.querySelector('base').dataset['dynamic_href'], new URL(self.__dynamic.meta.href));
 
             clearInterval(int);
         }
@@ -307,4 +309,17 @@ export default function attributes(self: Window | any) {
 
         document.head.appendChild(link);
     }
+
+    self.__dynamic.define(self.Attr.prototype, 'value', {
+        get() {
+            return this.__value || self.__dynamic.elements.attrValue.get.call(this);
+        },
+        set(val: any) {
+            this.__value = val;
+
+            if (this.name == 'style') return self.__dynamic.elements.attrValue.set.call(this, self.__dynamic.rewrite.css.rewrite(val, self.__dynamic.meta));
+
+            return self.__dynamic.elements.attrValue.set.call(this, val);
+        }
+    });
 }

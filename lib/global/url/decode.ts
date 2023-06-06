@@ -1,3 +1,5 @@
+declare const self: any;
+
 export default function decode(this: any, url: any) {
   if (!url) return url;
 
@@ -17,10 +19,17 @@ export default function decode(this: any, url: any) {
   if (url.slice(index + this.ctx.config.prefix.length).trim() == 'about:blank')
     return 'about:blank';
 
-  var search = (new URL(url).search + new URL(url).hash) || '';
-  var base = new URL(this.ctx.encoding.decode(url.slice(index + this.ctx.config.prefix.length)
-  .replace('https://', 'https:/')
-  .replace('https:/', 'https://').split('?')[0]));
+  try {
+    var search = (new URL(url).search + new URL(url).hash) || '';
+    var base = new URL(this.ctx.encoding.decode(url.slice(index + this.ctx.config.prefix.length)
+    .replace('https://', 'https:/')
+    .replace('https:/', 'https://').split('?')[0]));
+  } catch(e) {
+    console.log(url, this.ctx.encoding.decode(url.slice(index + this.ctx.config.prefix.length)
+    .replace('https://', 'https:/')
+    .replace('https:/', 'https://').split('?')[0]))
+    return url;
+  }
 
   url = base.origin + base.pathname + search;
 
