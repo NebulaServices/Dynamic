@@ -29,7 +29,16 @@ export default function fetch(self: Window | any) {
     });
     
     self.fetch = self.__dynamic.wrap(self.fetch,
-        function(this: Window, target: Function, ...args: Array<string | Request>) {
+        function(this: Window, target: Function, ...args: Array<string | Request | any>) {
+            const event = self.__dynamic.fire('fetch', [args[0].url || args[0]]);
+
+            if (event) {
+                if (event instanceof Promise) return event;
+                if (event instanceof Request) args[0] = event;
+                if (event instanceof Response) return new Promise(e=>e(event));
+                if (event instanceof String) args[0] = event;
+            }
+
             if (self.Request) if (args[0].constructor.name === 'Request' || args[0] instanceof self.Request) {
                 return Reflect.apply(target, self, args) as Promise<Response>;
             }

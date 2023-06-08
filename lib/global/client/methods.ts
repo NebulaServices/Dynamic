@@ -4,6 +4,10 @@ export default [
         function: 'self',
     },
     {
+        name: 'func',
+        function: 'self',
+    },
+    {
         name: 'location',
         function: 'self',
     },
@@ -57,10 +61,6 @@ export default [
     },
     {
         name: 'niche',
-        function: 'self',
-    },
-    {
-        name: 'func',
         function: 'self',
     },
     {

@@ -2,8 +2,8 @@ import { encodeProtocol as encode_protocol } from "../core/protocol";
 
 export default function websocket(self: Window | any) {
   const target = () =>
-    location.protocol.replace('http', 'ws') + new URL((self.__dynamic$config.bare.path + '/' || '/bare/') + 'v1/', new URL(location.origin)).href
-      .replace(/https?:\/\//g, '')
+    self.location.protocol.replace('http', 'ws') + '//' + new URL((self.__dynamic$config.bare.path + '/' || '/bare/') + 'v1/', new URL(location.origin)).href
+      .replace(/http(s?):\/\//g, '')
       .replace(/\/\//g, '/') as string;
 
   const WSUrl: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(

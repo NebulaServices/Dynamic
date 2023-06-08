@@ -16,7 +16,7 @@ export default function navigator(self: Window | any) {
         }
     );
 
-    if (self.navigator.getUserMedia) {
+    /*if (self.navigator.getUserMedia) {
         self.navigator.getUserMedia = self.__dynamic.wrap(self.navigator.getUserMedia,
             function(this: MediaDevices, target: Function, ...args: Array<MediaStreamConstraints>) {
                 console.log(args);
@@ -26,5 +26,5 @@ export default function navigator(self: Window | any) {
         );
 
         self.navigator.webkitGetUserMedia = self.navigator.getUserMedia;
-    }
+    }*/
 }

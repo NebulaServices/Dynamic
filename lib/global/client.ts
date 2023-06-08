@@ -28,6 +28,24 @@ class DynamicBundle {
 
   define:any;
   config;
+
+  listeners: Array<any> = [];
+
+  on(event: string, cb: Function) {
+    this.listeners.push({event, cb});
+  }
+
+  fire(event: string, data: Array<any>) {
+    var found = false;
+
+    for (var listener of this.listeners) {
+      if (listener.event === event) data = (found = true, listener.cb(...data));
+    }
+
+    if (found && data) return data;
+
+    return null;
+  }
   
   constructor(config:any) {if (config&&!this.config) this.config = config; if (config) this.util.encode(self)};
 }

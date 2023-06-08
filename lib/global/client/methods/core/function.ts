@@ -3,14 +3,6 @@ export default function Function(self: Window | any) {
 
     self.__dynamic.Function = self.Function.bind({});
 
-    var _call = self.Function.prototype.call;
-    self.__dynamic.define(self.Function.prototype, '_call', {
-        get(this: any) {
-            return _call.bind(this);
-        },
-        set: () => {}
-    });
-
     self.__dynamic.define(self.Function.prototype, '_toString', {
         get(this: any) {
             return _toString;
@@ -77,8 +69,8 @@ export default function Function(self: Window | any) {
         apply(t, g, a: any) {
             if (a[0] == self.__dynamic$window) a[0] = a[0].__dynamic$self;
             if (a[0] == self.__dynamic$document) a[0] = self.document;
-
-            return Reflect.apply(t, g, a)
+        
+            return Reflect.apply(t, g, a);
         }
     })
 

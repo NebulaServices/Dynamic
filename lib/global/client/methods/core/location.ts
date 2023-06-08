@@ -11,6 +11,13 @@ export default function Location(self: any, doc: Boolean = true) {
       });
     }
 
+    self.__dynamic.define(cloned, 'length', {
+      value: ancestor.length,
+      configurable: true,
+      enumerable: true,
+      writable: false
+    });
+
     return cloned;
   }
 
@@ -20,10 +27,10 @@ export default function Location(self: any, doc: Boolean = true) {
     self.Window,
     self.Location,
     self.WorkerLocation,
-    self.Document
+    self.Document,
   ].filter(object => object);
 
-  descriptors.forEach(object => {
+  [...descriptors, self.Object].forEach(object => {
     delete object['prototype']['__dynamic$location'];
   });
 
@@ -79,6 +86,20 @@ export default function Location(self: any, doc: Boolean = true) {
             (self.location[prop] = self.__dynamic.url.encode(self.__dynamic.meta.href.replace(property[prop], e), property)) as string
       });
   });
+
+  self.__dynamic.define(self.Object.prototype, '__dynamic$location', {
+    get() {
+        if (this === self || this === self.__dynamic$window || this === self.document || this === self.__dynamic$document) return this.__dynamic?.location;
+
+        return this.location;
+    },
+    set(value: any) {
+       if (this === self || this === self.__dynamic$window || this === self.document || this === self.__dynamic$document) return this.__dynamic.location.href = value;
+
+        return this.location = value;
+    },
+    configurable: true
+})
 
   funcs.forEach(func => {
       self.__dynamic.define(self.__dynamic.location, func, {

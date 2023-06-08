@@ -108,13 +108,13 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
       }
     }
 
-    if (node.computed && node.property.type == 'CallExpression') {
-      /*node.property = {
+    if (node.computed) {
+      node.property = {
         type: "CallExpression",
         callee: {type: 'Identifier', name: 'dp$'},
-        arguments: [node.property, node.object],
+        arguments: [node.property],
         __dynamic: true,
-      }*/
+      }
     }
 
     //if (!['self', 'globalThis'].includes(node.object.name)) return false;

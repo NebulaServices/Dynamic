@@ -19,6 +19,7 @@ export default function Eval(self: Window | any) {
     );
 
     self.__dynamic$wrapEval = function(script: string) {
+        return script;
         if (!arguments.length) return arguments[0];
         
         script = self.__dynamic.rewrite.js.rewrite(script, {type: 'script'}, false, self.__dynamic);

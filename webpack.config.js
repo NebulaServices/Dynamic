@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 import TerserPlugin from "terser-webpack-plugin";
 import WebpackBundleAnalyzer from 'webpack-bundle-analyzer';
+import webpack from 'webpack';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -72,5 +73,10 @@ export default {
   },
   plugins: [
     new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
+    new webpack.DefinePlugin({
+      'self.ORIGINS': JSON.stringify([
+        'http://localhost'
+      ]),
+    })
   ]
 };

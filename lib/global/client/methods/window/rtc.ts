@@ -1,5 +1,5 @@
 export default function rtc(self: Window | any) {
-    self.RTCPeerConnection = self.__dynamic.wrap(self.RTCPeerConnection,
+    /*self.RTCPeerConnection = self.__dynamic.wrap(self.RTCPeerConnection,
         function(this: RTCPeerConnection, target: Function, ...args: Array<any>) {
             if (args[0]) {
                 if (args[0].iceServers) {
@@ -54,5 +54,5 @@ export default function rtc(self: Window | any) {
 
             return Reflect.apply(target, this, args);
         }
-    );
+    );*/
 }

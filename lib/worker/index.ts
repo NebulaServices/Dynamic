@@ -6,8 +6,20 @@ import Cookie from '../global/cookie';
   self.skipWaiting();
 
   self.addEventListener('install', async (event: Event, cl: any) => {
-    
-    console.groupCollapsed('Dynamic Install Sequence:');
+    console[self.__dynamic$config.mode == 'development' ? 'group' : 'groupCollapsed']('Dynamic Install Sequence:');
+
+    if (typeof self.ORIGINS == 'object') {
+      if (self.ORIGINS.length) {
+        if (!self.ORIGINS.includes(location.origin)) {
+          console.error("Illegal Origin: " + location.origin);
+          console.log("Status: Aborting Install");
+          console.groupEnd();
+          return await self.registration.unregister();
+        } else console.log("Origin Verified: " + location.origin);
+      } else console.warn("Warning: No Origins Specified");
+    } else if (typeof self.ORIGINS == 'string') {
+      if (self.ORIGINS == '*') console.log("Wildcard Origin Accepted");
+    } else console.warn("Warning: No Origins Specified");
 
     console.log('ServiceWorker Installed:', event);
 
@@ -69,27 +81,33 @@ import Cookie from '../global/cookie';
 
   importScripts('/dynamic/dynamic.config.js');
 
-  const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config);
+  const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config), blockList = self.__dynamic$config.block || [];
+
+  __dynamic.config = self.__dynamic$config;
+  __dynamic.config.bare.path = typeof __dynamic.config.bare.path === 'string' ? [ new URL(__dynamic.config.bare.path, self.location) ][0] : __dynamic.config.bare.path.map((str:any) => new URL(str, self.location));
+  __dynamic.bare = new __dynamic.modules.bare(__dynamic.config.bare.path, null, 'v'+__dynamic.config.bare.version);
 
   self.__dynamic = __dynamic;
 
+  self.console.error = (message: any, ...optionalParams: any[]) => {
+    console.log.call({}, ...['%c'+message, 'background: #240d0d;padding:10px;color:#ff7474;font-size:11px;', ...optionalParams]);
+  };
+
   self.Object.defineProperty(self.WindowClient.prototype, '__dynamic$location', {get() { return new URL(__dynamic.url.decode(this.url)) }});
-
-  __dynamic.config = self.__dynamic$config;
-
-  __dynamic.config.bare.path = typeof __dynamic.config.bare.path === 'string' ? [ new URL(__dynamic.config.bare.path, self.location) ][0] : __dynamic.config.bare.path.map((str:any) => new URL(str, self.location));
-
-  __dynamic.bare = new __dynamic.modules.bare(__dynamic.config.bare.path, null, 'v'+__dynamic.config.bare.version);
 
   return self.Dynamic = class {
     constructor() {}
 
+    listeners: Array<any> = [];
     middleware = __dynamic.middleware;
+
+    on = self.__dynamic.on;
+    fire = self.__dynamic.fire;
   
     async fetch(event: Event | any) {
       const { request } = event;
 
-      //try {
+      try {
         if (!!__dynamic.util.file(request)) return await __dynamic.util.edit(request);
         if (!!__dynamic.util.path(request)) return await fetch(request);
         if (!__dynamic.util.routePath(request)) return await __dynamic.util.route(request);
@@ -97,6 +115,9 @@ import Cookie from '../global/cookie';
         if (request.mode !== 'navigate') request.client = (await self.clients.matchAll()).find((e:any)=>e.id==event.clientId);
 
         const Dynamic: DynamicBundle = new DynamicBundle(__dynamic.config);
+
+        Dynamic.on = (event: string, cb: Function) => self.__dynamic.on(event, cb);
+        Dynamic.fire = (event: string, ...data: Array<any>) => self.__dynamic.fire(event, data);
 
         if (request.url.startsWith(location.origin + __dynamic.config.prefix + 'caches/')) {
           const cache: Response | any = await caches.open('__dynamic');
@@ -128,6 +149,11 @@ import Cookie from '../global/cookie';
         }
 
         Dynamic.meta.load(new URL(Dynamic.url.decode(new URL(request.url))));
+
+        if (blockList.indexOf(Dynamic.meta.host) !== -1) return (this.fire('blocked', [Dynamic.meta, request]) || new Response(null, {
+          status: 403,
+          statusText: 'Forbidden'
+        }));
 
         const Cookies = Dynamic.cookies as Cookie;
 
@@ -220,10 +246,10 @@ import Cookie from '../global/cookie';
         if (ResponseBody) ResHeaders.set('content-length', ResponseBody.size);
 
         return new Response(ResponseBody, {status: BareRequest.status, statusText: BareRequest.statusText, headers: ResHeaders});
-      /*} catch(e: Error | any) {
-        console.error(e.message, request.url);
+      } catch(e: Error | any) {
+        //console.error(e.message, request.url);
         return new Response(e, {status: 500, statusText: 'error', headers: new Headers({})});
-      }*/
-    }
+      }
+    };
   }
 })(self) as Function;

@@ -36,10 +36,13 @@ function Emit(node:any, type:any, parent:any = {}, ctx:any = {}, dynamic: any = 
         case "VariableDeclarator":
             VariableDeclarator(node, parent);
             break;
+        case "CatchClause":
+            //node.body.body.unshift({"type":"ExpressionStatement","start":21,"end":37,"expression":{"type":"CallExpression","start":21,"end":36,"callee":{"type":"MemberExpression","start":21,"end":34,"object":{"type":"Identifier","start":21,"end":28,"name":"console"},"property":{"type":"Identifier","start":29,"end":34,"name":"error"},"computed":false,"optional":false},"arguments":[{type: "Identifier", name: "typeof E == 'undefined' ? typeof d == 'undefined' ? null : d : E"}],"optional":false}});
+            break;
         default:
             break;
     }
-    
+
     Imports(node, parent, ctx, dynamic);
 }
 

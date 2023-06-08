@@ -1,9 +1,15 @@
 importScripts('/dynamic/dynamic.worker.js');
 
-const sw = new Dynamic();
+const dynamic = new Dynamic();
 
-self.addEventListener('fetch', event =>
-    event.respondWith(
-        sw.fetch(event)
-    )
+self.dynamic = dynamic;
+
+importScripts('/dynamic-handler.js');
+
+self.addEventListener('fetch',
+    event => {
+        event.respondWith(
+            dynamic.fetch(event)
+        )
+    }
 );

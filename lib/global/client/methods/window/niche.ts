@@ -32,15 +32,21 @@ export default function niche(self: any) {
     });
 
     self.__dynamic.define(self.document, 'baseURI', {
-        value: self.__dynamic$location.toString() as string,
-        configurable: false,
-        enumerable: false,
+        get() {
+            return (self.__dynamic.baseURL || self.__dynamic$location).href as string;
+        },
+        set() {
+            return false;
+        }
     });
 
     self.__dynamic.define(self.HTMLElement.prototype, 'baseURI', {
-        value: self.__dynamic$location.toString() as string,
-        configurable: false,
-        enumerable: false,
+        get() {
+            return self.__dynamic.baseURL.href || self.__dynamic$location.toString() as string;
+        },
+        set() {
+            return false;
+        }
     });
 
     // storage.getEntries can leak page location
@@ -134,4 +140,24 @@ export default function niche(self: any) {
             }
         }
     );
+
+    /*self.onunhandledrejection = function(e: any) {
+        console.error(e);
+    }
+
+    self.onerror = function(e: any) {
+        console.error(e);
+    }
+
+    self.__dynamic.define(self, 'onerror', {
+        value: self.onerror,
+        configurable: false,
+        enumerable: false,
+    });
+
+    self.__dynamic.define(self, 'onunhandledrejection', {
+        value: self.onunhandledrejection,
+        configurable: false,
+        enumerable: false,
+    });*/
 }

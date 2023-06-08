@@ -9,6 +9,8 @@ export default function message(self: Window | any) {
     function __d$Send() {
         var args = arguments;
 
+        //console.log(target, origin, args)
+
         if (isWorker(target) || !isTarget(target))
           return target.postMessage.call(target, ...args);
 
@@ -30,13 +32,6 @@ export default function message(self: Window | any) {
 
         a[1] = function(event: MessageEvent | any) {
           return o(cloneEvent(event));
-        }
-      }
-
-      if (a[0] == 'error') {
-        var o = a[1].bind({});
-        a[1] = function(event: ErrorEvent | any) {
-          return o(event);
         }
       }
 
