@@ -3,13 +3,13 @@ import { Element } from "domhandler";
 declare const self: any;
 
 export default function GenerateHead(this: any, scriptURL: any, configURL: any, mutationURL: any, cookies: any, script: any = '') {
-    if (self.__dynamic$config) {
+    /*if (self.__dynamic$config) {
         var cache = self.__dynamic$config.mode == 'development';
     } else var cache = false;
 
-    /*var array: Array<Object> = [
+    var array: Array<Object> = [
         `<script src="${configURL+(cache?'?'+Math.floor(Math.random()*(99999-10000)+10000):'')}"></script>`,
-        //`<script src="${mutationURL+(cache?'?'+Math.floor(Math.random()*(99999-10000)+10000):'')}"></script>`,
+        `<script src="${mutationURL+(cache?'?'+Math.floor(Math.random()*(99999-10000)+10000):'')}"></script>`,
         `<script src="${scriptURL+(cache?'?'+Math.floor(Math.random()*(99999-10000)+10000):'')}"></script>`,
     ]
 

@@ -15,8 +15,6 @@ const serve = new nodeStatic.Server('static/');
 
 const server = http.createServer();
 
-console.log(http.maxHeaderSize)
-
 server.on('request', (req, res) => {
   if (bare.shouldRoute(req)) {
     bare.routeRequest(req, res);

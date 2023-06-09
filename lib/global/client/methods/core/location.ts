@@ -106,7 +106,7 @@ export default function Location(self: any, doc: Boolean = true) {
           get: () => {
             if (func == 'toString') return () => property['href'] as string;
 
-            return (func=='toString'&&(()=>property['href']))||new self.__dynamic.Function("arg", `return window.location.${func}(arg?${"reload"!==func&&"toString"!==func?"(self.__dynamic).url.encode(arg, new URL('"+property.href+"'))":"arg"}:null)`) as Function;
+            return new self.__dynamic.Function("arg", `return window.location.${func}(arg?${"reload"!==func&&"toString"!==func?"(self.__dynamic).url.encode(arg, new URL('"+property.href+"'))":"arg"}:null)`) as Function;
           },
           set: () => null
       });

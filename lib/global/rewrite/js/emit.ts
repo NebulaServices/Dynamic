@@ -28,7 +28,7 @@ function Emit(node:any, type:any, parent:any = {}, ctx:any = {}, dynamic: any = 
             AssignmentExpression(node, parent);
             break;
         case "ThisExpression":
-            ThisExpression(node, parent);
+            //ThisExpression(node, parent);
             break;
         case "Property":
             Property(node, parent);

@@ -33,7 +33,10 @@ import Cookie from '../global/cookie';
 
     console.groupCollapsed('Dynamic File Cache:');
 
-    for await (var url of self.__dynamic$config.assets.files) {
+    for await (var i of Object.values(self.__dynamic$config.assets.files) as any) {
+      if (!i) continue;
+      
+      var url: any = i;
       url = new URL(url, new URL(location.origin + self.__dynamic$config.assets.prefix + 'dynamic.worker.js')).href;
 
       const res = await fetch(url);

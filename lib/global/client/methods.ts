@@ -40,6 +40,10 @@ export default [
         function: 'self',
     },
     {
+        name: 'policy',
+        function: 'self',
+    },
+    {
         name: 'worker',
         function: 'self',
     },

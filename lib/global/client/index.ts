@@ -19,6 +19,7 @@ import blob from './methods/window/blob';
 import mutation from './methods/document/mutation';
 import _eval from './methods/core/eval';
 import func from './methods/core/function';
+import policy from './methods/window/policy';
 import rtc from './methods/window/rtc';
 
 import DynamicClientMethods from './methods';
@@ -34,6 +35,7 @@ export default class DynamicClient {
     ws = ws;
     fetch = fetch;
     message = message;
+    policy = policy;
     write = write;
     imports = imports;
     reflect = reflect;

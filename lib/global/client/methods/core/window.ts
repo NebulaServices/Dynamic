@@ -62,19 +62,20 @@ export default function window(self: any) {
             set(obj, prop, value): any {
                 try {
                     var desc = Object.getOwnPropertyDescriptor(obj, prop);
+
                     if (desc?.writable === false && desc?.enumerable === false) {
                         console.log(desc, prop, value);
                         return false;
                     }
 
                     if ((prop as any).constructor == self.Symbol) {
-                        return (Reflect.set(obj, prop, value), obj[prop])
+                        return (Reflect.set(obj, prop, value), obj[prop]);
                     }
 
                     if (obj.hasOwnProperty('undefined') && obj[prop]+''==prop) return obj[prop];
                     if (prop=='location') return window.__dynamic$location = value;
 
-                    if (obj.hasOwnProperty(prop) && !obj.propertyIsEnumerable(prop)) return obj[prop];
+                    if (obj.hasOwnProperty(prop) && !obj.propertyIsEnumerable(prop) && !desc?.writable) return obj[prop];
 
                     try {
                         if (window.__dynamic) window.__dynamic.Reflect.set(obj, prop, value);

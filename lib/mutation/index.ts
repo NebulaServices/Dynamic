@@ -1,4 +1,4 @@
-/*declare const self: any;
+declare const self: any;
 
 import { DynamicBundle } from '../global/client';
 
@@ -12,4 +12,4 @@ __dynamic.meta.load(new URL(self.__dynamic$baseURL));
 
 init(self, __dynamic);
 
-__dynamic.client.mutation(self, __dynamic);*/
+__dynamic.client.mutation(self, __dynamic);

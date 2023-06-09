@@ -3,7 +3,7 @@ import Client from "../../../client/client";
 export default function init(self: Window | any, __dynamic: any) {
     if (!__dynamic) __dynamic = self.__dynamic;
 
-    self.__dynamic.define = new self.Proxy(self.Object.defineProperty, {
+    __dynamic.define = new self.Proxy(self.Object.defineProperty, {
         apply(t: any, g: any, a: any) {
             try {
                 return Reflect.apply(t, g, a);
@@ -126,8 +126,8 @@ export default function init(self: Window | any, __dynamic: any) {
         },
         methods: ['getItem', 'setItem', 'removeItem', 'clear', 'length', 'keys', 'values', 'entries', 'forEach', 'hasOwnProperty', 'toString', 'toLocaleString', 'valueOf', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor', 'key'],
     }, __dynamic.storage.cloned = {
-        localStorage: self.__dynamic.util.clone(__dynamic.storage.localStorage),
-        sessionStorage: self.__dynamic.util.clone(__dynamic.storage.sessionStorage)
+        localStorage: __dynamic.util.clone(__dynamic.storage.localStorage),
+        sessionStorage: __dynamic.util.clone(__dynamic.storage.sessionStorage)
     });
 
     if (self.RTCPeerConnection) __dynamic.webrtc = {
@@ -136,10 +136,20 @@ export default function init(self: Window | any, __dynamic: any) {
         ]
     }
 
+    if (self.trustedTypes) __dynamic.trustedTypes = {
+        policy: self.trustedTypes.createPolicy('dynamic', {
+            createHTML: (s: any) => s,
+            createScript: (s: any) => s,
+            createScriptURL: (s: any) => s,
+            createURL: (s: any) => s,
+        }),
+        createScript: self.TrustedTypePolicy.prototype.createScript,
+    }
+
     if (self.__dynamic$config.tab) {
         if (self.Document && self.__dynamic$config.tab['title']) {
             document.title = self.__dynamic$config.tab.title;
-            self.__dynamic.define(self.document, 'title', {
+            __dynamic.define(self.document, 'title', {
                 get() {
                     return self.__dynamic$config.tab.title;
                 },

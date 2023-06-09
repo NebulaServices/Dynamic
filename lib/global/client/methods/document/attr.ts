@@ -270,28 +270,7 @@ export default function attributes(self: Window | any) {
         return this.textContent;
     }
 
-    var iterations = 0;
-
-    /*var int: any = setInterval(() => {
-        if (iterations++ > 10000) return clearInterval(int);
-        if (!self.document?.head) return;
-
-        if (self.document.head.querySelector('base')) {
-            self.__dynamic.baseURL = new URL(self.document.head.querySelector('base').dataset['dynamic_href'], new URL(self.__dynamic.meta.href));
-
-            clearInterval(int);
-        }
-    }, 0);
-
-    self.document.addEventListener('DOMContentLoaded', () => {
-        clearInterval(int);
-    });*/
-
-    /*self.TrustedTypePolicy.prototype.createScript = self.__dynamic.wrap(self.TrustedTypePolicy.prototype.createScript,
-        function(this: any, target: Function, ...args: Array<string>) {
-            return Reflect.apply(target, this, [self.__dynamic.rewrite.js.rewrite(args[0], {type: 'module'}, false, self.__dynamic)]);
-        }
-    );*/
+    self.__dynamic.baseURL = self.document ? new URL(self.__dynamic.url.decode(self.document.baseURI)) : null;
 
     self.document.createElement = self.__dynamic.wrap(self.document.createElement,
         function(this: any, target: Function, ...args: Array<string>) {

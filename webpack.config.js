@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
     
 export default {
-  mode: 'development',
+  mode: 'production',
   entry: {
     worker: {
       import: './'+join('lib', 'worker', 'index.ts'),
@@ -20,9 +20,9 @@ export default {
     handler: {
       import: './'+join('lib', 'handler', 'index.ts'),
     },
-    /*mutation: {
+    mutation: {
       import: './'+join('lib', 'mutation', 'index.ts'),
-    }*/
+    }
   },
   resolve: {
     extensions: ['.ts', '.js'],
