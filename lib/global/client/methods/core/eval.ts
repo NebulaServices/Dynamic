@@ -6,7 +6,7 @@ export default function Eval(self: Window | any) {
         script = self.__dynamic.rewrite.js.rewrite(script, {type: 'script'}, false, self.__dynamic);
 
         return handler.apply(this, [script]);
-    });
+    }, 'eval');
 
     self.__dynamic.define(self.Object.prototype, '__dynamic$eval', {
             get() {
@@ -20,6 +20,9 @@ export default function Eval(self: Window | any) {
 
     self.__dynamic$wrapEval = function(script: string) {
         if (!arguments.length) return arguments[0];
+
+        var event = self.__dynamic.fire('eval', [self, script]);
+        if (event) return event;
         
         script = self.__dynamic.rewrite.js.rewrite(script, {type: 'script'}, false, self.__dynamic);
 

@@ -37,7 +37,8 @@ export default function attributes(self: Window | any) {
                             args[1] = self.__dynamic.url.encode(args[1], self.__dynamic.baseURL || self.__dynamic.meta);
 
                             return Reflect.apply(target, this, args);
-                        }
+                        },
+                        'setAttribute'
                     );
 
                     element.prototype.setAttributeNS = self.__dynamic.wrap(element.prototype.setAttributeNS,
@@ -68,7 +69,8 @@ export default function attributes(self: Window | any) {
                             args[2] = self.__dynamic.url.encode(args[2], self.__dynamic.baseURL || self.__dynamic.meta);
 
                             return Reflect.apply(target, this, args);
-                        }
+                        },
+                        'setAttributeNS'
                     );
 
                     element.prototype.getAttribute = self.__dynamic.wrap(element.prototype.getAttribute,
@@ -76,7 +78,8 @@ export default function attributes(self: Window | any) {
                             if (this.dataset[`dynamic_${args[0]}`]) return this.dataset[`dynamic_${args[0]}`];
 
                             return Reflect.apply(target, this, args);
-                        }
+                        },
+                        'getAttribute'
                     );
 
                     element.prototype.getAttributeNS = self.__dynamic.wrap(element.prototype.getAttributeNS, 
@@ -84,7 +87,8 @@ export default function attributes(self: Window | any) {
                             if (this.dataset[`dynamic_${args[1]}`]) return this.dataset[`dynamic_${args[1]}`];
 
                             return Reflect.apply(target, this, args);
-                        }
+                        },
+                        'getAttributeNS'
                     );
                 }
 
@@ -235,7 +239,8 @@ export default function attributes(self: Window | any) {
             if (this instanceof self.HTMLTextAreaElement) return Reflect.apply(target, this, args);
 
             return Reflect.apply(target, this, [args[0], self.__dynamic.rewrite.html.rewrite(args[1], self.__dynamic.meta)]);
-        }
+        },
+        'insertAdjacentHTML'
     );
 
     [[self.Node, 'textContent'], [self.HTMLElement, 'innerText']].forEach(([el, attr]: any) => {
@@ -281,7 +286,8 @@ export default function attributes(self: Window | any) {
             }
 
             return element;
-        }
+        },
+        'createElement'
     );
 
     if (!document.querySelector('link[rel="icon"], link[rel="shortcut icon"]')) {

@@ -6,7 +6,8 @@ export default function style(self: any) {
             if (args[0]=='background-image'||args[0]=='background'||args[0]=='backgroundImage') args[1] = self.__dynamic.rewrite.css.rewrite(args[1], self.__dynamic.meta);
 
             return handler.apply(this, args);
-        }
+        },
+        'CSSStyleDeclaration.prototype.setProperty'
     );
 
     self.__dynamic.define(self.CSSStyleDeclaration.prototype, 'background', {

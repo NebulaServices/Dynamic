@@ -24,7 +24,7 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
       if (node.property.value == 'postMessage' && (parent.type=='CallExpression'&&parent.callee==node)) return PostMessage(node, parent);
       if (node.object.value == 'postMessage' && (parent.type=='CallExpression'&&parent.callee==node)) return PostMessage(node, parent);
 
-      if (node.property.name=='postMessage'||node.object.name=='postMessage') {
+      if ((node.property.name=='postMessage'||node.object.name=='postMessage') && node.object.type!=='Super') {
         var original:string = node.object?.name
         node.type = 'CallExpression';
         node.callee = {type: 'Identifier', name: '__dynamic$message'}

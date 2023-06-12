@@ -72,7 +72,7 @@ export default function window(self: any) {
                         return (Reflect.set(obj, prop, value), obj[prop]);
                     }
 
-                    if (obj.hasOwnProperty('undefined') && obj[prop]+''==prop) return obj[prop];
+                    if (obj.hasOwnProperty('undefined') && obj[prop]+''==prop) return obj[prop] || value || true;
                     if (prop=='location') return window.__dynamic$location = value;
 
                     if (obj.hasOwnProperty(prop) && !obj.propertyIsEnumerable(prop) && !desc?.writable) return obj[prop];

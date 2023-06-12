@@ -21,7 +21,7 @@ export default function CallExpression(node: any, parent: any = {}) {
     }
 
     if (node.callee.type=='MemberExpression') {
-        if (node.callee.property.name=='postMessage') {
+        if (node.callee.property.name=='postMessage' && node.callee.object.type!=='Super') {
             var original: string = node.callee.object;
             node.callee.type = 'CallExpression';
             node.callee.callee = {type: 'Identifier', name: '__dynamic$message'}

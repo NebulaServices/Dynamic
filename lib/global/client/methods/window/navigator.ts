@@ -13,7 +13,8 @@ export default function navigator(self: Window | any) {
             }
 
             return Reflect.apply(target, this, args) as boolean;
-        }
+        },
+        'navigator.sendBeacon'
     );
 
     /*if (self.navigator.getUserMedia) {

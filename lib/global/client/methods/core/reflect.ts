@@ -18,7 +18,8 @@ export default function reflect(self: Window | any) {
             }
             
             return _set.apply(this, a);
-        }
+        },
+        'Reflect.set'
     );
 
     self.Reflect.get = self.__dynamic.wrap(self.Reflect.get,
@@ -39,7 +40,8 @@ export default function reflect(self: Window | any) {
             }
 
             return _get.apply(this, a);
-        }
+        },
+        'Reflect.get'
     );
 
     self.__dynamic.Reflect = {

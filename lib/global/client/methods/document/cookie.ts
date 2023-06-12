@@ -5,11 +5,17 @@ export default function cookie(self: any) {
 
     self.__dynamic.define(self.document, 'cookie', {
         get() {
+            var event = self.__dynamic.fire('getCookies', [self.__dynamic.location.host, self.__dynamic.cookie.str || '']);
+            if (event) return event;
+
             self.__dynamic.cookies.update(self.__dynamic.location.host);
             return self.__dynamic.cookie.str || self.__dynamic.cookie.desc.get.call(this) || '';
         },
         set(val: any) {
             var parsed = self.__dynamic.modules.setCookieParser.parse(val, {decodeValues: false})[0];
+
+            var event = self.__dynamic.fire('setCookie', [self.__dynamic.location.host, val, parsed]);
+            if (event) return event;
 
             parsed.name = parsed.name.replace(/^\./g, '');
 

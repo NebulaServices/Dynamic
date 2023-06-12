@@ -6,7 +6,8 @@ export default function write(self: any) {
             }
 
             return handler.apply(this, args);
-        }
+        },
+        'document.write'
     );
 
     self.document.writeln = self.__dynamic.wrap(self.document.writeln,
@@ -16,6 +17,7 @@ export default function write(self: any) {
             }
 
             return handler.apply(this, args);
-        }
+        },
+        'document.writeln'
     );
 }

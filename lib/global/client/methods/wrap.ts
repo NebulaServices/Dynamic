@@ -6,6 +6,10 @@ export default function wrap(self: Window | any) {
             var g = handler;
             var t = target;
             var f: any = function(this: any, ...a: any[]) {
+                if (typeof result == 'string') {
+                    var event = self.__dynamic.fire(result, this ? [this, ...a] : a);
+                    if (event) return event;
+                }
                 var v = g.call(this, t, ...a);
                 return v;
             }

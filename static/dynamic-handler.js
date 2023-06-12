@@ -23,11 +23,5 @@ if (typeof self.registration !== 'undefined') {
 if (typeof window !== 'undefined') {
     // Only in Browser
 
-    window.__dynamic.on('fetch', (url, request) => {
-        //console.log(`Fetching: ${url}`);
-    });
-
-    window.__dynamic.on('XMLHttpRequest', (url, request) => {
-        //console.log(`XMLHttpRequest: ${url}`);
-    });
+    
 }

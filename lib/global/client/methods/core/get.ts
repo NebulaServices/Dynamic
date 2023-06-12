@@ -1,5 +1,8 @@
 export default function Get(self: Window | any) {
     self.__dynamic$get = function(object: any) {
+        var data = self.__dynamic.fire('get', [object]);
+        if (data) return data;
+
         try {
             if (object==self.parent) return self.parent.__dynamic$window;
             if (object==self.top) return self.top.__dynamic$window;
@@ -8,7 +11,7 @@ export default function Get(self: Window | any) {
                 return self.__dynamic$location;
             }
 
-            if (object instanceof (self.Location || self.WorkerLocation)) {
+            if (self.Location || self.WorkerLocation) if (object instanceof (self.Location || self.WorkerLocation)) {
                 return self.__dynamic$location;
             }
 

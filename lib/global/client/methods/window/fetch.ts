@@ -30,15 +30,6 @@ export default function fetch(self: Window | any) {
     
     self.fetch = self.__dynamic.wrap(self.fetch,
         function(this: Window, target: Function, ...args: Array<string | Request | any>) {
-            const event = self.__dynamic.fire('fetch', [args[0].url || args[0]]);
-
-            if (event) {
-                if (event instanceof Promise) return event;
-                if (event instanceof Request) args[0] = event;
-                if (event instanceof Response) return new Promise(e=>e(event));
-                if (event instanceof String) args[0] = event;
-            }
-
             if (self.Request) if (args[0].constructor.name === 'Request' || args[0] instanceof self.Request) {
                 return Reflect.apply(target, self, args) as Promise<Response>;
             }
@@ -48,7 +39,8 @@ export default function fetch(self: Window | any) {
             }
 
             return Reflect.apply(target, self, args) as Promise<Response>;
-        }
+        },
+        'fetch'
     );
 
     self.XMLHttpRequest.prototype.open = self.__dynamic.wrap(self.XMLHttpRequest.prototype.open,
@@ -58,11 +50,12 @@ export default function fetch(self: Window | any) {
             }
 
             if (args[2] === false) {
-                //args[2] = true;
+                args[2] = true;
             }
 
             return Reflect.apply(target, this, args) as undefined;
-        }
+        },
+        'XMLHttpRequest.prototype.open'
     );
 
     Object.defineProperty(self.XMLHttpRequest.prototype, 'responseURL', {
@@ -112,7 +105,8 @@ export default function fetch(self: Window | any) {
           self.__dynamic.elements.client(win, self.__dynamic$config, win.__dynamic$url);
     
           return win.__dynamic$window as Window;
-        }
+        },
+        'window.open'
     );
 
     self.__dynamic.define(self, '__dynamic$import', {

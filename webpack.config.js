@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
     
 export default {
-  mode: 'production',
+  mode: 'development',
   entry: {
     worker: {
       import: './'+join('lib', 'worker', 'index.ts'),

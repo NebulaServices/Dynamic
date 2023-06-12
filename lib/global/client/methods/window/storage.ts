@@ -5,7 +5,8 @@ export default function storage(self: Window | any) {
             if (args[0]) args[0] = '__dynamic$' + self.__dynamic$location.host + '$' + args[0].toString();
 
             return (Reflect.apply(target, this, args) as undefined, true);
-        }
+        },
+        'Storage.prototype.setItem'
     );
 
     self.Storage.prototype.getItem = self.__dynamic.wrap(self.Storage.prototype.getItem,
@@ -13,7 +14,8 @@ export default function storage(self: Window | any) {
             if (args[0]) args[0] = '__dynamic$' + self.__dynamic$location.host + '$' + args[0].toString();
 
             return (Reflect.apply(target, this, args) as string || null);
-        }
+        },
+        'Storage.prototype.getItem'
     );
 
     self.Storage.prototype.removeItem = self.__dynamic.wrap(self.Storage.prototype.removeItem,
@@ -21,7 +23,8 @@ export default function storage(self: Window | any) {
             if (args[0]) args[0] = '__dynamic$' + self.__dynamic$location.host + '$' + args[0].toString();
 
             return (Reflect.apply(target, this, args) as undefined, true);
-        }
+        },
+        'Storage.prototype.removeItem'
     );
 
     self.Storage.prototype.clear = self.__dynamic.wrap(self.Storage.prototype.clear,
@@ -37,7 +40,8 @@ export default function storage(self: Window | any) {
             }
 
             return true;
-        }
+        },
+        'Storage.prototype.clear'
     );
 
     self.Storage.prototype.key = self.__dynamic.wrap(self.Storage.prototype.key,
@@ -51,7 +55,8 @@ export default function storage(self: Window | any) {
             if (keys[args[0]]) return keys[args[0]];
 
             return null;
-        }
+        },
+        'Storage.prototype.key'
     );
 
     ["localStorage", "sessionStorage"].forEach((storage: any) => {

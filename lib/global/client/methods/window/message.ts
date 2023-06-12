@@ -9,8 +9,6 @@ export default function message(self: Window | any) {
     function __d$Send() {
         var args = arguments;
 
-        //console.log(target, origin, args)
-
         if (isWorker(target) || !isTarget(target))
           return target.postMessage.call(target, ...args);
 
@@ -39,7 +37,7 @@ export default function message(self: Window | any) {
     }
   });
 
-  if (self.constructor.name == 'Window') Object.defineProperty(self, 'onmessage', {
+  if (self.constructor.name == 'Window') self.__dynamic.define(self, 'onmessage', {
     get() {
       return self._onmessage;
     },
@@ -61,25 +59,25 @@ export default function message(self: Window | any) {
       for (var i in event) {
         switch(i) {
           case "isTrusted":
-            Object.defineProperty(cloned, i, {
+            self.__dynamic.define(cloned, i, {
               value: true,
               writable: false,
             });
             break;
           case "origin":
-            if (Array.isArray(event.data) && event.data.length == 5) Object.defineProperty(cloned, i, {
+            if (Array.isArray(event.data) && event.data.length == 5) self.__dynamic.define(cloned, i, {
               value: event.data[1],
               writable: false,
-            }); else Object.defineProperty(cloned, i, {
+            }); else self.__dynamic.define(cloned, i, {
               value: event.origin,
               writable: false,
             });
             break;
           case "data":
-            if (Array.isArray(event.data) && event.data.length == 5) Object.defineProperty(cloned, i, {
+            if (Array.isArray(event.data) && event.data.length == 5) self.__dynamic.define(cloned, i, {
               value: event.data[0],
               writable: false,
-            }); else Object.defineProperty(cloned, i, {
+            }); else self.__dynamic.define(cloned, i, {
               value: event.data,
               writable: false,
             });
@@ -88,19 +86,19 @@ export default function message(self: Window | any) {
             if (!event.source) break;
 
             if (_window) {
-              Object.defineProperty(cloned, i, {
+              self.__dynamic.define(cloned, i, {
                 value: _window?.__dynamic$window || _window,
                 writable: true,
               });
             } else {
-              Object.defineProperty(cloned, i, {
+              self.__dynamic.define(cloned, i, {
                 value: _window || (Array.isArray(event.data) && event.data.length == 3 && event.data[2] === true) ? event.source : event.currentTarget,
                 writable: true,
               });
             };
             break;
           default:
-            Object.defineProperty(cloned, i, {
+            self.__dynamic.define(cloned, i, {
               value: event[i],
               writable: false,
             });

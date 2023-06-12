@@ -1,4 +1,5 @@
 export default function mutation(self: Window | any, __dynamic: any) {
+    return;
     if (!__dynamic) __dynamic = self.__dynamic;
     
     function rewrite(node: Element | any) {
