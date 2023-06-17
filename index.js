@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import nodeStatic from 'node-static';
 import chalk from 'chalk';
 
-const port = 80;
+const port = 800;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

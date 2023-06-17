@@ -7,6 +7,11 @@ export default function(self: any, config: any = {}, altURL: string = '') {
   if (self.hasOwnProperty("__dynamic")) return false;
   if (!self.hasOwnProperty("__dynamic$config")) self.__dynamic$config = config;
 
+  self.document.querySelectorAll('*[integrity], *[nonce]').forEach((e: any) => {
+    e.removeAttribute('integrity');
+    e.removeAttribute('nonce');
+  });
+
   const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config);
 
   self.__dynamic$baseURL = altURL || self.__dynamic$url || __dynamic.url.decode(location.pathname + location.search + location.hash) || "";
@@ -20,6 +25,8 @@ export default function(self: any, config: any = {}, altURL: string = '') {
   for (var method of self.__dynamic.client.methods) {
     const name: any = method.name;
     const func: any = Object.entries(self.__dynamic.client).find(e=>e[0]==name);
+
+    if (name == 'mutation' && self.frameElement) continue;
 
     if (method.function=='self') func[1](self);
 

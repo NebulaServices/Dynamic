@@ -7,46 +7,26 @@ export default function niche(self: any) {
         enumerable: false,
     });
 
-    self.__dynamic.define(self.document, 'referrer', {
-        value: self.__dynamic$location.href as string,
-        configurable: false,
-        enumerable: false,
-    });
-
     self.__dynamic.define(self.document, 'domain', {
         value: self.__dynamic$location.hostname as string,
         configurable: false,
         enumerable: false,
     });
 
-    self.__dynamic.define(self.document, 'URL', {
-        value: self.__dynamic$location.toString() as string,
-        configurable: false,
-        enumerable: false,
+    ['referrer', 'URL', 'documentURI'].forEach(prop => {
+        self.__dynamic.define(self.document, prop, {
+            value: self.__dynamic$location.toString() as string,
+            configurable: false,
+            enumerable: false,
+        });
     });
 
-    self.__dynamic.define(self.document, 'documentURI', {
-        value: self.__dynamic$location.toString() as string,
-        configurable: false,
-        enumerable: false,
-    });
-
-    self.__dynamic.define(self.document, 'baseURI', {
-        get() {
-            return (self.__dynamic.baseURL || self.__dynamic$location).href as string;
-        },
-        set() {
-            return false;
-        }
-    });
-
-    self.__dynamic.define(self.HTMLElement.prototype, 'baseURI', {
-        get() {
-            return self.__dynamic.baseURL.href || self.__dynamic$location.toString() as string;
-        },
-        set() {
-            return false;
-        }
+    [self.document, self.HTMLElement.prototype].forEach(obj => {
+        self.__dynamic.define(obj, 'baseURI', {
+            get() {
+                return (self.__dynamic.baseURL || self.__dynamic$location).href as string;
+            }
+        });
     });
 
     // storage.getEntries can leak page location
@@ -140,24 +120,4 @@ export default function niche(self: any) {
             }
         }
     );
-
-    /*self.onunhandledrejection = function(e: any) {
-        console.error(e);
-    }
-
-    self.onerror = function(e: any) {
-        console.error(e);
-    }
-
-    self.__dynamic.define(self, 'onerror', {
-        value: self.onerror,
-        configurable: false,
-        enumerable: false,
-    });
-
-    self.__dynamic.define(self, 'onunhandledrejection', {
-        value: self.onunhandledrejection,
-        configurable: false,
-        enumerable: false,
-    });*/
 }

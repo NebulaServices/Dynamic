@@ -39,5 +39,5 @@ export default function Identifier(node: any, parent: any = {}) {
 
     if (node.name=='eval' && parent.right !== node) return node.name = '__dynamic$eval';
 
-    node.name = `dg$(${node.name})`;
+    //node.name = `dg$(${node.name})`;
 }

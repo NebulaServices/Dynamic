@@ -20,34 +20,36 @@ export default function message(self: Window | any) {
     return __d$Send;
   }
 
-  if (self.addEventListener && self.constructor.name == 'Window') self.addEventListener = new Proxy(self.addEventListener, {
-    apply(t, g, a) {
-      if (g==self.__dynamic$window) g = self;
-      if (!a[1] || !a[0] || typeof a[1] != 'function') return Reflect.apply(t, g, a);
-
-      if (a[0]=='message') {
-        var o = a[1].bind({});
-
-        a[1] = function(event: MessageEvent | any) {
-          return o(cloneEvent(event));
+  if (self.constructor.name == 'Window') {
+    if (self.addEventListener) self.addEventListener = new Proxy(self.addEventListener, {
+      apply(t, g, a) {
+        if (g==self.__dynamic$window) g = self;
+        if (!a[1] || !a[0] || typeof a[1] != 'function') return Reflect.apply(t, g, a);
+  
+        if (a[0]=='message') {
+          var o = a[1].bind({});
+  
+          a[1] = function(event: MessageEvent | any) {
+            return o(cloneEvent(event));
+          }
         }
+  
+        return Reflect.apply(t, g, a);
       }
+    });
 
-      return Reflect.apply(t, g, a);
-    }
-  });
-
-  if (self.constructor.name == 'Window') self.__dynamic.define(self, 'onmessage', {
-    get() {
-      return self._onmessage;
-    },
-    set(val: any) {
-      if (self._onmessage) {self.removeEventListener('message', self._onmessage)}
-
-      self.addEventListener('message', val);;
-      return self._onmessage = val;
-    }
-  });
+    if (self.constructor.name == 'Window') self.__dynamic.define(self, 'onmessage', {
+      get() {
+        return self._onmessage;
+      },
+      set(val: any) {
+        if (self._onmessage) {self.removeEventListener('message', self._onmessage)}
+  
+        self.addEventListener('message', val);;
+        return self._onmessage = val;
+      }
+    });
+  }
 
   function cloneEvent(event: MessageEvent | any) {
       const cloned = self.__dynamic.util.clone(event);
@@ -56,52 +58,55 @@ export default function message(self: Window | any) {
 
       if (event.source) _window = getWindow(event.data[3], event.data[2]) || event.currentTarget;
 
+      self.__dynamic.define(cloned, 'isTrusted', {
+        value: true,
+        writable: false,
+      });
+
+      if (event.origin) {
+        if (Array.isArray(event.data) && event.data.length == 5) self.__dynamic.define(cloned, 'origin', {
+          value: event.data[1],
+          writable: false,
+        }); else self.__dynamic.define(cloned, 'origin', {
+          value: event.origin,
+          writable: false,
+        });
+      }
+
+      if (event.data) {
+        if (Array.isArray(event.data) && event.data.length == 5) self.__dynamic.define(cloned, 'data', {
+          value: event.data[0],
+          writable: false,
+        }); else self.__dynamic.define(cloned, 'data', {
+          value: event.data,
+          writable: false,
+        });
+      }
+
+      if (event.source) {
+        if (_window) {
+          self.__dynamic.define(cloned, 'source', {
+            value: _window?.__dynamic$window || _window,
+            writable: true,
+          });
+        } else {
+          self.__dynamic.define(cloned, 'source', {
+            value: _window || (Array.isArray(event.data) && event.data.length == 3 && event.data[2] === true) ? event.source : event.currentTarget,
+            writable: true,
+          });
+        };
+      }
+
       for (var i in event) {
         switch(i) {
-          case "isTrusted":
-            self.__dynamic.define(cloned, i, {
-              value: true,
-              writable: false,
-            });
-            break;
-          case "origin":
-            if (Array.isArray(event.data) && event.data.length == 5) self.__dynamic.define(cloned, i, {
-              value: event.data[1],
-              writable: false,
-            }); else self.__dynamic.define(cloned, i, {
-              value: event.origin,
-              writable: false,
-            });
-            break;
-          case "data":
-            if (Array.isArray(event.data) && event.data.length == 5) self.__dynamic.define(cloned, i, {
-              value: event.data[0],
-              writable: false,
-            }); else self.__dynamic.define(cloned, i, {
-              value: event.data,
-              writable: false,
-            });
-            break;
-          case "source":
-            if (!event.source) break;
-
-            if (_window) {
-              self.__dynamic.define(cloned, i, {
-                value: _window?.__dynamic$window || _window,
-                writable: true,
-              });
-            } else {
-              self.__dynamic.define(cloned, i, {
-                value: _window || (Array.isArray(event.data) && event.data.length == 3 && event.data[2] === true) ? event.source : event.currentTarget,
-                writable: true,
-              });
-            };
-            break;
           default:
-            self.__dynamic.define(cloned, i, {
-              value: event[i],
-              writable: false,
-            });
+            if (i !== 'isTrusted' && i !== 'origin' && i !== 'data' && i !== 'source') {
+              self.__dynamic.define(cloned, i, {
+                value: event[i],
+                writable: false,
+              });
+            }
+            
             break;
         }
       }

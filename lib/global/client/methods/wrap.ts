@@ -10,6 +10,7 @@ export default function wrap(self: Window | any) {
                     var event = self.__dynamic.fire(result, this ? [this, ...a] : a);
                     if (event) return event;
                 }
+
                 var v = g.call(this, t, ...a);
                 return v;
             }

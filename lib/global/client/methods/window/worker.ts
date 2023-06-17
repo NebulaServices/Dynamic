@@ -5,7 +5,7 @@ export default function worker(self: any) {
         construct(t: any, a: any):any {
             if (a[0])  {
                 a[0] = a[0].toString();
-                if (a[0].trim().startsWith(`blob:${self.__dynamic$location.origin}`)) {
+                if (a[0].trim().startsWith(`blob:${self.location.origin}`)) {
                     const xhr = new XHR;
                     xhr.open('GET', a[0], false);
                     xhr.send();

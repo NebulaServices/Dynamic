@@ -1,5 +1,7 @@
+import Mutate from '@dynamic-pkg/mutation';
+
 export default function mutation(self: Window | any, __dynamic: any) {
-    return;
+    //return;
     if (!__dynamic) __dynamic = self.__dynamic;
     
     function rewrite(node: Element | any) {
@@ -39,29 +41,19 @@ export default function mutation(self: Window | any, __dynamic: any) {
                 node.src = __dynamic.url.encode(node.src, __dynamic.meta);
             }
 
-            if (node.integrity) {
-                node.setAttribute('nointegrity', node.integrity);
-                node.removeAttribute('integrity');
-            }
+            //let cloned = node.cloneNode(true) as HTMLScriptElement | any;
 
-            if (node.nonce) {
-                node.setAttribute('nononce', node.nonce);
-                node.removeAttribute('nonce');
-            }
-
-            let cloned = node.cloneNode(true) as HTMLScriptElement | any;
-
-            if (cloned.type && cloned.textContent?.length) {
-                if (cloned.type == "application/javascript" || cloned.type == 'text/javascript' || cloned.type == 'application/x-javascript' && cloned.textContent?.length) {
-                    cloned.textContent = __dynamic.rewrite.js.rewrite(cloned.textContent, {type: 'script'}, false, __dynamic);
+            if (node.type && node.textContent?.length) {
+                if (node.type == "application/javascript" || node.type == 'text/javascript' || node.type == 'application/x-javascript' && node.textContent?.length) {
+                    node.textContent = __dynamic.rewrite.js.rewrite(node.textContent, {type: 'script'}, false, __dynamic);
                 }
-            } else if (!cloned.type && cloned.textContent?.length) {
-                cloned.textContent = __dynamic.rewrite.js.rewrite(cloned.textContent, {type: 'script'}, false, __dynamic);
+            } else if (!node.type && node.textContent?.length) {
+                node.textContent = __dynamic.rewrite.js.rewrite(node.textContent, {type: 'script'}, false, __dynamic);
             }
 
-            cloned.rewritten = true;
-            node.rewritten = true;
-            return node.node.parentElement.replaceChild(cloned, node.node);
+            //cloned.rewritten = true;
+            //node.rewritten = true;
+            //return node.node.parentElement.replaceChild(cloned, node.node);
         }
 
         if (node instanceof HTMLStyleElement) {
@@ -84,7 +76,7 @@ export default function mutation(self: Window | any, __dynamic: any) {
             }
         }
 
-        if (node instanceof HTMLImageElement) {
+        /*if (node instanceof HTMLImageElement) {
             if (node.src) {
                 node.dataset['dynamic_src'] = node.src;
                 node.src = __dynamic.url.encode(node.src, __dynamic.meta);
@@ -94,9 +86,9 @@ export default function mutation(self: Window | any, __dynamic: any) {
                 node.dataset['dynamic_srcset'] = node.srcset;
                 node.srcset = __dynamic.rewrite.srcset.encode(node.srcset, __dynamic);
             }
-        }
+        }*/
 
-        if (node instanceof HTMLLinkElement) {
+        if (node instanceof HTMLLinkElement && node.getAttribute('rel') !== 'stylesheet' && node.getAttribute('rel') !== 'prefetch' && node.getAttribute('rel') !== 'dns-prefetch') {
             if (node.href) {
                 node.dataset['dynamic_href'] = node.href;
                 node.href = __dynamic.url.encode(node.href, __dynamic.meta);
@@ -105,16 +97,6 @@ export default function mutation(self: Window | any, __dynamic: any) {
             if (node.imageSrcset) {
                 node.dataset['dynamic_imagesrcset'] = node.imageSrcset;
                 node.imageSrcset = __dynamic.rewrite.srcset.encode(node.imageSrcset, __dynamic);
-            }
-
-            if (node.integrity) {
-                node.setAttribute('nointegrity', node.integrity);
-                node.removeAttribute('integrity');
-            }
-
-            if (node.nonce) {
-                node.setAttribute('nononce', node.nonce);
-                node.removeAttribute('nonce');
             }
         }
 
@@ -225,29 +207,46 @@ export default function mutation(self: Window | any, __dynamic: any) {
             if (node.getAttribute("style")) {
                 node.setAttribute("style", __dynamic.rewrite.css.rewrite(node.getAttribute("style"), __dynamic.meta));
             }
+
+            if (node.integrity) {
+                node.setAttribute('nointegrity', node.integrity);
+                node.removeAttribute('integrity');
+            }
+
+            if (node.nonce) {
+                node.setAttribute('nononce', node.nonce);
+                node.removeAttribute('nonce');
+            }
         }
 
         return (node.rewritten = true);
     }
 
-    const observer = ((t,e,a: any = null)=>((a=new MutationObserver(function e(a){for(var r of a)t[r.type](r),document.dispatchEvent(new CustomEvent({attributes:"attrChanged",characterData:"characterData",childList:"nodeChanged"}[r.type],{detail:r}))})).observe(e,{subtree:!0,attributes:!0,childList:!0}),a))({
+    const observer = Mutate({
         childList(event: MutationRecord) {
             rewrite(event.target);
 
             for (let node of event.addedNodes as any) {
-                rewrite(node);
                 if (node.childNodes) for (let child of node.childNodes) rewrite(child);
             }
 
             if (event.target.childNodes) for (var child of event.target.childNodes) rewrite(child);
         },
         attributes(event: MutationRecord) {
+            //if (event.attributeName == 'href') console.log(event);
+
             return;
         },
         characterData(event: MutationRecord) {
             return;
         }
-    }, self.document.documentElement);
+    }, self.document);
+
+    self.Element.prototype.replaceWith = self.__dynamic.wrap(self.Element .prototype.replaceWith, function (this: Node, handler: Function, ...args: Array<Node>) {
+        // for (let node of args) rewrite(node);
+
+        return handler.apply(this, args);
+    });
 
     self.document.addEventListener("DOMContentLoaded", function() {
         observer.disconnect();

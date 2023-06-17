@@ -16,16 +16,4 @@ export default function navigator(self: Window | any) {
         },
         'navigator.sendBeacon'
     );
-
-    /*if (self.navigator.getUserMedia) {
-        self.navigator.getUserMedia = self.__dynamic.wrap(self.navigator.getUserMedia,
-            function(this: MediaDevices, target: Function, ...args: Array<MediaStreamConstraints>) {
-                console.log(args);
-
-                return Reflect.apply(target, this, args) as Promise<MediaStream>;
-            }
-        );
-
-        self.navigator.webkitGetUserMedia = self.navigator.getUserMedia;
-    }*/
 }

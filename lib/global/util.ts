@@ -9,6 +9,7 @@ import edit from './util/edit';
 import error from './util/error';
 import about from './util/about';
 import encode from './util/encode';
+import rewritePath from './util/rewritePath';
 
 class DynamicUtil {
   route = route;
@@ -23,6 +24,7 @@ class DynamicUtil {
   error = error;
   encode = encode;
   about = about;
+  rewritePath = rewritePath;
 
   ctx;
   

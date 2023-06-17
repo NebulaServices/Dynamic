@@ -49,9 +49,16 @@ export default function Get(self: Window | any) {
         return self.__dynamic.url.encode(self.__dynamic.meta.href.replace(self.__dynamic.property['href'], value), self.__dynamic.property);
     }
 
+    self.__dynamic$var = function(object: any, value: any) {
+        return window[value] = object;
+    }
+
     self.dg$ = self.__dynamic$get;
     self.ds$ = self.__dynamic$set;
     self.dp$ = self.__dynamic$property;
+    self.dv$ = self.__dynamic$var;
     self.d$g_ = self.__dynamic$get;
     self.d$s_ = self.__dynamic$set;
+    self.d$p_ = self.__dynamic$property;
+    self.d$v_ = self.__dynamic$var;
 }

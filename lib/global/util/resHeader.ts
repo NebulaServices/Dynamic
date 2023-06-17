@@ -18,6 +18,8 @@ export default async function Header(this: DynamicUtil, headers: any, meta: Meta
 
             for await (var cookie of headers[header]) {
                 await Cookies.set(meta.host, this.ctx.modules.cookie.serialize(cookie.name, cookie.value, {...cookie, encode: (e:any) => e}));
+
+                continue;
             }
 
             delete headers[header];

@@ -11,10 +11,14 @@ export default [
         name: 'location',
         function: 'self',
     },
-    /*{
+    {
         name: 'mutation',
         function: 'self',
-    },*/
+    },
+    {
+        name: 'dom',
+        function: 'self',
+    },
     {
         name: 'write',
         function: 'self',

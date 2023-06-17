@@ -26,9 +26,7 @@ export default function Function(self: Window | any) {
 
     self.__dynamic.define(self.Function.prototype, 'toString', {
         get(this: any) {
-            if (this.__toString) return this.__toString;
-
-            return string;
+            return this.__toString || string;
         },
         set(val: any) { this.__toString = val; } 
     });
@@ -62,7 +60,8 @@ export default function Function(self: Window | any) {
             if (args[0] == self.__dynamic$document) args[0] = self.document;
 
             return Reflect.apply(handler, this, args);
-        }
+        },
+        'Function.prototype.apply'
     );
 
     self.Function.prototype.call = new Proxy(self.Function.prototype.call, {
@@ -80,6 +79,7 @@ export default function Function(self: Window | any) {
             if (args[0] == self.__dynamic$document) args[0] = self.document;
 
             return handler.apply(this, args);
-        }
+        },
+        'Function.prototype.bind'
     );
 }

@@ -84,5 +84,7 @@ export const DB = {
                 }
             }
         }
+
+        return cookies;
     }
 }

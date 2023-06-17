@@ -1,7 +1,7 @@
 self.__dynamic$config = {
   prefix: '/service/',
-  encoding: 'xor',
-  mode: 'development', // development: zero caching, no minification, production: speed-oriented
+  encoding: 'none',
+  mode: 'production', // development: zero caching, no minification, production: speed-oriented
   bare: {
     version: 2,
     path: 'https://tomp.app/',
@@ -18,7 +18,7 @@ self.__dynamic$config = {
       client: 'dynamic.client.js',
       worker: 'dynamic.worker.js',
       config: 'dynamic.config.js',
-      inject: '/dynamic-handler.js',
+      inject: null,
     }
   },
   block: [

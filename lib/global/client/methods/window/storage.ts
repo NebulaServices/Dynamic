@@ -60,52 +60,6 @@ export default function storage(self: Window | any) {
     );
 
     ["localStorage", "sessionStorage"].forEach((storage: any) => {
-        /*self.__dynamic.storage.cloned[storage].getItem = new Proxy(self[storage].getItem, {
-            apply(t: any, g: any, a: any) {
-                if (a[0]) a[0] = '__dynamic$' + self.__dynamic$location.host + '$' + a[0].toString();
-
-                return Reflect.apply(t, self.__dynamic.storage[storage], a);
-            }
-        });
-
-        self.__dynamic.storage.cloned[storage].setItem = new Proxy(self[storage].setItem, {
-            apply(t: any, g: any, a: any) {
-                if (a[0]) a[0] = '__dynamic$' + self.__dynamic$location.host + '$' + a[0].toString();
-
-                return Reflect.apply(t, self.__dynamic.storage[storage], a);
-            }
-        });
-
-        self.__dynamic.storage.cloned[storage].removeItem = new Proxy(self[storage].removeItem, {
-            apply(t: any, g: any, a: any) {
-                if (a[0]) a[0] = '__dynamic$' + self.__dynamic$location.host + '$' + a[0].toString();
-
-                return Reflect.apply(t, self.__dynamic.storage[storage], a);
-            }
-        });
-
-        self.__dynamic.storage.cloned[storage].clear = new Proxy(self[storage].clear, {
-            apply(t: any, g: any, a: any) {
-                self.__dynamic.storage.keys[storage].forEach((key: any) => {
-                    if (key.startsWith('__dynamic$' + self.__dynamic$location.host + '$')) self.__dynamic.storage[storage].removeItem(key);
-                });
-
-                return;
-            }
-        });
-
-        self.__dynamic.storage.cloned[storage].key = new Proxy(self[storage].key, {
-            apply(t: any, g: any, a: any) {
-                var keys = [];
-
-                for (var i = 0; i < self.__dynamic.storage[storage].length; i++) {
-                    if (self.__dynamic.storage[storage].key(i).startsWith('__dynamic$' + self.__dynamic$location.host + '$')) keys.push(self.__dynamic.storage[storage].key(i).replace('__dynamic$' + self.__dynamic$location.host + '$', ''));
-                }
-
-                return keys[a[0]]?.replace('__dynamic$' + self.__dynamic$location.host + '$', '') || null;
-            }
-        });*/
-
         self['__dynamic$'+storage] = new Proxy(self[storage], {
             get(target, prop: any): any {
                 if (prop == 'length') {

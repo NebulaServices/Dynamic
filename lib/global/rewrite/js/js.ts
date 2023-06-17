@@ -15,6 +15,11 @@ export default class js {
   }
 
   rewrite(this: any, src:any, config: any = {}, inject: Boolean = true, dynamic: any = {}) {
+    if (!src) return src;
+
+    if (src instanceof Object) return src;
+
+    src = src.toString();
 
     if (src.includes('/* dynamic.js */')) return src;
 
@@ -28,7 +33,7 @@ export default class js {
         src = this.process(src, config, {module: false, ...this.ctx}, dynamic);
       }
     } catch(e) {
-      console.log('backup failed', e, src)
+      console.trace('backup failed', e, src)
     }
     
     if (inject) {

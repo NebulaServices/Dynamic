@@ -1,4 +1,3 @@
-import { BareError } from '@tomphttp/bare-client';
 import { DynamicBundle } from '../global/bundle';
 import Cookie from '../global/cookie';
 
@@ -10,7 +9,8 @@ import Cookie from '../global/cookie';
 
     if (typeof self.ORIGINS == 'object') {
       if (self.ORIGINS.length) {
-        if (!self.ORIGINS.includes(location.origin)) {
+        if (self.ORIGINS[0] == '*') console.log("Wildcard Origin Accepted");
+        else if (!self.ORIGINS.includes(location.origin)) {
           console.error("Illegal Origin: " + location.origin);
           console.log("Status: Aborting Install");
           console.groupEnd();
@@ -26,6 +26,28 @@ import Cookie from '../global/cookie';
     console.log('Configuration Loaded:', self.__dynamic$config);
 
     await self.skipWaiting();
+
+    console.groupCollapsed('Loading Dynamic Modules:');
+
+    for await (var i of [['html', 'dynamic.html.js']] as any) {
+      var [name, url]: any = i;
+
+      url = new URL(url, new URL(location.origin + self.__dynamic$config.assets.prefix + 'dynamic.worker.js')).href;
+
+      self[name] = fetch(url).then((res: any) => {
+        console.log('Loaded Dynamic Module: ' + name, res);
+
+        return self[name] = res.text();
+      }).then((text: any) => {
+        return eval(text);
+      });
+
+      console.log('Loading: ' + name, url);
+
+      continue;
+    }
+
+    console.groupEnd();
 
     if (self.__dynamic$config.mode == 'development') return console.groupEnd();
 
@@ -50,6 +72,8 @@ import Cookie from '../global/cookie';
     console.groupEnd();
 
     console.groupEnd();
+
+    return;
   });
   
   self.addEventListener('activate', (event: Event | any) => {
@@ -88,13 +112,18 @@ import Cookie from '../global/cookie';
 
   __dynamic.config = self.__dynamic$config;
   __dynamic.config.bare.path = typeof __dynamic.config.bare.path === 'string' ? [ new URL(__dynamic.config.bare.path, self.location) ][0] : __dynamic.config.bare.path.map((str:any) => new URL(str, self.location));
-  __dynamic.bare = new __dynamic.modules.bare(__dynamic.config.bare.path, null, 'v'+__dynamic.config.bare.version);
+  __dynamic.bare = new __dynamic.modules.bare(__dynamic.config.bare.path);
+
+  __dynamic.encoding = {
+    ...__dynamic.encoding,
+    ...(__dynamic as any).encoding[__dynamic.config.encoding || 'none']
+  };
 
   self.__dynamic = __dynamic;
 
-  self.console.error = (message: any, ...optionalParams: any[]) => {
-    console.log.call({}, ...['%c'+message, 'background: #240d0d;padding:10px;color:#ff7474;font-size:11px;', ...optionalParams]);
-  };
+  /*self.console.error = (message: any, ...optionalParams: any[]) => {
+    return console.log.call({}, ...['%c'+message, 'background: #240d0d;padding:10px;color:#ff7474;font-size:11px;', ...optionalParams]);
+  };*/
 
   self.Object.defineProperty(self.WindowClient.prototype, '__dynamic$location', {get() { return new URL(__dynamic.url.decode(this.url)) }});
 
@@ -110,14 +139,29 @@ import Cookie from '../global/cookie';
     async fetch(event: Event | any) {
       const { request } = event;
 
-      try {
-        if (!!__dynamic.util.file(request)) return await __dynamic.util.edit(request);
-        if (!!__dynamic.util.path(request)) return await fetch(request);
-        if (!__dynamic.util.routePath(request)) return await __dynamic.util.route(request);
+      const userData = __dynamic.modules.bowser.parse(navigator.userAgent);
+      const userBrowser = userData.browser.name;
 
+      try {
         if (request.mode !== 'navigate') request.client = (await self.clients.matchAll()).find((e:any)=>e.id==event.clientId);
 
+        if (!!__dynamic.util.file(request)) return await __dynamic.util.edit(request);
+        if (!!__dynamic.util.path(request)) {
+          if (!request.client || !request.url.startsWith('http'))
+            return await fetch(request);
+          else Object.defineProperty(request, 'url', {value: __dynamic.util.rewritePath(request, request.client, new URL(self.__dynamic.url.decode(new URL(request.url))))});
+        }
+        if (!__dynamic.util.routePath(request)) return await __dynamic.util.route(request);
+
+        await __dynamic.bare.working;
+        console.log(__dynamic.bare);
+
         const Dynamic: DynamicBundle = new DynamicBundle(__dynamic.config);
+
+        Dynamic.encoding = {
+          ...Dynamic.encoding,
+          ...(Dynamic.encoding as any)[__dynamic.config.encoding || 'none']
+        };
 
         Dynamic.on = (event: string, cb: Function) => self.__dynamic.on(event, cb);
         Dynamic.fire = (event: string, ...data: Array<any>) => self.__dynamic.fire(event, data);
@@ -135,7 +179,7 @@ import Cookie from '../global/cookie';
           const ResponseBlob = await res.blob();
           const ResponseText = await ResponseBlob.text();
 
-          const HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+'/dynamic/dynamic.client.js', location.origin+'/dynamic/dynamic.config.js', location.origin+'/dynamic/dynamic.mutation.js', '', `window.__dynamic$url = "${res.headers.get('x-dynamic-location')}"`);
+          const HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.config, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.config, '', `window.__dynamic$url = "${res.headers.get('x-dynamic-location')}"`);
 
           Dynamic.meta.load(new URL(res.headers.get('x-dynamic-location')));
 
@@ -171,7 +215,7 @@ import Cookie from '../global/cookie';
           headers: ReqHeaders,
           redirect: 'manual',
           method: request.method,
-          credentials: 'include',
+          credentials: 'omit',
           body: null
         });
 
@@ -191,23 +235,45 @@ import Cookie from '../global/cookie';
 
         for await (var client of Clients) {
           client.postMessage({type: 'cookies', host: Dynamic.meta.host, cookies: await Cookies.get(Dynamic.meta.host)});
+
+          continue;
         }
     
         let ResponseBody: any = false;
 
         switch(request.destination) {
           case "document":
-          case "iframe":
             const ResponseBlob = await BareRequest.blob();
             const ResponseText = await ResponseBlob.text();
 
-            const HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+'/dynamic/dynamic.client.js', location.origin+'/dynamic/dynamic.config.js', location.origin+'/dynamic/dynamic.mutation.js', await Cookies.get(Dynamic.meta.host));
+            const HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.config, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, await Cookies.get(Dynamic.meta.host), '', false, 'self.__dynamic$bare = JSON.parse("'+JSON.stringify(__dynamic.bare.manifest)+'");');
 
             if (Dynamic.is.html(Dynamic.meta, BareRequest.headers.get('content-type'), ResponseText))
               ResponseBody = new Blob([Dynamic.rewrite.html.rewrite(ResponseText, Dynamic.meta, HeaderInject)], {type: BareRequest.headers.get('content-type')||'text/html; charset=utf-8'});
             else
               ResponseBody = ResponseBlob;
             break;
+          case "iframe": {
+            let ResponseBlob = await BareRequest.blob() as Blob;
+            let ResponseText = await ResponseBlob.text() as string;
+
+            if (Dynamic.is.html(Dynamic.meta, BareRequest.headers.get('content-type'), ResponseText)) {
+
+              try {
+                let HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.config, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, await Cookies.get(Dynamic.meta.host), '', true, 'self.__dynamic$bare = '+JSON.stringify(__dynamic.bare.manifest));
+                ResponseBody = new Blob([(new (await self.html)({ctx: Dynamic})).rewrite(ResponseText, Dynamic.meta, HeaderInject)], {type: BareRequest.headers.get('content-type')||'text/html; charset=utf-8'});
+              } catch {
+                ResponseBody = ResponseBlob;
+              }
+
+
+              break;
+            }
+            
+            ResponseBody = ResponseBlob;
+
+            break;
+          }
           case "worker":
           case "script":
             if (Dynamic.is.js(Dynamic.meta, BareRequest.headers.get('content-type')))
@@ -225,10 +291,12 @@ import Cookie from '../global/cookie';
             let ResponseText = await ResponseBlob.text() as string;
 
             if (Dynamic.is.html(Dynamic.meta, BareRequest.headers.get('content-type'), ResponseText)) {
-
-              const HeaderInject: Array<any> = Dynamic.rewrite.html.generateHead(location.origin+'/dynamic/dynamic.client.js', location.origin+'/dynamic/dynamic.config.js', location.origin+'/dynamic/dynamic.mutation.js', await Cookies.get(Dynamic.meta.host));
-
-              ResponseBody = new Blob([Dynamic.rewrite.html.rewrite(ResponseText, Dynamic.meta, HeaderInject)], {type: BareRequest.headers.get('content-type')||'text/html; charset=utf-8'});
+              try {
+                ResponseBody = new Blob([(new (await self.html)({ctx: Dynamic})).rewrite(ResponseText, Dynamic.meta, [])], {type: BareRequest.headers.get('content-type')||'text/html; charset=utf-8'});
+              } catch {
+                console.log(self.html);
+                ResponseBody = ResponseBlob;
+              }
 
               break;
             }
@@ -250,7 +318,7 @@ import Cookie from '../global/cookie';
 
         return new Response(ResponseBody, {status: BareRequest.status, statusText: BareRequest.statusText, headers: ResHeaders});
       } catch(e: Error | any) {
-        //console.error(e.message, request.url);
+        console.error(e);
         return new Response(e, {status: 500, statusText: 'error', headers: new Headers({})});
       }
     };

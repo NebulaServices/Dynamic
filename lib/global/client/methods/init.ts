@@ -8,8 +8,15 @@ export default function init(self: Window | any, __dynamic: any) {
             try {
                 return Reflect.apply(t, g, a);
             } catch(e) {
-                console.log(e)
                 return a[2];
+            }
+        }
+    }), __dynamic.defines = new self.Proxy(self.Object.defineProperties, {
+        apply(t: any, g: any, a: any) {
+            try {
+                return Reflect.apply(t, g, a);
+            } catch(e) {
+                return a[1];
             }
         }
     });
@@ -49,12 +56,7 @@ export default function init(self: Window | any, __dynamic: any) {
             },
             {
                 "elements": [self.HTMLIFrameElement],
-                "tags": ['contentWindow'],
-                "action": "window"
-            },
-            {
-                "elements": [self.HTMLIFrameElement],
-                "tags": ['contentDocument'],
+                "tags": ['contentWindow', 'contentDocument'],
                 "action": "window"
             },
             {
@@ -81,11 +83,6 @@ export default function init(self: Window | any, __dynamic: any) {
             },
             {
                 "elements": [self.HTMLIFrameElement],
-                "tags": ['contentWindow', 'contentDocument'],
-                "action": "window", 
-            },
-            {
-                "elements": [self.HTMLIFrameElement],
                 "tags": ['srcdoc'],
                 "action": "html",
             },
@@ -103,7 +100,7 @@ export default function init(self: Window | any, __dynamic: any) {
 
         createGetter: (prop: any) => {return {get(this: any): any {return (new URL(this.href||self.__dynamic$location.href) as any)[prop];},set(val: any) {return;}}},
         client: Client
-    };
+    }, self.__dynamic.baseURL = self.document ? new URL(self.__dynamic.url.decode(self.document.baseURI)) : null;
 
     if (self.document) __dynamic.cookie = {
         str: self.__dynamic$cookie||'',
@@ -147,7 +144,7 @@ export default function init(self: Window | any, __dynamic: any) {
     }
 
     if (self.__dynamic$config.tab) {
-        if (self.Document && self.__dynamic$config.tab['title']) {
+        if (self.document && self.__dynamic$config.tab['title']) {
             document.title = self.__dynamic$config.tab.title;
             __dynamic.define(self.document, 'title', {
                 get() {
