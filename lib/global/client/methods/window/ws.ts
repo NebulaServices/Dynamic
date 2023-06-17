@@ -25,7 +25,6 @@ export default function websocket(self: Window | any) {
   self.WebSocket = self.__dynamic.wrap(
     self.WebSocket,
     (e: any, ...args: Array<string | Array<string>>) => {
-      console.log(args);
       const url: URL = new URL(args[0] as string);
 
       const r: any = {

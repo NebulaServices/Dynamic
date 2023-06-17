@@ -233,8 +233,6 @@ export default function mutation(self: Window | any, __dynamic: any) {
             if (event.target.childNodes) for (var child of event.target.childNodes) rewrite(child);
         },
         attributes(event: MutationRecord) {
-            //if (event.attributeName == 'href') console.log(event);
-
             return;
         },
         characterData(event: MutationRecord) {

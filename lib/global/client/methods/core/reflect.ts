@@ -4,7 +4,6 @@ export default function reflect(self: Window | any) {
 
     self.Reflect.set = self.__dynamic.wrap(self.Reflect.set,
         function(this: any, target: any, ...a: any) {
-            if (!a[0]) console.log(a);
             if (a[0].constructor.name=='Window') {
                 if (a[1]=='location') {
                     a[0].__dynamic$location = a[2];
@@ -24,7 +23,6 @@ export default function reflect(self: Window | any) {
 
     self.Reflect.get = self.__dynamic.wrap(self.Reflect.get,
         function(this: any, target: any, ...a: any) {
-            if (!a[0]) console.log(a);
             if (typeof a[0] == 'object') {
                 if (a[0].constructor.name=='Window') {
                     if (a[1]=='location') return a[0].__dynamic$location;

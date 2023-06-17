@@ -29,11 +29,11 @@ export default class js {
       try {
         src = this.process(src, config, {module: true, ...this.ctx}, dynamic);
       } catch(e) {
-        console.log('module failed',e)
+        //console.log('module failed',e)
         src = this.process(src, config, {module: false, ...this.ctx}, dynamic);
       }
     } catch(e) {
-      console.trace('backup failed', e, src)
+      //console.trace('backup failed', e, src)
     }
     
     if (inject) {

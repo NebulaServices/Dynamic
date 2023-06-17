@@ -121,9 +121,9 @@ import Cookie from '../global/cookie';
 
   self.__dynamic = __dynamic;
 
-  /*self.console.error = (message: any, ...optionalParams: any[]) => {
+  console.error = (message: any, ...optionalParams: any[]) => {
     return console.log.call({}, ...['%c'+message, 'background: #240d0d;padding:10px;color:#ff7474;font-size:11px;', ...optionalParams]);
-  };*/
+  };
 
   self.Object.defineProperty(self.WindowClient.prototype, '__dynamic$location', {get() { return new URL(__dynamic.url.decode(this.url)) }});
 
@@ -154,7 +154,6 @@ import Cookie from '../global/cookie';
         if (!__dynamic.util.routePath(request)) return await __dynamic.util.route(request);
 
         await __dynamic.bare.working;
-        console.log(__dynamic.bare);
 
         const Dynamic: DynamicBundle = new DynamicBundle(__dynamic.config);
 
@@ -294,7 +293,6 @@ import Cookie from '../global/cookie';
               try {
                 ResponseBody = new Blob([(new (await self.html)({ctx: Dynamic})).rewrite(ResponseText, Dynamic.meta, [])], {type: BareRequest.headers.get('content-type')||'text/html; charset=utf-8'});
               } catch {
-                console.log(self.html);
                 ResponseBody = ResponseBlob;
               }
 
@@ -318,7 +316,6 @@ import Cookie from '../global/cookie';
 
         return new Response(ResponseBody, {status: BareRequest.status, statusText: BareRequest.statusText, headers: ResHeaders});
       } catch(e: Error | any) {
-        console.error(e);
         return new Response(e, {status: 500, statusText: 'error', headers: new Headers({})});
       }
     };

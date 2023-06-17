@@ -25,7 +25,6 @@ export default function window(self: any) {
         
                     return value||obj[prop]||true;
                 } catch(e) {
-                    console.log(e);
                     return value||obj[prop]||true;
                 }
             }
@@ -64,7 +63,6 @@ export default function window(self: any) {
                     var desc = Object.getOwnPropertyDescriptor(obj, prop);
 
                     if (desc?.writable === false && desc?.enumerable === false) {
-                        console.log(desc, prop, value);
                         return false;
                     }
 

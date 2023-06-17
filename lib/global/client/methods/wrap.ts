@@ -50,8 +50,6 @@ export default function wrap(self: Window | any) {
 
                 return p;
             } catch(e) {
-                console.log(target, handler, e);
-
                 return target;
             }
         }
