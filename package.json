@@ -15,7 +15,7 @@
   "dependencies": {
     "@dynamic-pkg/acorn": "^1.0.1",
     "@dynamic-pkg/astring": "^1.0.1",
-    "@dynamic-pkg/bare-client": "^1.0.0",
+    "@dynamic-pkg/bare-client": "^1.0.2",
     "@dynamic-pkg/base64": "^1.0.1",
     "@dynamic-pkg/cookie": "^1.0.0",
     "@dynamic-pkg/mime": "^1.0.1",
