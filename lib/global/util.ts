@@ -10,25 +10,27 @@ import error from './util/error';
 import about from './util/about';
 import encode from './util/encode';
 import rewritePath from './util/rewritePath';
+import { DynamicBundle } from './client';
 
 class DynamicUtil {
-  route = route;
-  routePath = routePath;
-  path = path;
-  resHeader = resHeader;
-  reqHeader = reqHeader;
-  clone = clone;
-  class = Class;
-  file = file;
-  edit = edit;
-  error = error;
-  encode = encode;
-  about = about;
-  rewritePath = rewritePath;
-
-  ctx;
+  route: Function = route;
+  routePath: Function = routePath;
+  path: Function = path;
+  resHeader: Function = resHeader;
+  reqHeader: Function = reqHeader;
+  clone: Function = clone;
+  class: Function = Class;
+  file: Function = file;
+  edit: Function = edit;
+  error: Function = error;
+  encode: Function = encode;
+  rewritePath: Function = rewritePath;
   
-  constructor(ctx: any) {
+  about: any = about;
+
+  ctx: DynamicBundle & { encoding: any };
+  
+  constructor(ctx: DynamicBundle) {
     this.ctx = ctx;
   }
 }

@@ -3,7 +3,7 @@ import * as path from 'path-browserify';
 import * as idb from 'idb';
 import * as base64 from '@dynamic-pkg/base64';
 import { parse } from '@dynamic-pkg/acorn';
-import { BareClient } from '@tomphttp/bare-client';
+import { createBareClient, BareClient } from '@tomphttp/bare-client';
 import * as cookie from '@dynamic-pkg/cookie';
 import * as setCookieParser from 'set-cookie-parser'
 import { generate } from '@dynamic-pkg/astring';
@@ -15,7 +15,7 @@ class DynamicModules {
   idb = idb;
   path = path;
   acorn = { parse };
-  bare = BareClient;
+  bare = {createBareClient, BareClient};
   base64 = base64;
   estree = { generate };
   cookie = {...cookie, serialize: (...args: any) => { try {return cookie.serialize.apply({}, args)} catch(e) {console.log(e);}}};

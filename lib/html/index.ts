@@ -181,7 +181,7 @@ The document has moved
               rewritten.setAttribute(`data-dynamic_${tag}`, rewritten.getAttribute(tag));
               rewritten.setAttribute(tag, Srcset.encode(rewritten.getAttribute(tag), that.ctx));
             } else if (config.action === 'rewrite') {
-              rewritten.setAttribute(config.new, rewritten.getAttribute(tag));
+              rewritten.setAttribute(config.new as any, rewritten.getAttribute(tag));
               rewritten.removeAttribute(tag);
             } else if (config.action === 'html') {
               rewritten.setAttribute(`data-dynamic_${tag}`, rewritten.getAttribute(tag));

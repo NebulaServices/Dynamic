@@ -3,14 +3,15 @@ import Node from './nodewrapper';
 import MetaURL from '../../meta/type';
 import generateHead from './generateHead';
 import { Element } from 'parse5/dist/tree-adapters/default';
+import DynamicRewrites from '../../rewrite';
 
 export default class html {
 
-  ctx;
+  ctx: any;
 
-  generateHead = generateHead;
+  generateHead: Function = generateHead;
 
-  config = [
+  config: Array<Object> = [
       {
         "elements": "all",
         "tags": ['style'],
@@ -75,11 +76,11 @@ export default class html {
       }
   ];
 
-  constructor(ctx:any) {
+  constructor(ctx: DynamicRewrites) {
     this.ctx = ctx.ctx;
   }
 
-  generateRedirect(url:any) {
+  generateRedirect(url: string) {
     return `
 <HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
 <TITLE>301 Moved</TITLE></HEAD><BODY>
@@ -90,8 +91,8 @@ The document has moved
     `
   }
 
-  iterate(_dom: any, cb: any) {
-    function it(dom: any = _dom) {
+  iterate(_dom: Object, cb: Function) {
+    function it(dom: Object | any = _dom) {
       for (var i = 0; i<dom.childNodes.length; i++) {
         cb(dom.childNodes[i]);
     
@@ -104,9 +105,7 @@ The document has moved
     it(_dom);
   }
 
-  rewrite(src:any, meta:MetaURL, head: any = []) {
-    const that = this;
-
+  rewrite(src: string, meta: MetaURL, head: Array<string | Object> = []) {
     if (Array.isArray(src)) src = src[0];
     
     if (!src) return src;

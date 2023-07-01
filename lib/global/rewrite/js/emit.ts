@@ -8,7 +8,7 @@ import Property from './type/Property';
 import Imports from './type/Imports';
 import VariableDeclarator from './type/VariableDeclaractor';
 
-function Emit(node:any, type:any, parent:any = {}, ctx:any = {}, dynamic: any = {}, config: any = {}) {
+function Emit(node: Object | any, type: string, parent: Object | any = {}, ctx: Object | any = {}, dynamic: Object | any = {}, config: Object | any = {}) {
     if (node.__dynamic) return;
 
     switch(type) {

@@ -1,7 +1,7 @@
 import { encodeProtocol as encode_protocol } from "../core/protocol";
 
 export default function websocket(self: Window | any) {
-  const target = () =>
+  /*const target = () =>
     self.location.protocol.replace('http', 'ws') + '//' + new URL((self.__dynamic$config.bare.path + '/' || '/bare/') + 'v1/', new URL(location.origin)).href
       .replace(/http(s?):\/\//g, '')
       .replace(/\/\//g, '/') as string;
@@ -20,9 +20,14 @@ export default function websocket(self: Window | any) {
     set(val: any) {
       return false;
     },
-  });
+  });*/
 
-  self.WebSocket = self.__dynamic.wrap(
+  self.WebSocket = function() {
+    return self.__dynamic.bare.createWebSocket.apply(
+      self.__dynamic.bare,
+      [arguments[0], arguments[1] || [], {}]
+    )
+  }/*self.__dynamic.wrap(
     self.WebSocket,
     (e: any, ...args: Array<string | Array<string>>) => {
       const url: URL = new URL(args[0] as string);
@@ -61,5 +66,5 @@ export default function websocket(self: Window | any) {
         ["bare", encode_protocol(JSON.stringify(r))],
       ];
     }
-  );
+  );*/
 }

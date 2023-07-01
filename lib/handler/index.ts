@@ -4,7 +4,7 @@ importScripts('/dynamic/dynamic.config.js');
 import init from '../global/client/methods/init';
 import wrap from '../global/client/methods/wrap';
 
-(function(self: any) {
+(function(self: Window | any) {
   const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config);
   self.__dynamic = __dynamic;
 

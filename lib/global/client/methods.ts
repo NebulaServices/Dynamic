@@ -91,4 +91,4 @@ export default [
         name: 'navigator',
         function: 'self',
     }
-]
+] as Array<{name: string, function: string}>;

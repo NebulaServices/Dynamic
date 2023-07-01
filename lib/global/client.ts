@@ -11,22 +11,27 @@ import DynamicCookies from './cookie';
 import * as DynamicEncoding from './codec';
 
 class DynamicBundle {
-  modules = new DynamicModules(this);
-  util = new DynamicUtil(this);
-  meta = new DynamicMeta(this);
-  regex = new DynamicRegex(this);
-  rewrite = new DynamicRewrites(this);
-  url = new DynamicUrlRewriter(this);
-  is = new DynamicTypeFunctions(this);
-  cookies = new DynamicCookies(this);
-  client = new DynamicClient(this);
-  encoding = DynamicEncoding;
-  headers = HeaderData;
+  _location: any;
+  bare: any;
+  http: any;
+  middleware: any;
 
-  parent:Window | any;
-  top:Window | any;
+  modules: DynamicModules = new DynamicModules(this);
+  util: DynamicUtil = new DynamicUtil(this);
+  meta: DynamicMeta = new DynamicMeta(this);
+  regex: any = new DynamicRegex(this);
+  rewrite: DynamicRewrites = new DynamicRewrites(this);
+  url: DynamicUrlRewriter = new DynamicUrlRewriter(this);
+  is: DynamicTypeFunctions = new DynamicTypeFunctions(this);
+  cookies: DynamicCookies = new DynamicCookies(this);
+  client: DynamicClient = new DynamicClient(this);
+  encoding: any = DynamicEncoding;
+  headers: any = HeaderData;
 
-  define:any;
+  parent: Window | any;
+  top: Window | any;
+
+  define: any;
   config;
 
   listeners: Array<any> = [];

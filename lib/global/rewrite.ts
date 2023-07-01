@@ -3,17 +3,18 @@ import css from './rewrite/css';
 import js from './rewrite/js/js';
 import man from './rewrite/manifest';
 import srcset from './rewrite/html/srcset';
+import { DynamicBundle } from './client';
 
 class DynamicRewrites {
 
-  html;
+  html: html;
   srcset;
-  js;
-  css;
-  man;
-  ctx;
+  js: js;
+  css: css;
+  man: man;
+  ctx: DynamicBundle;
 
-  constructor(ctx: any) {
+  constructor(ctx: DynamicBundle) {
     this.ctx = ctx;
     this.html = new html(this);
     this.srcset = srcset;

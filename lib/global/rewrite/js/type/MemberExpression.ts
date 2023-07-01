@@ -1,7 +1,8 @@
 import Eval from '../object/Eval';
 import PostMessage from '../object/PostMessage';
+import { Node } from '../types';
 
-export default function MemberExpression(node: any, parent: any = {}, config: any = {}) {
+export default function MemberExpression(node: Node, parent: Node = {} as any, config: any = {}) {
     /*if (config.destination !== 'worker') if (node.object.type!=='Identifier') {
       if (node.object.type == 'MemberExpression') return node.object = {
         type: 'CallExpression',
@@ -27,9 +28,9 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
       if ((node.property.name=='postMessage'||node.object.name=='postMessage') && node.object.type!=='Super') {
         var original:string = node.object?.name
         node.type = 'CallExpression';
-        node.callee = {type: 'Identifier', name: '__dynamic$message'}
-        node.arguments = [{type: 'Identifier', name: original}, {type: 'Identifier', name: 'self', __dynamic: true}]
-        if (parent=='CallExpression') {
+        node.callee = {type: 'Identifier', name: '__dynamic$message'} as Node;
+        node.arguments = [{type: 'Identifier', name: original} as Node, {type: 'Identifier', name: 'self', __dynamic: true} as Node]
+        if (parent.type=='CallExpression') {
           parent.arguments = parent.arguments
         }
 
@@ -48,10 +49,10 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
         if (node.object.name=='window') {
           node.object = {
             type: 'CallExpression',
-            callee: {type: 'Identifier', name: 'dg$'},
+            callee: {type: 'Identifier', name: 'dg$'} as Node,
             arguments: [node.object],
             __dynamic: true
-          }
+          } as Node;
         };
         if (node.object.name=='parent') {
           node.object = {
@@ -59,7 +60,7 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
             callee: {type: 'Identifier', name: 'dg$'},
             arguments: [node.object],
             __dynamic: true
-          }
+          } as Node;
         };
         if (node.property.name == '__dynamic') node.property.name = 'undefined';
         if (node.object.name=='self') {
@@ -68,7 +69,7 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
             callee: {type: 'Identifier', name: 'dg$'},
             arguments: [node.object],
             __dynamic: true
-          }
+          } as Node;
         };
         if (node.object.name=='document') {
           node.object = {
@@ -76,7 +77,7 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
             callee: {type: 'Identifier', name: 'dg$'},
             arguments: [node.object],
             __dynamic: true
-          }
+          } as Node;
         };
         if (node.object.name=='globalThis') {
           node.object = {
@@ -84,7 +85,7 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
             callee: {type: 'Identifier', name: 'dg$'},
             arguments: [node.object],
             __dynamic: true
-          }
+          } as Node;
         };
       }
       if (node.object.name=='location') {
@@ -93,7 +94,7 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
           callee: {type: 'Identifier', name: 'dg$'},
           arguments: [node.object],
           __dynamic: true
-        }
+        } as Node;
       };
       if (node.property.name=='location' && parent.type !== "BinaryExpression" && parent.type !== "AssignmentExpression") {
         node.property.__dynamic = true;
@@ -102,21 +103,21 @@ export default function MemberExpression(node: any, parent: any = {}, config: an
         let original: any = Object.assign({}, node);
 
         node.type = "CallExpression";
-        node.callee = {type: 'Identifier', name: 'dg$', __dynamic: true,};
+        node.callee = {type: 'Identifier', name: 'dg$', __dynamic: true} as Node;
         node.arguments = [original];
         node.__dynamic = true;
       }
     }
 
-    /*if (node.computed) {
+    if (node.computed) {
       node.property = {
         type: "CallExpression",
         callee: {type: 'Identifier', name: 'dp$'},
         arguments: [node.property],
         __dynamic: true,
-      }
-    }*/
-
+      } as Node;
+    }
+    
     //if (!['self', 'globalThis'].includes(node.object.name)) return false;
 
     //if (parent.type=='CallExpression'&&parent.callee==node) return;

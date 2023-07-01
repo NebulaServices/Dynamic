@@ -1,7 +1,7 @@
 declare const self: any;
 
-export default async function Edit(req: any) {
-    let request: any;
+export default async function Edit(req: Request) {
+    let request: Response;
 
     if (self.__dynamic$config.mode !== 'development') {
         var cache = await caches.open('__dynamic$files');

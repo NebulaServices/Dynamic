@@ -44,4 +44,4 @@ const base64 = {
     }
 }
 
-export { xor, plain, none, base64};
+export { xor, plain, none, base64 };

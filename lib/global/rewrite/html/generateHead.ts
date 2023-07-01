@@ -1,8 +1,9 @@
 import { Element } from "domhandler";
+import html from "./html";
 
-declare const self: any;
+declare const self: Window | any;
 
-export default function GenerateHead(this: any, scriptURL: any, configURL: any, mutationURL: any, cookies: any, script: any = '', object: boolean = false, bare: string = '') {
+export default function GenerateHead(this: html, scriptURL: string, configURL: string, mutationURL: string, cookies: string | null, script: string = '', object: boolean = false, bare: string = '') {
     if (self.__dynamic$config) {
         var cache = self.__dynamic$config.mode == 'development';
     } else var cache = false;

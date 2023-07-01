@@ -1,6 +1,6 @@
 export default function Class(obj: any) {
   try {
-    new new Proxy(obj, { construct: () => ({}) });
+    new (new Proxy(obj, { construct: () => ({}) }));
 
     if (!Object.getOwnPropertyNames(obj).includes('arguments')) throw new Error("");
       

@@ -1,4 +1,5 @@
 import MetaURL from "../meta/type";
+import DynamicRewrites from "../rewrite";
 
 export default class manifest {
 
@@ -18,13 +19,11 @@ export default class manifest {
     ]
   }
 
-  constructor(ctx:any) {
+  constructor(ctx: DynamicRewrites) {
     this.ctx = ctx.ctx;
   }
 
-  rewrite(this: any, src: any, meta: MetaURL) {
-    const that = this;
-
+  rewrite(this: manifest, src: string, meta: MetaURL) {
     const manifest = JSON.parse(src);
 
     for (let config in this.config) {
@@ -63,6 +62,6 @@ export default class manifest {
         }
     }
 
-    return JSON.stringify(manifest);
+    return JSON.stringify(manifest) as string;
   }
 }

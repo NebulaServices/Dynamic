@@ -1,8 +1,9 @@
 import Eval from '../object/Eval';
 import PostMessage from '../object/PostMessage';
+import { Node } from '../types';
 
-export default function Literal(node: any, parent: any = {}) {
-    if (!(node.value instanceof String)) return false;
+export default function Literal(node: Node, parent: Node = {} as any) {
+    if (!((node.value as any) instanceof String)) return false;
 
     if (node.value==('__dynamic')) node.value = 'undefined';
 

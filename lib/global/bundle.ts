@@ -13,20 +13,26 @@ import DynamicCookies from './cookie';
 import * as DynamicEncoding from './codec';
 
 class DynamicBundle {
-  modules = new DynamicModules(this);
-  util = new DynamicUtil(this);
-  http = new DynamicHttp(this);
-  meta = new DynamicMeta(this);
-  rewrite = new DynamicRewrites(this);
-  url = new DynamicUrlRewriter(this);
-  is = new DynamicTypeFunctions(this);
-  cookies = new DynamicCookies(this);
-  regex = new DynamicRegex(this);
-  headers = HeaderData;
-  encoding = DynamicEncoding;
+  _location: any;
+  client: any;
+  parent: any;
+  top: any;
+  define: any;
+
+  modules: DynamicModules = new DynamicModules(this);
+  util: DynamicUtil = new DynamicUtil(this);
+  http: DynamicHttp = new DynamicHttp(this);
+  meta: DynamicMeta = new DynamicMeta(this);
+  rewrite: DynamicRewrites = new DynamicRewrites(this);
+  url: DynamicUrlRewriter = new DynamicUrlRewriter(this);
+  is: DynamicTypeFunctions = new DynamicTypeFunctions(this);
+  cookies: DynamicCookies = new DynamicCookies(this);
+  regex: any = new DynamicRegex(this as DynamicBundle);
+  headers: any = HeaderData;
+  encoding: any = DynamicEncoding;
   bare: BareClient | any;
 
-  middleware = new DynamicMiddleware(this);
+  middleware: DynamicMiddleware = new DynamicMiddleware(this);
 
   config;
 

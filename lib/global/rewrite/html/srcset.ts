@@ -1,5 +1,5 @@
 export default {
-    encode(val:any, dynamic: any) {
+    encode(val: string | undefined, dynamic: Object | any) {
         if (!val) return val;
         if (!(val.toString())) return val;
 
@@ -13,7 +13,7 @@ export default {
             }).join(' ');
         }).join(', ');
     },
-    decode(val:any) {
+    decode(val: string | undefined) {
         if (!val) return val;
 
         return val;

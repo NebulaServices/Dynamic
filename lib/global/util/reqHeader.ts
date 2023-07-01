@@ -1,4 +1,7 @@
-export default function Header(this: any, headers: any, meta: any, request: any, cookies: any) {
+import MetaURL from "../meta/type";
+import DynamicUtil from "../util";
+
+export default function Header(this: DynamicUtil, headers: Object | any, meta: MetaURL, request: Request & { client: any }, cookies: string) {
     let { referrer }: any = request;
 
     [

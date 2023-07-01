@@ -1,4 +1,6 @@
-export default function encode(this: any, self: Window | any) {
+import DynamicUtil from "../util";
+
+export default function encode(this: DynamicUtil, self: Window | any) {
     var obj = this.ctx.encoding;
 
     if (typeof this.ctx.config.encoding == 'object') {

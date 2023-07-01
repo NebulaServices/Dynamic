@@ -1,15 +1,16 @@
+import { DynamicBundle } from "./client";
 import css from "./is/css";
 import html from "./is/html";
 import js from "./is/js";
 
 class DynamicTypeFunctions {
-  html = html;
-  js = js;
-  css = css;
+  html: Function = html;
+  js: Function = js;
+  css: Function = css;
 
-  ctx;
+  ctx: DynamicBundle;
   
-  constructor(ctx: any) {
+  constructor(ctx: DynamicBundle) {
     this.ctx = ctx;
   }
 }

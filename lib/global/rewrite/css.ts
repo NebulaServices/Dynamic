@@ -1,14 +1,15 @@
 import MetaURL from "../meta/type";
+import DynamicRewrites from "../rewrite";
 
 export default class css {
 
   ctx;
 
-  constructor(ctx:any) {
+  constructor(ctx: DynamicRewrites) {
     this.ctx = ctx.ctx;
   }
 
-  rewrite(this: any, src: any, meta: MetaURL, config:any = {}) {
+  rewrite(this: css, src: string | URL, meta: MetaURL, config: Object = {}) {
     const that = this;
 
     if (!src) return src;

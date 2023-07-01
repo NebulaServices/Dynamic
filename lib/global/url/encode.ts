@@ -1,4 +1,7 @@
-export default function encode(this: any, url: any, meta: any) {
+import MetaURL from "../meta/type";
+import DynamicUrlRewriter from "../url";
+
+export default function encode(this: DynamicUrlRewriter, url: URL | string | any, meta: MetaURL) {
   if (!url) return url;
   url = new String(url).toString();
 
@@ -10,7 +13,7 @@ export default function encode(this: any, url: any, meta: any) {
   if (url.match(this.ctx.regex.WeirdRegex)) {
     var data = this.ctx.regex.WeirdRegex.exec(url);
 
-    url = data[2];
+    if (data) url = data[2];
   }
 
   if (url.startsWith(location.origin+this.ctx.config.prefix) || url.startsWith(this.ctx.config.prefix)) return url;
@@ -20,6 +23,7 @@ export default function encode(this: any, url: any, meta: any) {
   if (url.match(this.ctx.regex.DataRegex)) {
     try {
       var data = this.ctx.regex.DataRegex.exec(url);
+      
       if (data) {
         var [_, type, charset, base64, content] = data;
 

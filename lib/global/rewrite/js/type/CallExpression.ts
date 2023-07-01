@@ -1,15 +1,16 @@
 import Eval from '../object/Eval';
 import PostMessage from '../object/PostMessage';
+import { Node } from '../types';
 
-export default function CallExpression(node: any, parent: any = {}) {
+export default function CallExpression(node: Node, parent: Node = {} as any) {
     if (parent.type=='AssignmentExpression'&&parent.left==node) return;
     
     if (node.callee.type=='Identifier') {
         if (node.callee.name=='postMessage') {
-            var original = 'undefined'
+            let original = 'undefined';
             node.callee.type = 'CallExpression';
-            node.callee.callee = {type: 'Identifier', name: '__dynamic$message'}
-            node.callee.arguments = [{type: 'Identifier', name: original}, {type: 'Identifier', name: 'self', __dynamic: true}]
+            node.callee.callee = {type: 'Identifier', name: '__dynamic$message'} as Node;
+            node.callee.arguments = [{type: 'Identifier', name: original}, {type: 'Identifier', name: 'self', __dynamic: true}] as Array<Node>;
     
             return;
         }
@@ -22,10 +23,10 @@ export default function CallExpression(node: any, parent: any = {}) {
 
     if (node.callee.type=='MemberExpression') {
         if (node.callee.property.name=='postMessage' && node.callee.object.type!=='Super') {
-            var original: string = node.callee.object;
+            let original: Node = node.callee.object;
             node.callee.type = 'CallExpression';
-            node.callee.callee = {type: 'Identifier', name: '__dynamic$message'}
-            node.callee.arguments = [original, {type: 'Identifier', name: 'self', __dynamic: true}]
+            node.callee.callee = {type: 'Identifier', name: '__dynamic$message'} as Node;
+            node.callee.arguments = [original, {type: 'Identifier', name: 'self', __dynamic: true}] as Array<Node>;
     
             return;
         }

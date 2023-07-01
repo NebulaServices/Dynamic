@@ -1,6 +1,8 @@
+import DynamicUrlRewriter from "../url";
+
 declare const self: any;
 
-export default function decode(this: any, url: any) {
+export default function decode(this: DynamicUrlRewriter, url: string | URL) {
   if (!url) return url;
 
   url = new String(url).toString();

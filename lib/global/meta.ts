@@ -1,12 +1,13 @@
+import { DynamicBundle } from './client';
 import load from './meta/load';
 import MetaURL from './meta/type';
 
 class DynamicMeta extends MetaURL {
-  load = load;
+  load: Function = load;
 
-  ctx;
+  ctx: DynamicBundle;
 
-  constructor(ctx:any) {
+  constructor(ctx: DynamicBundle) {
     super();
     this.ctx = ctx;
   }

@@ -1,5 +1,8 @@
-export default function process (this: any, src: any, config: any = {}, ctx: any, dynamic: any) {
-    var ast = this.ctx.modules.acorn.parse(src, {sourceType: config.module ? 'module' : 'script', allowImportExportEverywhere: true, allowAwaitOutsideFunction: true, allowReturnOutsideFunction: true, ecmaVersion: "latest", preserveParens: true, loose: true, allowReserved: true});
+import DynamicRewrites from "../../rewrite";
+import js from "./js";
+
+export default function process (this: js, src: string, config: Object | any = {}, ctx: any, dynamic: Object | any) {
+    var ast = this.ctx.modules.acorn.parse(src.toString(), {sourceType: config.module ? 'module' : 'script', allowImportExportEverywhere: true, allowAwaitOutsideFunction: true, allowReturnOutsideFunction: true, ecmaVersion: "latest", preserveParens: true, loose: true, allowReserved: true});
 
     this.iterate(ast, (node:any, parent:any = null) => {
       this.emit(node, node.type, parent, ctx, dynamic, config);

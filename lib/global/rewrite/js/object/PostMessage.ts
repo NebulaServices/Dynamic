@@ -1,4 +1,6 @@
-export default function PostMessage(node: any, parent: any = {}) {
+import { Node } from "../types";
+
+export default function PostMessage(node: Node, parent: Node = {} as any) {
     Object.entries({
         type: 'CallExpression',
         callee: {
@@ -10,7 +12,7 @@ export default function PostMessage(node: any, parent: any = {}) {
             node.object||node,
             {type: 'Identifier', name: 'self', __dynamic: true}
         ]
-    }).forEach(([e,v])=>node[e]=v)
+    }).forEach(([name,value]) => (node as any)[name] = value)
 
     return;
 }

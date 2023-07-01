@@ -1,4 +1,6 @@
-export default function Eval(node: any, parent: any = {}) {
+import { Node } from "../types";
+
+export default function Eval(node: Node, parent: Node = {} as any) {
     if (node.__dynamic) return;
     
     if (node.arguments.length) {
@@ -11,7 +13,7 @@ export default function Eval(node: any, parent: any = {}) {
             },
             arguments: node.arguments,
             __dynamic: true,
-        }];
+        }] as Array<Node>;
 
         node.__dynamic = true;
     }

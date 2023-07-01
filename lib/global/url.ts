@@ -1,13 +1,14 @@
 import Encode from './url/encode';
 import Decode from './url/decode';
+import { DynamicBundle } from './bundle';
 
 class DynamicUrlRewriter {
-  encode = Encode;
-  decode = Decode;
+  encode: Function = Encode;
+  decode: Function = Decode;
 
-  ctx;
+  ctx: DynamicBundle;
   
-  constructor(ctx: any) {
+  constructor(ctx: DynamicBundle) {
     this.ctx = ctx;
   }
 }

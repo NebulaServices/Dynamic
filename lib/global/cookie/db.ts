@@ -1,12 +1,13 @@
 import * as idb from 'idb';
+import { Cookie } from 'set-cookie-parser';
 
-function createObject(input: any, newobj: any) {
+function createObject(input: Array<Object> | undefined, newobj: Cookie) {
     if (!input) input = [];
 
     if (input.find((e:any)=>e.name==newobj.name)) input[input.findIndex((e:any)=>e.name==newobj.name)] = { name: newobj.name, value: newobj.value, expires: newobj.expires }
     else input.push({ name: newobj.name, value: newobj.value, expires: newobj.expires });
 
-    return input;
+    return input as Array<Cookie>;
 }
 
 export const DB = {
@@ -17,13 +18,12 @@ export const DB = {
             }
         });
     },
-    set: async (host: any, raw: any, db: any) => {
-        if (raw.domain) host = raw.domain;
-
+    set: async (host: string, raw: Cookie & { raw: any }, db: Promise<idb.IDBPDatabase>) => {
+        if (raw.domain) host = raw.domain as string;
         if (host.startsWith('.')) host = host.slice(1);
 
         if (raw.expires) {
-            var expires = new Date(raw.expires);
+            var expires: Date = new Date(raw.expires);
 
             if (expires < new Date()) return DB.remove(host, raw, db);
         }
@@ -32,18 +32,17 @@ export const DB = {
         
         return true;
     },
-    get: async (host: any, db: any) => {
-        var baseHost = host.replace(/^(.*\.)?([^.]*\..*)$/g, "$2");
-
-        var first = await (await db).get('__dynamic$cookies', host) || [];
+    get: async (host: string, db: Promise<idb.IDBPDatabase>) => {
+        var baseHost: string = host.replace(/^(.*\.)?([^.]*\..*)$/g, "$2");
+        var first: Array<Cookie> = await (await db).get('__dynamic$cookies', host) || [];
 
         if (host !== baseHost && host !== '.' + baseHost) {
-            var cookies = await (await db).get('__dynamic$cookies', baseHost);
+            var cookies: Array<Cookie | any> = await (await db).get('__dynamic$cookies', baseHost);
 
             if (cookies) {
                 for (var {name, value, expires} of cookies) {
                     if (expires) {
-                        var target = new Date(expires);
+                        var target: Date = new Date(expires);
 
                         if (target <= new Date()) { DB.remove(host, cookies.find((e:any)=>e.name==name&&e.value==value&&e.expires==expires), db); continue; };
                     }
@@ -53,14 +52,14 @@ export const DB = {
             }
         }
 
-        return first;
+        return first as Array<Cookie>;
     },
-    remove: async (host: any, raw: any, db: any) => {
+    remove: async (host: string, raw: Cookie, db: Promise<idb.IDBPDatabase>) => {
         if (raw.domain) host = raw.domain;
 
         if (host.startsWith('.')) host = host.slice(1);
 
-        var cookies = await (await db).get('__dynamic$cookies', host);
+        var cookies: Array<Cookie> = await (await db).get('__dynamic$cookies', host);
 
         if (!cookies) return false;
 
@@ -70,21 +69,21 @@ export const DB = {
 
         return true;
     },
-    update: async (host: any, db: any) => {
-        var baseHost = host.replace(/^(.*\.)?([^.]*\..*)$/g, "$2");
+    update: async (host: string, db: Promise<idb.IDBPDatabase>) => {
+        var baseHost: string = host.replace(/^(.*\.)?([^.]*\..*)$/g, "$2");
 
-        var cookies = await (await db).get('__dynamic$cookies', baseHost);
+        var cookies: Array<Cookie> = await (await db).get('__dynamic$cookies', baseHost);
 
         if (cookies) {
             for (var {name, value, expires} of cookies) {
                 if (expires) {
-                    var target = new Date(expires);
+                    var target: Date = new Date(expires);
 
                     if (target <= new Date()) { DB.remove(host, {name, value, expires}, db); continue; };
                 }
             }
         }
 
-        return cookies;
+        return cookies as Array<Cookie>;
     }
 }

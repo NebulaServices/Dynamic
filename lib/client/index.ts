@@ -1,5 +1,3 @@
-declare const self: any;
-
 import Client from './client';
 
-export default Client(self);
+export default Client(self) as Window;

@@ -1,4 +1,4 @@
-import createServer from '@tomphttp/bare-server-node';
+import { createBareServer } from '@tomphttp/bare-server-node';
 import http from 'http';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -10,7 +10,7 @@ const port = 800;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const bare = createServer('/bare/');
+const bare = createBareServer('/bare/');
 const serve = new nodeStatic.Server('static/');
 
 const server = http.createServer();

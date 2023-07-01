@@ -1,5 +1,5 @@
 export default class Node {
-    Original:any = null;
+    Original: Object | any | null = null;
     ctx: any;
 
     constructor(element: Element, ctx: any) {
@@ -8,7 +8,7 @@ export default class Node {
         var that = this;
 
         this.Original.attribs = new Proxy(this.Original.attribs||{}, {
-            set: (target:any, prop:any, value:any): any => {
+            set: (target:any, prop: string, value:any): any => {
                 var a = target[prop] = value;
 
                 that.Original.attrs = Object.keys(target).map((key:any) => {
@@ -20,7 +20,7 @@ export default class Node {
 
                 return a || (a + ' ');
             },
-            deleteProperty: (target:any, prop:any): any => {
+            deleteProperty: (target: any, prop: string): any => {
                 var a = delete target[prop];
 
                 that.Original.attrs = Object.keys(target).map((key:any) => {
@@ -37,25 +37,25 @@ export default class Node {
         this.ctx = ctx;
     }
 
-    getAttribute(attr: any) {
+    getAttribute(attr: string) {
         if (!this.Original.attribs) return false;
 
         return (typeof this.Original.attribs[attr] == 'undefined' ? null : this.Original.attribs[attr].trim());
     }
 
-    setAttribute(attr: any, value: any) {
+    setAttribute(attr: string, value: any) {
         if (!this.Original.attribs) return false;
 
         return this.Original.attribs[attr] = value;
     }
 
-    removeAttribute(attr:any) {
+    removeAttribute(attr: string) {
         if (!this.Original.attribs) return false;
 
         return delete this.Original.attribs[attr];
     }
 
-    hasAttribute(attr:any) {
+    hasAttribute(attr: string) {
         if (!this.Original.attribs) return false;
 
         return this.Original.attribs.hasOwnProperty(attr);

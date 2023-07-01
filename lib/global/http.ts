@@ -1,3 +1,4 @@
+import { DynamicBundle } from './client';
 import Request from './http/request';
 import Response from './http/response';
 
@@ -5,9 +6,9 @@ class DynamicHttp {
   Request = Request;
   Response = Response;
 
-  ctx;
+  ctx: DynamicBundle;
   
-  constructor(ctx: any) {
+  constructor(ctx: DynamicBundle) {
     this.ctx = ctx;
   }
 }

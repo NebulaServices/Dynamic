@@ -13,7 +13,6 @@ export default {
         'x-content-type-options',
         'x-frame-options',
         'x-permitted-cross-domain-policies',
-        'x-powered-by',
         'x-xss-protection',
     ],
     status: {

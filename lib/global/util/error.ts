@@ -1,3 +1,3 @@
-export default async function Error(request: any, error: any) {
+export default async function Error(request: Request, error: Error) {
     
 }

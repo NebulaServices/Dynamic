@@ -1,4 +1,6 @@
-export default function VariableDeclarator(node: any, parent: any = {}) {
+import { Node } from "../types";
+
+export default function VariableDeclarator(node: Node, parent: Node = {} as any) {
     if (node.id.type !== 'Identifier') return false;
     if (node.id.__dynamic === true) return;
 

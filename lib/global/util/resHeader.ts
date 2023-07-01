@@ -2,7 +2,7 @@ import Cookie from "../cookie";
 import MetaURL from "../meta/type";
 import DynamicUtil from "../util";
 
-export default async function Header(this: DynamicUtil, headers: any, meta: MetaURL, Cookies: Cookie) {
+export default async function Header(this: DynamicUtil, headers: Object | any, meta: MetaURL, Cookies: Cookie) {
 
     for (const header in headers) {
         if (this.ctx.headers.csp.indexOf(header.toLowerCase())!==-1) delete headers[header];

@@ -2,6 +2,7 @@ import MetaURL from '../../meta/type';
 import iterate from './iterate';
 import process from './process';
 import emit from './emit';
+import DynamicRewrites from '../../rewrite';
 
 export default class js {
   iterate = iterate;
@@ -10,11 +11,11 @@ export default class js {
 
   ctx;
   
-  constructor(ctx:any) {
+  constructor(ctx: DynamicRewrites) {
     this.ctx = ctx.ctx;
   }
 
-  rewrite(this: any, src:any, config: any = {}, inject: Boolean = true, dynamic: any = {}) {
+  rewrite(this: js, src: string | Object | any, config: Object | any = {}, inject: Boolean = true, dynamic: Object | any = {}) {
     if (!src) return src;
 
     if (src instanceof Object) return src;

@@ -6,7 +6,7 @@ export default function history(self: Window | any) {
 
         self.__dynamic.client.location(self, true, false);
 
-        return true;
+        return;
     }
     
     self.History.prototype.pushState = self.__dynamic.wrap(self.History.prototype.pushState, self.__dynamic$history);

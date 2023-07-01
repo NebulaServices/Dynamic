@@ -1,4 +1,6 @@
-async function route(this: any, request: Request) {
+import DynamicUtil from "../util";
+
+async function route(this: DynamicUtil, request: Request) {
   var parsed = new URL(request.url);
   var url = parsed.searchParams.get('url');
 

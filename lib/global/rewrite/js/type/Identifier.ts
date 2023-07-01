@@ -1,7 +1,8 @@
 import Eval from '../object/Eval';
 import PostMessage from '../object/PostMessage';
+import { Node } from '../types';
 
-export default function Identifier(node: any, parent: any = {}) {
+export default function Identifier(node: Node, parent: Node = {} as any) {
     if (typeof node.name !== 'string') return false;
 
     if (node.__dynamic === true) return;
@@ -11,7 +12,7 @@ export default function Identifier(node: any, parent: any = {}) {
     if (parent.type=='AssignmentExpression'&&parent.left==node&&node.name=='location') return; //node.name = '__dynamic$location'
 
     if (parent.type=='CallExpression'&&(parent.callee==node)) return;
-    if (parent.type=='MemberExpression'&&(parent.object!==node&&(parent.object.name!=='document'||parent.object.name!=='window'||parent.object.name!=='self'||parent.object.name!=='globalThis'))) return;
+    if (parent.type=='MemberExpression'&&(parent.object!==node&&(!['document', 'window', 'self', 'globalThis'].includes(parent.object.name)))) return;
     if (parent.type=='FunctionDeclaration') return;
     if (parent.type=='VariableDeclaration') return;
     if (parent.type=='VariableDeclarator'&&parent.id==node) return;
@@ -39,5 +40,5 @@ export default function Identifier(node: any, parent: any = {}) {
 
     if (node.name=='eval' && parent.right !== node) return node.name = '__dynamic$eval';
 
-    //node.name = `dg$(${node.name})`;
+    node.name = `dg$(${node.name})`;
 }

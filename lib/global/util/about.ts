@@ -2,7 +2,7 @@ export default class about {
     rawHeaders = {};
     headers = new Headers({});
 
-    body;
+    body: Blob;
 
     constructor(blob: Blob) {
         this.body = blob;

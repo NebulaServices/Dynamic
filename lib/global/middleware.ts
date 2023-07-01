@@ -1,8 +1,10 @@
+import { DynamicBundle } from "./client";
+
 class DynamicMiddleware {
 
-  ctx;
+  ctx: DynamicBundle;
   
-  constructor(ctx: any) {
+  constructor(ctx: DynamicBundle) {
     this.ctx = ctx;
   }
 }
