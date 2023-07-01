@@ -1,4 +1,6 @@
 export default function rtc(self: Window | any) {
+    // rip
+    
     /*self.RTCPeerConnection = self.__dynamic.wrap(self.RTCPeerConnection,
         function(this: RTCPeerConnection, target: Function, ...args: Array<any>) {
             if (args[0]) {

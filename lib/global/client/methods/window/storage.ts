@@ -1,16 +1,16 @@
 export default function storage(self: Window | any) {
 
     self.Storage.prototype.setItem = self.__dynamic.wrap(self.Storage.prototype.setItem,
-        function(this: Storage, target: Function, ...args: Array<string | Symbol>) {
+        function(this: Storage, target: Function, ...args: Array<string | Symbol>): void {
             if (args[0]) args[0] = '__dynamic$' + self.__dynamic$location.host + '$' + args[0].toString();
 
-            return (Reflect.apply(target, this, args) as undefined, true);
+            return Reflect.apply(target, this, args) as undefined;
         },
         'Storage.prototype.setItem'
     );
 
     self.Storage.prototype.getItem = self.__dynamic.wrap(self.Storage.prototype.getItem,
-        function(this: Storage, target: Function, ...args: Array<string | Symbol>) {
+        function(this: Storage, target: Function, ...args: Array<string | Symbol>): string | null {
             if (args[0]) args[0] = '__dynamic$' + self.__dynamic$location.host + '$' + args[0].toString();
 
             return (Reflect.apply(target, this, args) as string || null);
@@ -19,16 +19,16 @@ export default function storage(self: Window | any) {
     );
 
     self.Storage.prototype.removeItem = self.__dynamic.wrap(self.Storage.prototype.removeItem,
-        function(this: Storage, target: Function, ...args: Array<string | Symbol>) {
+        function(this: Storage, target: Function, ...args: Array<string | Symbol>): void {
             if (args[0]) args[0] = '__dynamic$' + self.__dynamic$location.host + '$' + args[0].toString();
 
-            return (Reflect.apply(target, this, args) as undefined, true);
+            return Reflect.apply(target, this, args) as undefined;
         },
         'Storage.prototype.removeItem'
     );
 
     self.Storage.prototype.clear = self.__dynamic.wrap(self.Storage.prototype.clear,
-        function(this: Storage, target: Function, ...args: Array<string | Symbol>) {
+        function(this: Storage, target: Function, ...args: Array<string | Symbol>): void {
             var keys: Array<any> = [];
 
             for (var i = 0; i < this.length; i++) {
@@ -39,13 +39,13 @@ export default function storage(self: Window | any) {
                 target.call(this, keys[key]);
             }
 
-            return true;
+            return;
         },
         'Storage.prototype.clear'
     );
 
     self.Storage.prototype.key = self.__dynamic.wrap(self.Storage.prototype.key,
-        function(this: Storage, target: Function, ...args: Array<string | Symbol | number | any>) {
+        function(this: Storage, target: Function, ...args: Array<string | Symbol | number | any>): string | null {
             var keys: Array<any> = [];
 
             for (var i = 0; i < this.length; i++) {

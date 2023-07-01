@@ -3,10 +3,10 @@ export default function message(self: Window | any) {
   const isTarget = (s: any) => s.constructor.name=="Window" || s.constructor.name=='global';
   const getWindow = (name: any, location: any) => Object.keys(window || {}).map(e=>parseInt(e)).filter(e=>isFinite(e)).map(e=>window[e]).filter(e=>e||false).find((e: any)=>{try{return e.name == name && e.location.href == location} catch {return false;}});
 
-  self.__dynamic$message = function(target: any, origin: any = top) {
+  self.__dynamic$message = function(target: Window & any, origin: Window | null & any = top) {
     if (!target) target = self;
 
-    function __d$Send() {
+    function __d$Send(): void {
         var args = arguments;
 
         if (isWorker(target) || !isTarget(target))
@@ -22,7 +22,7 @@ export default function message(self: Window | any) {
 
   if (self.constructor.name == 'Window') {
     if (self.addEventListener) self.addEventListener = new Proxy(self.addEventListener, {
-      apply(t, g, a) {
+      apply(t, g, a: Array<Function | string | null>): void {
         if (g==self.__dynamic$window) g = self;
         if (!a[1] || !a[0] || typeof a[1] != 'function') return Reflect.apply(t, g, a);
   
@@ -39,10 +39,10 @@ export default function message(self: Window | any) {
     });
 
     if (self.constructor.name == 'Window') self.__dynamic.define(self, 'onmessage', {
-      get() {
-        return self._onmessage;
+      get(): Function | null {
+        return self._onmessage || null;
       },
-      set(val: any) {
+      set(val: Function | null): Function | null {
         if (self._onmessage) {self.removeEventListener('message', self._onmessage)}
   
         self.addEventListener('message', val);;
@@ -51,7 +51,7 @@ export default function message(self: Window | any) {
     });
   }
 
-  function cloneEvent(event: MessageEvent | any) {
+  function cloneEvent(event: MessageEvent | any): MessageEvent {
       const cloned = self.__dynamic.util.clone(event);
 
       let _window: any;

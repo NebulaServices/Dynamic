@@ -1,5 +1,5 @@
 export default function history(self: Window | any) {
-    self.__dynamic$history = function(this: History, target: Function, ...args: Array<string | null>) {
+    self.__dynamic$history = function(this: History, target: Function, ...args: Array<string | null>): void {
         if (args[2]) args[2] = self.__dynamic.url.encode(args[2], self.__dynamic.meta);
 
         self.__dynamic.Reflect.apply(target, this, args) as undefined;

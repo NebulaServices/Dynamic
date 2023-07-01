@@ -7,7 +7,7 @@ export default function navigator(self: Window | any) {
     }
 
     self.navigator.sendBeacon = self.__dynamic.wrap(self.navigator.sendBeacon,
-        function(this: Navigator, target: Function, ...args: Array<string>) {
+        function(this: Navigator, target: Function, ...args: Array<string>): Boolean {
             if (args[0]) {
                 args[0] = self.__dynamic.url.encode(args[0], self.__dynamic.meta);
             }

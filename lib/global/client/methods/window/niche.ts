@@ -23,7 +23,7 @@ export default function niche(self: any) {
 
     [self.document, self.HTMLElement.prototype].forEach(obj => {
         self.__dynamic.define(obj, 'baseURI', {
-            get() {
+            get(): string {
                 return (self.__dynamic.baseURL || self.__dynamic$location).href as string;
             }
         });
@@ -33,7 +33,7 @@ export default function niche(self: any) {
 
     ['getEntries', 'getEntriesByName', 'getEntriesByType'].forEach(prop => {
         self.performance[prop] = new Proxy(self.performance[prop], {
-            apply(t, g, a) {
+            apply(t, g, a: Array<any>): Array<PerformanceEntry> {
                 return (Reflect.apply(t, g, a) as any).filter((e:any)=>!e.name?.includes(self.location.origin+'/dynamic/dynamic.')).filter((e:any)=>!e.name.includes(self.location.origin+self.__dynamic.config.prefix+'caches/')).map((e:any)=>{
                     if (e.name) {
                         var cloned: PerformanceEntry | any = self.__dynamic.util.clone(e);
@@ -84,7 +84,7 @@ export default function niche(self: any) {
     // initEvent things
 
     if (self.MouseEvent) self.MouseEvent.prototype.initMouseEvent = self.__dynamic.wrap(self.MouseEvent.prototype.initMouseEvent,
-        function(this: MouseEvent, target: Function, ...args: Array<string | Symbol | any>) {
+        function(this: MouseEvent, target: Function, ...args: Array<string | Symbol | any>): void {
             if (args.length) args = args.map(e=>e==self.__dynamic$window?self:e);
 
             return Reflect.apply(target, this, args);
@@ -92,7 +92,7 @@ export default function niche(self: any) {
     );
 
     if (self.KeyboardEvent) self.KeyboardEvent.prototype.initKeyboardEvent = self.__dynamic.wrap(self.KeyboardEvent.prototype.initKeyboardEvent,
-        function(this: KeyboardEvent, target: Function, ...args: Array<string | Symbol | any>) {
+        function(this: KeyboardEvent, target: Function, ...args: Array<string | Symbol | any>): void {
             if (args.length) args = args.map(e=>e==self.__dynamic$window?self:e);
 
             return Reflect.apply(target, this, args);
@@ -100,7 +100,7 @@ export default function niche(self: any) {
    );
 
     if (self.StorageEvent) self.StorageEvent.prototype.initStorageEvent = self.__dynamic.wrap(self.StorageEvent.prototype.initStorageEvent,
-        function(this: StorageEvent, target: Function, ...args: Array<string | Symbol | any>) {
+        function(this: StorageEvent, target: Function, ...args: Array<string | Symbol | any>): void {
             if (args.length) args = args.map(e=>e==self.localStorage?self.__dynamic.storage.localStorage:e==self.sessionStorage?self.__dynamic.storage.sessionStorage:e);
 
             return Reflect.apply(target, this, args);
@@ -108,7 +108,7 @@ export default function niche(self: any) {
     );
 
     self.Object.defineProperty = self.__dynamic.wrap(self.Object.defineProperty,
-        function(this: any, target: Function, ...args: Array<string | Symbol | any>) {
+        function(this: any, target: Function, ...args: Array<string | Symbol | any>): any {
             try {
                 return Reflect.apply(target, this, args);
             } catch(e: any) {

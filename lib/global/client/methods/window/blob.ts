@@ -1,6 +1,6 @@
 export default function blob(self: Window | any) {
-    self.__dynamic.createBlobHandler = async function (blob: Blob, element: HTMLIFrameElement, val: string) {
-        const sw = (await self.__dynamic.sw.ready).active;
+    self.__dynamic.createBlobHandler = async function (blob: Blob, element: HTMLIFrameElement, val: string): Promise<void> {
+        const sw: ServiceWorker = (await self.__dynamic.sw.ready).active;
         
         self.__dynamic.sw.addEventListener('message', ({ data: {url} }: MessageEvent) => {
             if (url) {
