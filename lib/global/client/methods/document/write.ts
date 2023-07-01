@@ -1,23 +1,16 @@
 export default function write(self: any) {
-    self.document.write = self.__dynamic.wrap(self.document.write,
-        function(this: Document, handler: Function, ...args: Array<string>) {
-            for (var arg in args) {
-                args[arg] = self.__dynamic.rewrite.dom(args[arg], self.__dynamic.meta);
-            }
+    function handler(this: Document, handler: Function, ...args: Array<string>): undefined {
+        for (var arg in args) {
+            args[arg] = self.__dynamic.rewrite.dom(args[arg], self.__dynamic.meta);
+        }
 
-            return handler.apply(this, args);
-        },
-        'document.write'
-    );
+        return handler.apply(this, args);
+    };
 
-    self.document.writeln = self.__dynamic.wrap(self.document.writeln,
-        function(this: Document, handler: Function, ...args: Array<string>) {
-            for (var arg in args) {
-                args[arg] = self.__dynamic.rewrite.dom(args[arg], self.__dynamic.meta);
-            }
-
-            return handler.apply(this, args);
-        },
-        'document.writeln'
-    );
+    ["write", "writeln"].forEach(method => {
+        self.document[method] = self.__dynamic.wrap(self.document[method],
+            handler,
+            `document.${method}`
+        );
+    });
 }

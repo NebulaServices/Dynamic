@@ -1,17 +1,18 @@
+import Cookie from '../../../cookie';
 import { parse, serialize } from '../../../cookie/parse';
 
 export default function cookie(self: any) {
     delete self.Document.prototype.cookie;
 
     self.__dynamic.define(self.document, 'cookie', {
-        get() {
+        get(): string {
             var event = self.__dynamic.fire('getCookies', [self.__dynamic.location.host, self.__dynamic.cookie.str || '']);
             if (event) return event;
 
             self.__dynamic.cookies.update(self.__dynamic.location.host);
             return self.__dynamic.cookie.str || self.__dynamic.cookie.desc.get.call(this) || '';
         },
-        set(val: any) {
+        set(val: any): void {
             var parsed = self.__dynamic.modules.setCookieParser.parse(val, {decodeValues: false})[0];
 
             var event = self.__dynamic.fire('setCookie', [self.__dynamic.location.host, val, parsed]);
@@ -28,7 +29,7 @@ export default function cookie(self: any) {
 
             cookies[parsed.name] = parsed.value;
 
-            self.__dynamic.cookie.str = serialize(Object.entries(cookies).map(e=>({ name: e[0], value: e[1] })));
+            self.__dynamic.cookie.str = serialize(Object.entries(cookies).map(e=>({ name: e[0], value: e[1] })) as Array<any>);
         }
     });
 
@@ -40,7 +41,7 @@ export default function cookie(self: any) {
 
                     cookies[Object.entries(parsed)[0][0]] = Object.entries(parsed)[0][1];
 
-                    self.__dynamic.cookie.str = serialize(Object.entries(cookies).map(e=>({ name: e[0], value: e[1] })));
+                    self.__dynamic.cookie.str = serialize(Object.entries(cookies).map(e=>({ name: e[0], value: e[1] })) as Array<any>);
             }
 
             if (data.host==self.__dynamic.location.host && data.type == 'cookies') {

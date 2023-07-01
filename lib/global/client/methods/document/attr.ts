@@ -1,16 +1,15 @@
 export default function attributes(self: Window | any) {
-    const sanitize = (html: string) => new DOMParser().parseFromString(html, 'text/html').body.innerHTML;
+    const sanitize = (html: string): string => new DOMParser().parseFromString(html, 'text/html').body.innerHTML;
 
     self.__dynamic.elements.config.forEach((config: any) => {
         config.elements.forEach((element: any) => {
             config.tags.forEach((tag: string) => {
                 var descriptor: PropertyDescriptor | any = Object.getOwnPropertyDescriptor(element.prototype, tag);
-
                 if (!descriptor) descriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, tag);
 
                 if (typeof element.prototype.setAttribute.__dynamic$target == 'undefined') {
                     element.prototype.setAttribute = self.__dynamic.wrap(element.prototype.setAttribute,
-                        function(this: any, target: Function, ...args: Array<string>) {
+                        function(this: HTMLElement, target: Function, ...args: Array<string>): undefined {
                             if (this instanceof HTMLLinkElement && self.__dynamic$icon) {
                                 if (args[0].toLowerCase() == 'href' && (this.rel == 'icon' || this.rel == 'shortcut icon')) {
                                     args[1] = self.__dynamic$icon;
@@ -44,7 +43,7 @@ export default function attributes(self: Window | any) {
                     );
 
                     element.prototype.setAttributeNS = self.__dynamic.wrap(element.prototype.setAttributeNS,
-                        function(this: any, target: Function, ...args: Array<string>) {
+                        function(this: HTMLElement, target: Function, ...args: Array<string>): undefined {
                             if (this instanceof HTMLLinkElement && self.__dynamic$icon) {
                                 if (args[1].toLowerCase() == 'href' && (this.rel == 'icon' || this.rel == 'shortcut icon')) {
                                     args[2] = self.__dynamic$icon;
@@ -78,7 +77,7 @@ export default function attributes(self: Window | any) {
                     );
 
                     element.prototype.getAttribute = self.__dynamic.wrap(element.prototype.getAttribute,
-                        function(this: any, target: Function, ...args: Array<string>) {
+                        function(this: HTMLElement, target: Function, ...args: Array<string>): string | undefined {
                             if (this.dataset[`dynamic_${args[0]}`]) return this.dataset[`dynamic_${args[0]}`];
 
                             return Reflect.apply(target, this, args);
@@ -87,7 +86,7 @@ export default function attributes(self: Window | any) {
                     );
 
                     element.prototype.getAttributeNS = self.__dynamic.wrap(element.prototype.getAttributeNS, 
-                        function(this: any, target: Function, ...args: Array<string>) {
+                        function(this: HTMLElement, target: Function, ...args: Array<string>): string | undefined {
                             if (this.dataset[`dynamic_${args[1]}`]) return this.dataset[`dynamic_${args[1]}`];
 
                             return Reflect.apply(target, this, args);
@@ -98,7 +97,7 @@ export default function attributes(self: Window | any) {
 
 
                 self.__dynamic.define(element.prototype, tag, {
-                    get() {
+                    get(): string {
                         if (config.action=='window') {
                             const _window: any = self.__dynamic.elements.contentWindow.get.call(this);
 
@@ -131,7 +130,7 @@ export default function attributes(self: Window | any) {
 
                         return descriptor.get.call(this);
                     },
-                    set(val: any) {
+                    set(val: string): any {
                         if (val && typeof val == 'string') val = val.toString();
 
                         if (tag == 'href' && this instanceof HTMLLinkElement && self.__dynamic$icon && (this.rel == 'icon' || this.rel == 'shortcut icon')) {
@@ -172,12 +171,12 @@ export default function attributes(self: Window | any) {
         })
     });
 
-    ['innerHTML', 'outerHTML'].forEach((tag: string) => {
+    ['innerHTML', 'outerHTML'].forEach(tag => {
         self.__dynamic.define(self.HTMLElement.prototype, tag, {
-            get() {
+            get(): string {
                 return (this['__'+tag]||self.__dynamic.elements[tag].get.call(this)).toString(); 
             },
-            set(val: any) {
+            set(val: string): string {
                 this['__'+tag] = sanitize(val);
 
                 if (this instanceof self.HTMLTextAreaElement) return self.__dynamic.elements[tag].set.call(this, val);
@@ -189,9 +188,9 @@ export default function attributes(self: Window | any) {
         });
     });
 
-    ["MutationObserver", "ResizeObserver", "IntersectionObserver"].forEach((observer: string) => {
+    ["MutationObserver", "ResizeObserver", "IntersectionObserver"].forEach(observer => {
         self[observer].prototype.observe = self.__dynamic.wrap(self[observer].prototype.observe,
-            function(this: any, target: Function, ...args: Array<string>) {
+            function(this: MutationObserver | ResizeObserver | IntersectionObserver, target: Function, ...args: Array<string>): undefined {
                 if (args[0]==self.__dynamic$document) args[0] = self.document;
 
                 return Reflect.apply(target, this, args);
@@ -214,7 +213,7 @@ export default function attributes(self: Window | any) {
     });
 
     self.HTMLElement.prototype.insertAdjacentHTML = self.__dynamic.wrap(self.HTMLElement.prototype.insertAdjacentHTML,
-        function(this: any, target: Function, ...args: Array<string>) {
+        function(this: HTMLElement, target: Function, ...args: Array<string>): undefined {
             if (this instanceof self.HTMLStyleElement) return Reflect.apply(target, this, [args[0], self.__dynamic.rewrite.css.rewrite(args[1], self.__dynamic.meta)]);
             if (this instanceof self.HTMLScriptElement) return Reflect.apply(target, this, [args[0], self.__dynamic.rewrite.js.rewrite(args[1], {type: 'script'}, false, self.__dynamic)]);
             if (this instanceof self.HTMLTextAreaElement) return Reflect.apply(target, this, args);
@@ -225,18 +224,18 @@ export default function attributes(self: Window | any) {
     );
 
     [[self.Node, 'textContent'], [self.HTMLElement, 'innerText']].forEach(([el, attr]: any) => {
-        var desc: any = Object.getOwnPropertyDescriptor(el.prototype, attr);
+        var desc: PropertyDescriptor | undefined = Object.getOwnPropertyDescriptor(el.prototype, attr);
 
         function get(this: HTMLScriptElement | HTMLStyleElement & any) {
-            return this['__'+attr] || desc.get.call(this);
+            return this['__'+attr] || (desc?.get && desc.get.call(this));
         }
 
         self.__dynamic.define(self.HTMLStyleElement.prototype, attr, {
             get,
-            set(val: any) {
+            set(this: HTMLStyleElement | any, val: any) : any {
                 this['__'+attr] = val;
 
-                return desc.set.call(this, self.__dynamic.rewrite.css.rewrite(val, self.__dynamic.meta));
+                return desc?.set && desc.set.call(this, self.__dynamic.rewrite.css.rewrite(val, self.__dynamic.meta));
             }
         });
 
@@ -245,26 +244,25 @@ export default function attributes(self: Window | any) {
             set(val: any) {
                 this['__'+attr] = val;
 
-                if (this.type !== null || this.type !== 'application/javascript' || this.type !== 'text/javascript' || this.type !== 'application/x-javascript') return desc.set.call(this, val);
+                if (this.type !== null || this.type !== 'application/javascript' || this.type !== 'text/javascript' || this.type !== 'application/x-javascript') return desc?.set && desc.set.call(this, val);
 
-                return desc.set.call(this, self.__dynamic.rewrite.js.rewrite(val, {type: 'script'}, false, self.__dynamic));
+                return desc?.set && desc.set.call(this, self.__dynamic.rewrite.js.rewrite(val, {type: 'script'}, false, self.__dynamic));
             }
         });
     });
 
-    self.Text.prototype.toString = function() {
+    self.Text.prototype.toString = function(this: Text): string | null {
         return this.textContent;
     }
 
     self.document.createElement = self.__dynamic.wrap(self.document.createElement,
-        function(this: any, target: Function, ...args: Array<string>) {
+        function(this: Document, target: Function, ...args: Array<string>): HTMLElement & { src: any, rewritten: any } {
             var element: HTMLElement & { src: any, rewritten: any } = Reflect.apply(target, this, args);
+            element.rewritten = true;
 
             if (args[0].toLowerCase() == 'iframe') {
                 element.src = 'about:blank';
             }
-
-            element.rewritten = true;
 
             return element;
         },
@@ -272,7 +270,7 @@ export default function attributes(self: Window | any) {
     );
 
     if (!document.querySelector('link[rel="icon"], link[rel="shortcut icon"]')) {
-        var link = document.createElement('link');
+        var link: HTMLLinkElement = document.createElement('link');
         link.rel = 'icon';
         link.href = (self.__dynamic$icon || '/favicon.ico') + '?dynamic';
 
@@ -282,10 +280,10 @@ export default function attributes(self: Window | any) {
     }
 
     self.__dynamic.define(self.Attr.prototype, 'value', {
-        get() {
+        get(): string | null {
             return this.__value || self.__dynamic.elements.attrValue.get.call(this);
         },
-        set(val: any) {
+        set(val: any): any {
             this.__value = val;
 
             if (this.name == 'href' || this.name == 'src') return self.__dynamic.elements.attrValue.set.call(this, self.__dynamic.url.encode(val, self.__dynamic.meta));

@@ -1,15 +1,14 @@
 import Mutate from '@dynamic-pkg/mutation';
 
 export default function mutation(self: Window | any, __dynamic: any) {
-    //return;
     if (!__dynamic) __dynamic = self.__dynamic;
     
-    function rewrite(node: Element | any) {
+    function rewrite(node: HTMLElement & { rewritten: boolean, integrity: any }): Boolean | void {
         if (node.rewritten) return;
         if (node.nodeType !== 1 && node.nodeType !== 3) return;
 
         node = new Proxy(node, {
-            get(obj, prop) {
+            get(obj, prop): any {
                 if (prop == 'src' || prop == 'href' || prop == 'srcset' || prop == 'imageSrcset' || prop == 'data' || prop == 'action') {
                     return __dynamic.elements.getAttribute.call(obj, prop.toLowerCase());
                 }
@@ -22,26 +21,24 @@ export default function mutation(self: Window | any, __dynamic: any) {
 
                 if (prop == 'node') return obj;
 
-                return obj[prop];
+                return (obj as any)[prop];
             },
-            set(obj, prop, value) {
+            set(obj, prop, value): boolean {
                 if (prop == 'src' || prop == 'href' || prop == 'srcset' || prop == 'imageSrcset' || prop == 'data' || prop == 'action') {
                     __dynamic.elements.setAttribute.call(obj, prop.toLowerCase(), value);
                 } else {
-                    obj[prop] = value;
+                    (obj as any)[prop] = value;
                 }
 
                 return true;
             }
         });
 
-        if ((node instanceof HTMLScriptElement) as any) {
+        if (node instanceof HTMLScriptElement) {
             if (node.src) {
                 node.dataset['dynamic_src'] = node.src;
                 node.src = __dynamic.url.encode(node.src, __dynamic.meta);
             }
-
-            //let cloned = node.cloneNode(true) as HTMLScriptElement | any;
 
             if (node.type && node.textContent?.length) {
                 if (node.type == "application/javascript" || node.type == 'text/javascript' || node.type == 'application/x-javascript' && node.textContent?.length) {
@@ -50,10 +47,6 @@ export default function mutation(self: Window | any, __dynamic: any) {
             } else if (!node.type && node.textContent?.length) {
                 node.textContent = __dynamic.rewrite.js.rewrite(node.textContent, {type: 'script'}, false, __dynamic);
             }
-
-            //cloned.rewritten = true;
-            //node.rewritten = true;
-            //return node.node.parentElement.replaceChild(cloned, node.node);
         }
 
         if (node instanceof HTMLStyleElement) {
@@ -75,18 +68,6 @@ export default function mutation(self: Window | any, __dynamic: any) {
                 node.src = URL.createObjectURL(blob);
             }
         }
-
-        /*if (node instanceof HTMLImageElement) {
-            if (node.src) {
-                node.dataset['dynamic_src'] = node.src;
-                node.src = __dynamic.url.encode(node.src, __dynamic.meta);
-            }
-
-            if (node.srcset) {
-                node.dataset['dynamic_srcset'] = node.srcset;
-                node.srcset = __dynamic.rewrite.srcset.encode(node.srcset, __dynamic);
-            }
-        }*/
 
         if (node instanceof HTMLLinkElement && node.getAttribute('rel') !== 'stylesheet' && node.getAttribute('rel') !== 'prefetch' && node.getAttribute('rel') !== 'dns-prefetch') {
             if (node.href) {
@@ -182,12 +163,12 @@ export default function mutation(self: Window | any, __dynamic: any) {
             }
         }
 
-        if ((node instanceof SVGImageElement) as any) {
+        /*if (node instanceof SVGImageElement) {
             if (node.href) {
-                node.dataset['dynamic_href'] = node.href;
-                node.href = __dynamic.url.encode(node.href, __dynamic.meta);
+                //node.dataset['dynamic_href'] = node.href;
+                (node as any).href = __dynamic.url.encode(node.href, __dynamic.meta);
             }
-        }
+        }*/
 
         if (node instanceof HTMLMetaElement) {
             if (node.httpEquiv) {
@@ -219,32 +200,26 @@ export default function mutation(self: Window | any, __dynamic: any) {
             }
         }
 
-        return (node.rewritten = true);
+        return node.rewritten = true;
     }
 
     const observer = Mutate({
-        childList(event: MutationRecord) {
-            rewrite(event.target);
+        childList(event: MutationRecord): void {
+            rewrite(event.target as HTMLElement & {rewritten: boolean, integrity: any});
 
             for (let node of event.addedNodes as any) {
-                if (node.childNodes) for (let child of node.childNodes) rewrite(child);
+                if (node.childNodes) for (let child of node.childNodes) rewrite(child as HTMLElement & {rewritten: boolean, integrity: any});
             }
 
-            if (event.target.childNodes) for (var child of event.target.childNodes) rewrite(child);
+            if (event.target.childNodes) for (var child of event.target.childNodes) rewrite(child as HTMLElement & {rewritten: boolean, integrity: any});
         },
-        attributes(event: MutationRecord) {
+        attributes(event: MutationRecord): void {
             return;
         },
-        characterData(event: MutationRecord) {
+        characterData(event: MutationRecord): void {
             return;
         }
     }, self.document);
-
-    self.Element.prototype.replaceWith = self.__dynamic.wrap(self.Element .prototype.replaceWith, function (this: Node, handler: Function, ...args: Array<Node>) {
-        // for (let node of args) rewrite(node);
-
-        return handler.apply(this, args);
-    });
 
     self.document.addEventListener("DOMContentLoaded", function() {
         observer.disconnect();
