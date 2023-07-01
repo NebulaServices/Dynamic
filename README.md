@@ -40,7 +40,8 @@ npm start
 ```
 ## Authors
 
-- [@EnderKingJ](https://www.github.com/EnderKingJ) - Lead developer
+- [@Sylvie](https://www.github.com/Sylvie-TN) - Lead developer
+- [@GreenyDev](https://github.com/GreenyDEV) - Code Beautification and Moral Support
 
 
 Made with ❤️ By Nebula Services 
