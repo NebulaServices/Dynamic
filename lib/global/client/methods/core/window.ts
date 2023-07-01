@@ -1,5 +1,5 @@
 export default function window(self: any) {
-    self.__dynamic.util.CreateDocumentProxy = function CreateDocumentProxy(document: any) {
+    self.__dynamic.util.CreateDocumentProxy = function CreateDocumentProxy(document: any): ProxyHandler<Document> {
         return new Proxy(document, {
             get(obj, prop): any {
                 const val = obj[prop];
@@ -31,7 +31,7 @@ export default function window(self: any) {
         });
     }
 
-    self.__dynamic.util.CreateWindowProxy = function CreateWindowProxy(window: any) {
+    self.__dynamic.util.CreateWindowProxy = function CreateWindowProxy(window: any): ProxyHandler<Window> {
         return new Proxy(window, {
             get(obj, prop): any {
                 const val = self.__dynamic.Reflect.get(obj, prop);

@@ -1,6 +1,6 @@
 export default function Get(self: Window | any) {
     self.__dynamic$get = function(object: any) {
-        var data = self.__dynamic.fire('get', [object]);
+        var data: any = self.__dynamic.fire('get', [object]);
         if (data) return data;
 
         try {
@@ -27,7 +27,6 @@ export default function Get(self: Window | any) {
 
             return object;
         } catch(e) {
-            console.error(e);
             return object;
         }
     }

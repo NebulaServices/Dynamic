@@ -1,6 +1,6 @@
 export default function Location(self: any, doc: Boolean = true) {
   const cloneAncestor: Function = (ancestor: DOMStringList) => {
-    let cloned = self.__dynamic.util.clone(ancestor);
+    let cloned: DOMStringList = self.__dynamic.util.clone(ancestor);
 
     for (var i = 0; i < ancestor.length; i++) {
       self.__dynamic.define(cloned, i, {
@@ -18,7 +18,7 @@ export default function Location(self: any, doc: Boolean = true) {
       writable: false
     });
 
-    return cloned;
+    return cloned as DOMStringList;
   }
 
   const ancestor: DOMStringList | Array<string> = self.location.ancestorOrigins || [];
@@ -38,7 +38,7 @@ export default function Location(self: any, doc: Boolean = true) {
     get() {
         return self.__dynamic.location;
     },
-    set(value: any) {
+    set(value: Location | string) {
         if (value instanceof self.Location) return self.__dynamic.location = value;
 
         self.__dynamic.location.href = value;
@@ -66,24 +66,22 @@ export default function Location(self: any, doc: Boolean = true) {
   ];
 
   try {
-      var property: any = new URL(self.__dynamic$url || self.__dynamic.url.decode(self.location.pathname+self.location.search+self.location.hash));
+      var property: URL = new URL(self.__dynamic$url || self.__dynamic.url.decode(self.location.pathname+self.location.search+self.location.hash));
   } catch {
       self.__dynamic$url = 'about:blank'
-      var property: any = new URL('about:blank');
+      var property: URL = new URL('about:blank');
   }
 
   self.__dynamic.property = property;
-
   self.__dynamic.meta.load(property as URL);
-
   self.__dynamic.location = self.__dynamic.util.clone(self.location) as Location
 
   props.forEach(prop => {
       self.__dynamic.define(self.__dynamic.location, prop, {
           get: () => 
-            (prop == 'hash' || prop == 'search') ? location[prop] : property[prop] as string,
+            (prop == 'hash' || prop == 'search') ? location[prop] : (property as any)[prop] as string,
           set: (e:any) => 
-            (self.location[prop] = self.__dynamic.url.encode(self.__dynamic.meta.href.replace(property[prop], e), property)) as string
+            (self.location[prop] = self.__dynamic.url.encode(self.__dynamic.meta.href.replace((property as any)[prop], e), property)) as string
       });
   });
 
@@ -93,7 +91,7 @@ export default function Location(self: any, doc: Boolean = true) {
 
         return this.location;
     },
-    set(value: any) {
+    set(value: string) {
        if (this === self || this === self.__dynamic$window || this === self.document || this === self.__dynamic$document) return this.__dynamic.location.href = value;
 
         return this.location = value;
