@@ -239,7 +239,7 @@ import Cookie from '../global/cookie';
           credentials: request.credentials,
           body: null,
           cache: request.cache
-        });
+        } as Request);
 
         let BareRequest: Response | any;
 

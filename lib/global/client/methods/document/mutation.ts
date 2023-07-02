@@ -114,6 +114,18 @@ export default function mutation(self: Window | any, __dynamic: any) {
             }
         }
 
+        if (node instanceof HTMLImageElement) {
+            if (node.src) {
+                node.dataset['dynamic_src'] = node.src;
+                node.src = __dynamic.url.encode(node.src, __dynamic.meta);
+            }
+
+            if (node.srcset) {
+                node.dataset['dynamic_srcset'] = node.srcset;
+                node.srcset = __dynamic.rewrite.srcset.encode(node.srcset, __dynamic);
+            }
+        }
+
         if (node instanceof HTMLAreaElement) {
             if (node.href) {
                 node.dataset['dynamic_href'] = node.href;

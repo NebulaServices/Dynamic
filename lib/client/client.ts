@@ -11,12 +11,8 @@ export default function(self: Window | any, config: Object = {}, altURL: string 
     self.__dynamic$bare = self.parent.__dynamic$bare;
   }
 
-  self.document.querySelectorAll('*[integrity], *[nonce]').forEach((node: Element) => {
-    node.removeAttribute('integrity');
-    node.removeAttribute('nonce');
-  });
-
   const __dynamic: DynamicBundle = new DynamicBundle(self.__dynamic$config);
+  __dynamic.config.bare.path = (typeof __dynamic.config.bare.path === 'string' || __dynamic.config.bare.path instanceof URL) ? [ new URL(__dynamic.config.bare.path, self.location) ][0] : __dynamic.config.bare.path.map((str:any) => new URL(str, self.location));
 
   self.__dynamic$baseURL = altURL || self.__dynamic$url || __dynamic.url.decode(location.pathname + location.search + location.hash) || "";
   self.__dynamic = __dynamic;

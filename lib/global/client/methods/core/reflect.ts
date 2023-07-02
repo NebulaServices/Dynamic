@@ -1,4 +1,7 @@
 export default function reflect(self: Window | any) {
+    var get = self.Reflect.get.bind({});
+    var set = self.Reflect.set.bind({});
+
     self.Reflect.set = self.__dynamic.wrap(self.Reflect.set,
         function(this: Object, target: Function, ...a: Array<any>): any {
             if (a[0].constructor.name=='Window') {
@@ -13,7 +16,7 @@ export default function reflect(self: Window | any) {
                 return true;
             }
             
-            return target.apply(this, a);
+            return Reflect.apply(set, this, a);
         },
         'Reflect.set'
     );
@@ -24,7 +27,7 @@ export default function reflect(self: Window | any) {
                 if (a[0].constructor.name=='Window') {
                     if (a[1]=='location') return a[0].__dynamic$location;
 
-                    if (a[0][a[1]].constructor.name=='Window') {
+                    if (a[0][a[1]] && a[0][a[1]].constructor.name=='Window') {
                         return a[0][a[1]].__dynamic$window;
                     }
                 }
@@ -34,14 +37,14 @@ export default function reflect(self: Window | any) {
                 }
             }
 
-            return target.apply(this, a);
+            return Reflect.apply(get, this, a);
         },
         'Reflect.get'
     );
 
     self.__dynamic.Reflect = {
-        get: self.Reflect.get.bind({}),
-        set: self.Reflect.set.bind({}),
+        get,
+        set,
         apply: self.Reflect.apply.bind({}),
         construct: self.Reflect.construct.bind({}),
         defineProperty: self.Reflect.defineProperty.bind({}),

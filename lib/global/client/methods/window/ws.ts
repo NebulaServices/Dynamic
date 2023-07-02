@@ -1,10 +1,17 @@
 export default function websocket(self: Window | any) {
   // ty divide i love you
 
-  self.WebSocket = function(): WebSocket {
+  const createSocket = (url: string, protocols?: string | string[]): WebSocket => {
     return self.__dynamic.bare.createWebSocket.apply(
       self.__dynamic.bare,
-      [arguments[0], arguments[1] || [], {}]
-    ) as WebSocket;
+      [url, protocols || [], {}],
+    );
   }
+
+  self.WebSocket = new Proxy(self.WebSocket, {
+    construct(target: Function, args: Array<string | string[] | any>): any {
+      console.log(args);
+      return createSocket(args[0], args[1]);
+    }
+  });
 }

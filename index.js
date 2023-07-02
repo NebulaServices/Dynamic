@@ -24,7 +24,6 @@ server.on('request', (req, res) => {
 });
 
 server.on('upgrade', (req, socket, head) => {
-
   if (bare.shouldRoute(req, socket, head)) {
     bare.routeUpgrade(req, socket, head);
   } else {

@@ -69,7 +69,7 @@ export default function Function(self: Window | any) {
         
             return Reflect.apply(t, g, a);
         }
-    })
+    });
 
     self.Function.prototype.bind = self.__dynamic.wrap(self.Function.prototype.bind,
         function(this: any, handler: Function, ...args: Array<any>): Function {

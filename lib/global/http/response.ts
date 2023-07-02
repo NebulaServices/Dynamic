@@ -1,13 +1,13 @@
 export default class DynamicResponse extends Response {
-    status:any;
-    body: any;
-    statusText:any;
-    headers:any;
+    status: number = 200;
+    body: ReadableStream<Uint8Array> | null;
+    statusText: string = 'OK';
+    headers: Headers = new Headers({});
 
-    constructor(body: BodyInit = '', init: any | undefined = {}) {
+    constructor(body: string | ReadableStream<any> = '', init: Response | undefined = new Response('')) {
         super(body, init)
         
-        this.body = body;//new Response(body, {}).body;
+        this.body = body as ReadableStream<any>;
 
         if (init.status) this.status = init.status;
         if (init.statusText) this.statusText = init.statusText;
@@ -16,10 +16,10 @@ export default class DynamicResponse extends Response {
 
     get init() {
         return {
-            headers: this.headers||{},
-            statusText: this.statusText||200,
-            body: this.body||undefined,
-            status: this.statusText||'OK',
+            headers: this.headers || new Headers({}),
+            statusText: this.statusText || 200,
+            body: this.body || new Blob([]),
+            status: this.statusText || 'OK',
           }
     }
 }

@@ -21,6 +21,8 @@ export default class Cookie {
     }
     async open(): Promise<undefined> {
         await DB.open();
+
+        return;
     }
     async update(host: string): Promise<Array<Object>> {
         if (!this._db) this._db = this.db.open();
