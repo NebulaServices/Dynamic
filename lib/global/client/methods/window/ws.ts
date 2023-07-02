@@ -5,6 +5,6 @@ export default function websocket(self: Window | any) {
     return self.__dynamic.bare.createWebSocket.apply(
       self.__dynamic.bare,
       [arguments[0], arguments[1] || [], {}]
-    )
+    ) as WebSocket;
   }
 }
