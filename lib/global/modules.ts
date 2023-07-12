@@ -3,7 +3,7 @@ import * as path from 'path-browserify';
 import * as idb from 'idb';
 import * as base64 from '@dynamic-pkg/base64';
 import { parse } from '@dynamic-pkg/acorn';
-import { createBareClient, BareClient } from '@tomphttp/bare-client';
+import BareClient, { createBareClient } from '@tomphttp/bare-client';
 import * as cookie from '@dynamic-pkg/cookie';
 import * as setCookieParser from 'set-cookie-parser'
 import { generate } from '@dynamic-pkg/astring';

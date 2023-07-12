@@ -7,7 +7,7 @@ import DynamicHttp from './http';
 import DynamicRegex from './regex';
 import DynamicMiddleware from './middleware';
 import HeaderData from './headers';
-import { BareClient } from '@tomphttp/bare-client';
+import BareClient from '@tomphttp/bare-client';
 import DynamicTypeFunctions from './istype';
 import DynamicCookies from './cookie';
 import * as DynamicEncoding from './codec';
