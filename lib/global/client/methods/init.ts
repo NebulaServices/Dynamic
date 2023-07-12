@@ -37,6 +37,7 @@ export default function init(self: Window | any, __dynamic: any) {
         removeAttribute: self.Element.prototype.removeAttribute,
         hasAttribute: self.Element.prototype.hasAttribute,
         cloneNode: self.Node.prototype.cloneNode,
+        addEventListener: self.Node.prototype.addEventListener,
         
         config: [
             {

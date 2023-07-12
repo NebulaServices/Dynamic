@@ -31,6 +31,7 @@ export default function fetch(self: Window | any) {
     self.fetch = self.__dynamic.wrap(self.fetch,
         function(this: Window, target: Function, ...args: Array<string | Request | any>): Promise<Response> {
             if (self.Request) if (args[0].constructor.name === 'Request' || args[0] instanceof self.Request) {
+                console.log(args[0]);
                 return Reflect.apply(target, self, args) as Promise<Response>;
             }
 

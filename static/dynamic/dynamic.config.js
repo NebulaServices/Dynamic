@@ -4,7 +4,7 @@ self.__dynamic$config = {
   mode: 'production', // development: zero caching, no minification, production: speed-oriented
   logLevel: 3, // 0: none, 1: errors, 2: errors + warnings, 3: errors + warnings + info
   bare: {
-    version: 2,
+    version: 2, // v3 is shit
     path: '/bare/',
   },
   tab: {

@@ -114,6 +114,6 @@ The document has moved
 
     if (!src.match(/<(html|script|style)[^>]*>/g) && src.match(/<\!DOCTYPE[^>]*>/gi)) return src;
 
-    return src = src.replace(/(<!DOCTYPE html>|<html(.*?)>)/i, `$1${head.join(``)}\n`).replace(/<(script|link)\b[^>]*>/g,(e,n)=>e.replace(/\snonce\s*=\s*"[^"]*"/,e=>e.replace("nonce","nononce")).replace(/\sintegrity\s*=\s*"[^"]*"/,e=>e.replace("integrity","nointegrity")));;
+    return src.replace(/(<!DOCTYPE html>|<html(.*?)>)/im, `$1${head.join(``)}\n`).replace(/<(script|link)\b[^>]*>/g,(e,n)=>e.replace(/\snonce\s*=\s*"[^"]*"/,e=>e.replace("nonce","nononce")).replace(/\sintegrity\s*=\s*"[^"]*"/,e=>e.replace("integrity","nointegrity")));
   }
 }

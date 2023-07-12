@@ -13,7 +13,7 @@ export default function mutation(self: Window | any, __dynamic: any) {
                     return __dynamic.elements.getAttribute.call(obj, prop.toLowerCase());
                 }
 
-                if (prop == 'setAttribute' || prop == 'getAttribute' || prop == 'removeAttribute' || prop == 'hasAttribute' || prop == 'cloneNode') {
+                if (prop == 'setAttribute' || prop == 'getAttribute' || prop == 'removeAttribute' || prop == 'hasAttribute' || prop == 'cloneNode' || prop == 'addEventListener') {
                     return (...args: any) => {
                         return __dynamic.elements[prop].call(obj, ...args);
                     }
@@ -69,15 +69,35 @@ export default function mutation(self: Window | any, __dynamic: any) {
             }
         }
 
-        if (node instanceof HTMLLinkElement && node.getAttribute('rel') !== 'stylesheet' && node.getAttribute('rel') !== 'prefetch' && node.getAttribute('rel') !== 'dns-prefetch') {
-            if (node.href) {
-                node.dataset['dynamic_href'] = node.href;
-                node.href = __dynamic.url.encode(node.href, __dynamic.meta);
-            }
+        if (node instanceof HTMLLinkElement) {
+            if (node.getAttribute('rel') !== 'stylesheet' && node.getAttribute('rel') !== 'prefetch' && node.getAttribute('rel') !== 'dns-prefetch') {
+                if (node.href) {
+                    node.dataset['dynamic_href'] = node.href;
+                    node.href = __dynamic.url.encode(node.href, __dynamic.meta);
+                }
 
-            if (node.imageSrcset) {
-                node.dataset['dynamic_imagesrcset'] = node.imageSrcset;
-                node.imageSrcset = __dynamic.rewrite.srcset.encode(node.imageSrcset, __dynamic);
+                if (node.imageSrcset) {
+                    node.dataset['dynamic_imagesrcset'] = node.imageSrcset;
+                    node.imageSrcset = __dynamic.rewrite.srcset.encode(node.imageSrcset, __dynamic);
+                }
+            } else {
+                node.addEventListener('error', (e) => {
+                    if (node instanceof HTMLLinkElement) {
+                        if (node.href) {
+                            node.dataset['dynamic_href'] = node.href;
+                            node.href = __dynamic.url.encode(node.href, __dynamic.meta);
+                        }
+        
+                        if (node.imageSrcset) {
+                            node.dataset['dynamic_imagesrcset'] = node.imageSrcset;
+                            node.imageSrcset = __dynamic.rewrite.srcset.encode(node.imageSrcset, __dynamic);
+                        }
+
+                        e.preventDefault();
+
+                        return false;
+                    }
+                }, {once: true});
             }
         }
 
