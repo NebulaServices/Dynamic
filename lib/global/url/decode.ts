@@ -30,7 +30,7 @@ export default function decode(this: DynamicUrlRewriter, url: string | URL) {
     return url;
   }
 
-  url = base.origin + base.pathname + search;
+  url = base.origin + base.pathname + search + (new URL(url).search ? base.search.replace('?', '&') : base.search);
 
   return url;
 }

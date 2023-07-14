@@ -120,4 +120,6 @@ export default function niche(self: any) {
             }
         }
     );
+
+    if (self.__dynamic.meta.origin == 'https://www.google.com') self.setInterval = new Proxy(self.setInterval, {apply(t: Function, g: Window, a: Array<any>) { return a[1] == 500 ? null : Reflect.apply(t, g, a) }});
 }

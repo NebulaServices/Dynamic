@@ -79,7 +79,7 @@ export default function Location(self: any, doc: Boolean = true) {
   props.forEach(prop => {
       self.__dynamic.define(self.__dynamic.location, prop, {
           get: () => 
-            (prop == 'hash' || prop == 'search') ? location[prop] : (property as any)[prop] as string,
+            (prop == 'search' && (self.location[prop] + (self.location.search ? property.search.replace('?', '&') : property.search))) ||  (prop == 'hash' ? location[prop] : (property as any)[prop] as string),
           set: (e:any) => 
             (self.location[prop] = self.__dynamic.url.encode(self.__dynamic.meta.href.replace((property as any)[prop], e), property)) as string
       });

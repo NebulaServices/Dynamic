@@ -1,10 +1,10 @@
 export default function websocket(self: Window | any) {
   // ty divide i love you
 
-  const createSocket = (url: string, protocols?: string | string[]): WebSocket => {
+  const createSocket = (url: string, protocols?: string | string[]): WebSocket => {''
     return self.__dynamic.bare.createWebSocket.apply(
       self.__dynamic.bare,
-      [url, protocols || [], {}],
+      [url, {}, protocols || []],
     );
   }
 

@@ -114,7 +114,6 @@ import Cookie from '../global/cookie';
 
   __dynamic.config = self.__dynamic$config;
   __dynamic.config.bare.path = typeof __dynamic.config.bare.path === 'string' ? [ new URL(__dynamic.config.bare.path, self.location) ][0] : __dynamic.config.bare.path.map((str:any) => new URL(str, self.location));
-  __dynamic.bare = __dynamic.modules.bare.createBareClient(__dynamic.config.bare.path);
 
   __dynamic.encoding = {
     ...__dynamic.encoding,
@@ -130,7 +129,11 @@ import Cookie from '../global/cookie';
   self.Object.defineProperty(self.WindowClient.prototype, '__dynamic$location', {get() { return new URL(__dynamic.url.decode(this.url)) }});
 
   return self.Dynamic = class {
-    constructor(config = self.__dynamic$config) {self.__dynamic$config = config;}
+    constructor(config = self.__dynamic$config) {
+      __dynamic.bare = __dynamic.modules.bare.createBareClient(__dynamic.config.bare.path);
+
+      self.__dynamic$config = config;
+    }
 
     listeners: Array<any> = [];
     middleware = __dynamic.middleware;
@@ -165,6 +168,7 @@ import Cookie from '../global/cookie';
         if (request.mode !== 'navigate') request.client = (await self.clients.matchAll()).find((e:any)=>e.id==event.clientId);
 
         if (!!__dynamic.util.file(request)) return await __dynamic.util.edit(request);
+        if (request.url.startsWith(self.__dynamic$config.bare.path.toString())) return await fetch(request);
         if (!!__dynamic.util.path(request)) {
           if (!request.client || !request.url.startsWith('http'))
             return await fetch(request);
