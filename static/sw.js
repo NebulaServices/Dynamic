@@ -13,9 +13,7 @@ self.addEventListener('fetch',
                     return await dynamic.fetch(event);
                 }
 
-                event.respondWith(
-                    fetch(event.request)
-                );
+                return await fetch(event.request);
             })()
         );
     }
