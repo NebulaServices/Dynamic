@@ -139,9 +139,12 @@ import Cookie from '../global/cookie';
     fire = self.__dynamic.fire;
 
     async route(event: Event | any) {
-      if (event.request.url.startsWith(location.origin + self.__dynamic$config.prefix)) return true;
-
       const { request } = event;
+
+      // don't proxy requests to the bare server
+      if (request.url.startsWith(__dynamic.config.bare.path.toString())) return false;
+
+      if (request.url.startsWith(location.origin + self.__dynamic$config.prefix)) return true;
 
       if (blockList.includes(request.url)) return false;
 
