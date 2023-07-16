@@ -124,10 +124,6 @@ import about from '../global/util/about';
 
   self.__dynamic = __dynamic;
 
-  console.error = (message: any, ...optionalParams: any[]) => {
-    return console.log.call({}, ...['%c'+message, 'background: #240d0d;padding:10px;color:#ff7474;font-size:11px;', ...optionalParams]);
-  };
-
   self.Object.defineProperty(self.WindowClient.prototype, '__dynamic$location', {get() { return new URL(__dynamic.url.decode(this.url)) }});
 
   return self.Dynamic = class {
