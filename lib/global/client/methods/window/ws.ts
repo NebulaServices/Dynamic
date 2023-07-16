@@ -4,13 +4,12 @@ export default function websocket(self: Window | any) {
   const createSocket = (url: string, protocols?: string | string[]): WebSocket => {''
     return self.__dynamic.bare.createWebSocket.apply(
       self.__dynamic.bare,
-      [url, {}, protocols || []],
+      [url, protocols || [], {}],
     );
   }
 
   self.WebSocket = new Proxy(self.WebSocket, {
     construct(target: Function, args: Array<string | string[] | any>): any {
-      console.log(args);
       return createSocket(args[0], args[1]);
     }
   });

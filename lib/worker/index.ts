@@ -275,7 +275,7 @@ import Cookie from '../global/cookie';
             const ResponseBlob = await BareRequest.blob();
             const ResponseText = await ResponseBlob.text();
 
-            const HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.config, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, await Cookies.get(Dynamic.meta.host), '', false, "self.__dynamic$bare = JSON.parse('"+JSON.stringify((await __dynamic.bare).manfiest)+"');");
+            const HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.config, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, await Cookies.get(Dynamic.meta.host), '', false, "self.__dynamic$bare = JSON.parse('"+JSON.stringify((await __dynamic.bare).manifest)+"');");
 
             if (Dynamic.is.html(Dynamic.meta, BareRequest.headers.get('content-type'), ResponseText))
               ResponseBody = new Blob([Dynamic.rewrite.html.rewrite(ResponseText, Dynamic.meta, HeaderInject)], {type: BareRequest.headers.get('content-type')||'text/html; charset=utf-8'});
@@ -289,7 +289,7 @@ import Cookie from '../global/cookie';
             if (Dynamic.is.html(Dynamic.meta, BareRequest.headers.get('content-type'), ResponseText)) {
 
               try {
-                let HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.config, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, await Cookies.get(Dynamic.meta.host), '', true, "self.__dynamic$bare = JSON.parse('"+JSON.stringify((await __dynamic.bare).manfiest)+"');");
+                let HeaderInject = Dynamic.rewrite.html.generateHead(location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.config, location.origin+self.__dynamic$config.assets.prefix+self.__dynamic$config.assets.files.client, await Cookies.get(Dynamic.meta.host), '', true, "self.__dynamic$bare = JSON.parse('"+JSON.stringify((await __dynamic.bare).manifest)+"');");
                 ResponseBody = new Blob([(new (await self.html)({ctx: Dynamic})).rewrite(ResponseText, Dynamic.meta, HeaderInject)], {type: BareRequest.headers.get('content-type')||'text/html; charset=utf-8'});
               } catch {
                 ResponseBody = ResponseBlob;
