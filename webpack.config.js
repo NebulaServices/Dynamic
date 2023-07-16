@@ -7,7 +7,10 @@ import webpack from 'webpack';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-    
+
+// You have to opt-in to not view bundle analytics
+const showAnalytics = process.env.SHOW_ANALYTICS !== '0';
+
 export default {
   mode: 'development',
   entry: {
@@ -72,7 +75,8 @@ export default {
     maxAssetSize: 512000
   },
   plugins: [
-    new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
+    // conditionally add the plugin
+    ...(showAnalytics ? [new WebpackBundleAnalyzer.BundleAnalyzerPlugin()] : []),
     new webpack.DefinePlugin({
       'self.ORIGINS': JSON.stringify([
         '*'
