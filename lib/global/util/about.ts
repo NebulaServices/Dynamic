@@ -1,6 +1,8 @@
 export default class about {
     rawHeaders = {};
     headers = new Headers({});
+    status = 200;
+    statusText = 'OK';
 
     body: Blob;
 

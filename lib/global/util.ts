@@ -26,7 +26,7 @@ class DynamicUtil {
   encode: Function = encode;
   rewritePath: Function = rewritePath;
   
-  about: any = about;
+  about = about;
 
   ctx: DynamicBundle & { encoding: any };
   

@@ -30,7 +30,7 @@ class DynamicBundle {
   regex: any = new DynamicRegex(this as DynamicBundle);
   headers: any = HeaderData;
   encoding: any = DynamicEncoding;
-  bare: BareClient | any;
+  bare!: Promise<BareClient>;
 
   middleware: DynamicMiddleware = new DynamicMiddleware(this);
 

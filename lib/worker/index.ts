@@ -1,5 +1,7 @@
+import { BareResponse } from '@tomphttp/bare-client';
 import { DynamicBundle } from '../global/bundle';
 import Cookie from '../global/cookie';
+import about from '../global/util/about';
 
 (function(self: ServiceWorker | any) {
   self.skipWaiting();
@@ -176,6 +178,7 @@ import Cookie from '../global/cookie';
         }
         if (!__dynamic.util.routePath(request)) return await __dynamic.util.route(request);
 
+        // @ts-ignore
         await __dynamic.bare.working;
 
         const Dynamic: DynamicBundle = new DynamicBundle(__dynamic.config);
@@ -245,7 +248,7 @@ import Cookie from '../global/cookie';
           cache: request.cache
         } as Request);
 
-        let BareRequest: Response | any;
+        let BareRequest: BareResponse|about;
 
         if (__dynamic.headers.method.body.indexOf(request.method.toUpperCase())==-1) Request.body = await request.blob();
 
