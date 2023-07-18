@@ -25,7 +25,7 @@ export default function reflect(self: Window | any) {
         function(this: Object, target: Function, ...a: Array<any>) {
             if (typeof a[0] == 'object') {
                 if (a[0].constructor.name=='Window') {
-                    if (a[1]=='location') return a[0].__dynamic$location;
+                    if (a[1]=='location') return a[0].__dynamic ? a[0].__dynamic$location : Reflect.apply(get, this, a);
 
                     if (a[0][a[1]] && a[0][a[1]].constructor.name=='Window') {
                         return a[0][a[1]].__dynamic$window;

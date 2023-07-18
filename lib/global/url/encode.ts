@@ -67,7 +67,7 @@ export default function encode(this: DynamicUrlRewriter, url: URL | string | any
   url = new String(url).toString();
 
   if (meta.href.match(this.ctx.regex.BypassRegex)) (
-    url = new URL(url, new URL(this.ctx.parent.__dynamic.meta.href)).href
+    url = new URL(url, new URL((this.ctx.parent.__dynamic || this.ctx).meta.href)).href
   );
 
   url = new URL(url, meta.href);

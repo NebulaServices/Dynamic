@@ -47,8 +47,10 @@ export default function window(self: any) {
 
                 //if (window.document) if (prop=='document') return window.__dynamic.util.CreateDocumentProxy(val);
                 if (prop=='location') return window.__dynamic$location;
-                if (prop=='parent') return window.top.__dynamic$window;
-                if (prop=='top') return window.top.__dynamic$window;
+                if (prop=='parent') return window.parent.__dynamic$window || window.parent;
+                if (prop=='top') 
+                    if (!window.top.__dynamic) return window.parent.__dynamic$window;
+                    else return window.top.__dynamic$window;
                 if (prop=='self') return window.__dynamic$window;
                 if (prop=='globalThis') return window.__dynamic$window;
 

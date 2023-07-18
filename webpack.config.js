@@ -12,7 +12,7 @@ const __dirname = dirname(__filename);
 const showAnalytics = process.env.SHOW_ANALYTICS !== '0';
 
 export default {
-  mode: 'development',
+  mode: 'production',
   entry: {
     worker: {
       import: './'+join('lib', 'worker', 'index.ts'),

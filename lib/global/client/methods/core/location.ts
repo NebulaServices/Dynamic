@@ -4,7 +4,7 @@ export default function Location(self: any, doc: Boolean = true) {
 
     for (var i = 0; i < ancestor.length; i++) {
       self.__dynamic.define(cloned, i, {
-        value: self.top.__dynamic$location.origin,
+        value: (self.top.__dynamic$location || self.__dynamic$location).origin,
         configurable: true,
         enumerable: true,
         writable: false
