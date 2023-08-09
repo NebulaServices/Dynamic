@@ -50,10 +50,15 @@ npm i
 ```bash
 npm start
 ```
+
+## Notice 
+
+Hi there, we're launching this project in **early public beta**. Behind the scenes we're working hard at rewriting and bug fixes. Thanks for understanding. 
+
 ## Authors
 
 - [@Sylvie](https://www.github.com/Sylvie-TN) - Lead developer
-- [@GreenyDev](https://github.com/GreenyDEV) - Code Beautification and Moral Support
+- [@GreenyDev](https://github.com/GreenyDEV) - Documentation, project manager
 
 
 Made with ❤️ By Nebula Services 
