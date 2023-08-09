@@ -19,6 +19,24 @@
 - Written in TypeScript
 ## Getting started (How to run)
 
+### Method 1 
+
+1. Clone and Change directory into Dynamic
+```bash
+git clone https://GitHub.com/NebulaServices/dynamic.git && cd Dynamic
+```
+
+2. Give bash file permissions
+```bash 
+chmod +x ./bin/run.sh
+```
+
+3. Run bash file 
+```bash
+./bin/run.sh
+```
+
+### Method 2 
 ```bash
 git clone https://GitHub.com/NebulaServices/dynamic.git && cd Dynamic
 ```
