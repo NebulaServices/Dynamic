@@ -1,4 +1,6 @@
-![Frame 1 (6)](https://github.com/NebulaServices/Dynamic/assets/81369743/5fbb36d7-67e9-4117-aa23-5b064ed99760)
+
+
+![Frame_1_6](https://github.com/NebulaServices/Dynamic/assets/81369743/373dc333-ff38-46c7-90f7-bd34899a6807)
 ![Version](https://img.shields.io/badge/status-BETA-build) 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
 [![License](https://img.shields.io/github/license/NebulaServices/Dynamic.svg)](https://github.com/NebulaServices/Dynamic/blob/main/LICENSE)
