@@ -11,37 +11,35 @@ document.addEventListener('DOMContentLoaded', async function(){
   workerLoaded = true;
 })
 
+function prependHttps(url) {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return 'https://' + url;
+  }
+  return url;
+}
 
 function isUrl(val = "") {
-  if (
-    /^http(s?):\/\//.test(val) ||
-    (val.includes(".") && val.substr(0, 1) !== " ")
-  )
-    return true;
-  return false;
+  // Use a regular expression to check for a valid URL pattern
+  const urlPattern = /^(http(s)?:\/\/)?([\w-]+\.)+[\w]{2,}(\/.*)?$/;
+  return urlPattern.test(val);
 }
-const inpbox = document.getElementById("uform");
 
+const inpbox = document.getElementById("uform");
 inpbox.addEventListener("submit", async (event) => {
   event.preventDefault();
-
   console.log("Connecting to service -> loading");
-
-  if (typeof navigator.serviceWorker === "undefined")
+  if (typeof navigator.serviceWorker === "undefined") {
     alert(
-      "An error occured registering your service worker. Please contact support - discord.gg/unblocker"
+      "An error occurred registering your service worker. Please contact support - discord.gg/unblocker"
     );
-
-  if (!workerLoaded) await worker();
-  
-  form = document.querySelector("form");
-  const formValue = document.querySelector("form input").value;
-  if (!isUrl(formValue)) {
-    location.href =
-      form.action +
-      "?url=https://www.google.com/search?q=" +
-      encodeURIComponent(formValue);
-  } else {
-    location.href = form.action + "?url=" + encodeURIComponent(formValue);
   }
+  if (!workerLoaded) {
+    await worker();
+  }
+  
+  const form = document.querySelector("form");
+  const formValue = document.querySelector("form input").value;
+  const url = isUrl(formValue) ? prependHttps(formValue) : 'https://www.google.com/search?q=' + encodeURIComponent(formValue);
+
+  location.href = form.action + "?url=" + encodeURIComponent(url);
 });
