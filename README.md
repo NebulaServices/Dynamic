@@ -57,6 +57,9 @@ npm start
 
 Hi there, we're launching this project in **early public beta**. Behind the scenes we're working hard at rewriting and bug fixes. Thanks for understanding. 
 
+## Developer support 
+We have our very own developer support server! Join with this link: https://discord.gg/shESgmwt3M
+
 ## Authors
 
 - [@Sylvie](https://www.github.com/Sylvie-TN) - Lead developer
