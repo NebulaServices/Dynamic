@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Web Proxy</title>
+	<title>Dynamic</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/x-icon" href="/resources/img/logo.png">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
 	<link rel="stylesheet" href="resources/style.css">
 
 </head>
 <body>
-	<h1></h1>
-  <svg width="100%" height="100%"></svg>
+	
+  <canvas></canvas>
+  <h1> Dynamic </h1>
 	<form action="/service/route" action="" method="POST" id="uform">
-	  <input title="query" name="url" >
+	  <input title="query" name="url" autocomplete="off" >
 	</form>
   <div class="footer"> 
-    <div class="copyright"> Copyright Nebula Services 2023 | <a> credits </a></div>
+    <div class="copyright"> Copyright Nebula Services 2023 </div>
  </div>  
-  <script src="/resources/d3.v4.min.js"></script>
-  <script src="/resources/d3-hexbin.v0.2.min.js"></script>
-  <script src="/resources/index.js"></script>
+
+  <script src="/resources/scripts/index.js"></script>
+  <script src="/resources/scripts/backdrop.js"></script>
+  <script src="/resources/scripts/notice.js"></script>
 </body>
 </html>

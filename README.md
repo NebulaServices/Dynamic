@@ -1,5 +1,9 @@
 ![Frame 1 (6)](https://github.com/NebulaServices/Dynamic/assets/81369743/5fbb36d7-67e9-4117-aa23-5b064ed99760)
-Join the revolution today and experience the power of Dynamic.
+![Version](https://img.shields.io/badge/status-BETA-build) 
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
+[![License](https://img.shields.io/github/license/NebulaServices/Dynamic.svg)](https://github.com/NebulaServices/Dynamic/blob/main/LICENSE)
+[![TypeScript](https://badgen.net/badge/icon/typescript?icon=typescript&label)](https://typescriptlang.org)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 ## Features
 
@@ -15,16 +19,6 @@ Join the revolution today and experience the power of Dynamic.
 - Written in TypeScript
 ## Getting started (How to run)
 
-
-### The absolute simplest way
-
-Dynamics CLI makes it easy to not only download Dynamic but use it too! 
-
-```
-npm i @greenydeveloper/dynamic-cli -g && dynamic auto --start
-```
-
-### The normal way 
 ```bash
 git clone https://GitHub.com/NebulaServices/dynamic.git && cd Dynamic
 ```

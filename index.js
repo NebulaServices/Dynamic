@@ -5,7 +5,9 @@ import { fileURLToPath } from 'url';
 import nodeStatic from 'node-static';
 import chalk from 'chalk';
 
-const port = 800;
+
+
+const port = process.env.PORT || 3000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -34,5 +36,6 @@ server.on('upgrade', (req, socket, head) => {
 server.listen({
   port: port,
 }, () => {
-  console.log(chalk.green.bold("[Dynamic] ") + "live at port " + chalk.underline.bold.green(port));
+  console.log(chalk.bold('Thanks for using Dynamic!'), chalk.red(`Please notice that ${chalk.red.bold('dynamic is currently in public BETA')}. please report all issues to the GitHub page. `))
+  console.log(chalk.green.bold("[Dynamic] ") + "live at port " + chalk.bold.green(port));
 });

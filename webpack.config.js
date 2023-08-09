@@ -75,12 +75,12 @@ export default {
     maxAssetSize: 512000
   },
   plugins: [
-    // conditionally add the plugin
-    ...(showAnalytics ? [new WebpackBundleAnalyzer.BundleAnalyzerPlugin()] : []),
-    new webpack.DefinePlugin({
-      'self.ORIGINS': JSON.stringify([
-        '*'
-      ]),
-    })
+    // // conditionally add the plugin
+    // ...(showAnalytics ? [new WebpackBundleAnalyzer.BundleAnalyzerPlugin()] : []),
+    // new webpack.DefinePlugin({
+    //   'self.ORIGINS': JSON.stringify([
+    //     '*'
+    //   ]),
+    // })
   ]
 };
