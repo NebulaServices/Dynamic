@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# Step 1: Install dependencies
+# naming
+echo "Running Dynamic install sequence"
+
+#  Install dependencies
 npm i
 
-# Step 2: Build the project
+#  Build the project
 npm run build
 
-# Step 3: Start the application
+# Start server
 npm start
