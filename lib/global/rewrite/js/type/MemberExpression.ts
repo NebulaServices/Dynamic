@@ -109,7 +109,7 @@ export default function MemberExpression(node: Node, parent: Node = {} as any, c
       }
     }
 
-    if (node.computed) {
+    if (node.computed && config.destination !== 'worker') {
       node.property = {
         type: "CallExpression",
         callee: {type: 'Identifier', name: 'dp$'},
