@@ -7,7 +7,7 @@ import { BareClient, createBareClient } from '@tomphttp/bare-client';
 import * as cookie from '@dynamic-pkg/cookie';
 import * as setCookieParser from 'set-cookie-parser'
 import { generate } from '@dynamic-pkg/astring';
-import * as Bowser from 'bowser';
+//import * as Bowser from 'bowser';
 //import mutation from '@dynamic-pkg/mutation';
 
 class DynamicModules {
@@ -19,9 +19,9 @@ class DynamicModules {
   base64 = base64;
   estree = { generate };
   cookie = {...cookie, serialize: (...args: any) => { try {return cookie.serialize.apply({}, args)} catch(e) {console.log(e);}}};
-  setCookieParser = setCookieParser;
-  bowser = Bowser;
-
+  setCookieParser = setCookieParser.parse;
+ //bowser = Bowser;
+  
   ctx;
 
   constructor(ctx:any) {

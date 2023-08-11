@@ -43,7 +43,7 @@ import about from '../global/util/about';
 
         return self[name] = res.text();
       }).then((text: any) => {
-        return eval(text);
+        return (0, eval)(text);
       });
 
       if (log > 1) console.log('Loading: ' + name, url);
@@ -159,8 +159,8 @@ import about from '../global/util/about';
     async fetch(event: Event | any) {
       const { request } = event;
 
-      const userData = __dynamic.modules.bowser.parse(navigator.userAgent);
-      const userBrowser = userData.browser.name;
+      //const userData = __dynamic.modules.bowser.parse(navigator.userAgent);
+      //const userBrowser = userData.browser.name;
 
       try {
         if (request.mode !== 'navigate') request.client = (await self.clients.matchAll()).find((e:any)=>e.id==event.clientId);
