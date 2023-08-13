@@ -1,12 +1,13 @@
 {
   "name": "dynamic",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node --max-http-header-size=50000 index",
-    "build": "webpack",
-    "watch": "webpack --watch",
+    "build": "esbuild",
+    "webpack": "webpack",
+    "webpackwatch": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -30,9 +31,11 @@
     "dom-serializer": "^2.0.0",
     "domhandler": "^5.0.3",
     "esbuild": "^0.19.0",
+    "express": "^4.18.2",
     "htmlparser2": "^9.0.0",
     "idb": "^7.0.2",
     "node-static": "^0.7.11",
+    "open": "^9.1.0",
     "parse5": "^7.1.2",
     "path-browserify": "^1.0.1",
     "remove-strict-webpack-plugin": "^0.1.2",
