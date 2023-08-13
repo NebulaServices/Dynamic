@@ -51,7 +51,7 @@ fastify.register(fastifyStatic, {
 
 const URL = `http://localhost:${port}/`;
 fastify.listen({ port }, async (err) => {
-  if (err && err.code !== "EADDRINUSE") {
+  if (err && err.code === "EADDRINUSE") {
     console.log(chalk.red.bold(`[Dynamic ${_v}] `) + "Port is already in use! Please close any apps using port " + chalk.bold.underline.red(port) + " and try again.");
     process.exit(1);
   } else if (err) {
