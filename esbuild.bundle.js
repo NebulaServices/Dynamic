@@ -1,12 +1,12 @@
 import * as esbuild from 'esbuild';
 
 const build = async () => {
-    console.time("esbuild");
+    console.time('esbuild');
 
     const worker = await esbuild.context({
         entryPoints: ['lib/worker/index.ts'],
         bundle: true,
-        outfile: 'static/dynamic/dynamic.worker.js',
+        outfile: 'dist/dynamic.worker.js',
         format: 'iife',
         minify: true,
         platform: 'browser',
@@ -21,7 +21,7 @@ const build = async () => {
     const handler = await esbuild.context({
         entryPoints: ['lib/handler/index.ts'],
         bundle: true,
-        outfile: 'static/dynamic/dynamic.handler.js',
+        outfile: 'dist/dynamic.handler.js',
         format: 'iife',
         minify: true,
         platform: 'browser',
@@ -36,7 +36,7 @@ const build = async () => {
     const client = await esbuild.context({
         entryPoints: ['lib/client/index.ts'],
         bundle: true,
-        outfile: 'static/dynamic/dynamic.client.js',
+        outfile: 'dist/dynamic.client.js',
         format: 'iife',
         minify: true,
         platform: 'browser',
@@ -51,7 +51,7 @@ const build = async () => {
     const html = await esbuild.context({
         entryPoints: ['lib/html/index.ts'],
         bundle: true,
-        outfile: 'static/dynamic/dynamic.html.js',
+        outfile: 'dist/dynamic.html.js',
         format: 'iife',
         minify: true,
         platform: 'browser',
@@ -65,7 +65,7 @@ const build = async () => {
 
     console.log(await esbuild.analyzeMetafile((await worker.rebuild()).metafile));
 
-    console.timeEnd("esbuild");
+    console.timeEnd('esbuild');
 
     await new Promise(resolve => null);
 }
