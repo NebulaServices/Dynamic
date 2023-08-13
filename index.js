@@ -50,7 +50,7 @@ fastify.register(fastifyStatic, {
 });
 
 const URL = `http://localhost:${port}/`;
-fastify.listen({ port }, async () => {
+fastify.listen({ port }, async (err) => {
   console.log(chalk.bold('Thanks for using Dynamic!'), chalk.red(`Please notice that ${chalk.red.bold('dynamic is currently in public BETA')}. please report all issues to the GitHub page. `))
   console.log(chalk.green.bold(`Dynamic ${_v} `) + "live at port " + chalk.bold.green(port));
   try {
@@ -58,4 +58,5 @@ fastify.listen({ port }, async () => {
   } catch (ERR) {
     console.error(ERR);
   }
+  if (err) throw new Error(err);
 });
