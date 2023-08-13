@@ -1,4 +1,3 @@
-declare module 'meriyah/dist/meriyah.esm.min.js';
 declare module '@dynamic-pkg/bare-client';
 declare module '@dynamic-pkg/acorn';
 declare module '@dynamic-pkg/astring';
