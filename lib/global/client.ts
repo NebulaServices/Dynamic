@@ -19,40 +19,58 @@ class DynamicBundle {
   modules: DynamicModules = new DynamicModules(this);
   util: DynamicUtil = new DynamicUtil(this);
   meta: DynamicMeta = new DynamicMeta(this);
-  regex: any = new DynamicRegex(this);
+  regex: DynamicRegex = new DynamicRegex(this);
   rewrite: DynamicRewrites = new DynamicRewrites(this);
   url: DynamicUrlRewriter = new DynamicUrlRewriter(this);
   is: DynamicTypeFunctions = new DynamicTypeFunctions(this);
   cookies: DynamicCookies = new DynamicCookies(this);
   client: DynamicClient = new DynamicClient(this);
-  encoding: any = DynamicEncoding;
-  headers: any = HeaderData;
+  encoding: typeof DynamicEncoding = DynamicEncoding;
+  headers: typeof HeaderData = HeaderData;
 
   parent: Window | any;
   top: Window | any;
 
-  define: any;
-  config;
+  define: Function | undefined;
+  config: any;
 
-  listeners: Array<any> = [];
+  listeners: Array<{ event: string; cb: Function }> = [];
 
   on(event: string, cb: Function) {
-    this.listeners.push({event, cb});
+    this.listeners.push({ event, cb });
   }
 
   fire(event: string, data: Array<any>) {
-    var found = false;
+    let found = false;
 
-    for (var listener of this.listeners) {
-      if (listener.event === event) data = (found = true, listener.cb(...data));
+    for (const listener of this.listeners) {
+      if (listener.event === event) {
+        data = (found = true, listener.cb(...data));
+      }
     }
 
-    if (found && data) return data;
+    if (found && data) {
+      return data;
+    }
 
     return null;
   }
   
-  constructor(config:any) {if (config&&!this.config) this.config = config; if (config) this.util.encode(self)};
+  constructor(config: any) {
+    if (config && !this.config) {
+      this.config = config;
+    }
+    if (config) {
+      this.util.encode(self);
+    }
+  }
 }
 
-export { DynamicBundle, DynamicModules, DynamicRewrites, DynamicUtil, DynamicMeta, DynamicUrlRewriter };
+export {
+  DynamicBundle,
+  DynamicModules,
+  DynamicRewrites,
+  DynamicUtil,
+  DynamicMeta,
+  DynamicUrlRewriter,
+};

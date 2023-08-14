@@ -1,3 +1,4 @@
+import { BareClient } from '@tomphttp/bare-client';
 import DynamicModules from './modules';
 import DynamicRewrites from './rewrite';
 import DynamicUtil from './util';
@@ -6,10 +7,9 @@ import DynamicMeta from './meta';
 import DynamicHttp from './http';
 import DynamicRegex from './regex';
 import DynamicMiddleware from './middleware';
-import HeaderData from './headers';
-import { BareClient } from '@tomphttp/bare-client';
 import DynamicTypeFunctions from './istype';
 import DynamicCookies from './cookie';
+import HeaderData from './headers';
 import * as DynamicEncoding from './codec';
 
 class DynamicBundle {
@@ -17,7 +17,9 @@ class DynamicBundle {
   client: any;
   parent: any;
   top: any;
-  define: any;
+  define: Function | undefined;
+  config: any;
+  listeners: Array<{ event: string; cb: Function }> = [];
 
   modules: DynamicModules = new DynamicModules(this);
   util: DynamicUtil = new DynamicUtil(this);
@@ -27,34 +29,43 @@ class DynamicBundle {
   url: DynamicUrlRewriter = new DynamicUrlRewriter(this);
   is: DynamicTypeFunctions = new DynamicTypeFunctions(this);
   cookies: DynamicCookies = new DynamicCookies(this);
-  regex: any = new DynamicRegex(this as DynamicBundle);
-  headers: any = HeaderData;
-  encoding: any = DynamicEncoding;
+  regex: DynamicRegex = new DynamicRegex(this);
+  headers: typeof HeaderData = HeaderData;
+  encoding: typeof DynamicEncoding = DynamicEncoding;
   bare!: Promise<BareClient>;
-
   middleware: DynamicMiddleware = new DynamicMiddleware(this);
 
-  config;
-
-  listeners: Array<any> = [];
+  constructor(config: any) {
+    if (config && !this.config) {
+      this.config = config;
+    }
+    if (config) {
+      this.util.encode(self);
+    }
+  }
 
   on(event: string, cb: Function) {
-    this.listeners.push({event, cb});
+    this.listeners.push({ event, cb });
   }
 
   fire(event: string, data: Array<any>) {
-    var found = false;
-
-    for (var listener of this.listeners) {
-      if (listener.event === event) data = (found = true, listener.cb(...data));
+    for (const listener of this.listeners) {
+      if (listener.event === event) {
+        data = listener.cb(...data);
+        return data;
+      }
     }
-
-    if (found && data) return data;
-
     return null;
   }
-  
-  constructor(config:any) {if (config&&!this.config) this.config = config; if (config) this.util.encode(self)};
 }
 
-export { DynamicBundle, DynamicModules, DynamicRewrites, DynamicUtil, DynamicMiddleware, DynamicHttp, DynamicMeta, DynamicUrlRewriter };
+export {
+  DynamicBundle,
+  DynamicModules,
+  DynamicRewrites,
+  DynamicUtil,
+  DynamicMiddleware,
+  DynamicHttp,
+  DynamicMeta,
+  DynamicUrlRewriter,
+};
