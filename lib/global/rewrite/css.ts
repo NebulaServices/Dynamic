@@ -10,14 +10,12 @@ export default class css {
   }
 
   rewrite(this: css, src: string | URL, meta: MetaURL, config: Object = {}) {
-    const that = this;
-
     if (!src) return src;
 
-    return src.toString().replace(/((@import ['"`]+|url\(['"`]?)(.*?)(['"`]?\)|['"`]+))/gmi, function() {
+    return src.toString().replace(/((@import ['"`]+|url\(['"`]?)(.*?)(['"`]?\)|['"`]+))/gmi, (...args) => {
       try {
-        return arguments[0].replace(arguments[3], that.ctx.url.encode(arguments[3], meta));
-      } catch {}
+        return args[0].replace(args[3], this.ctx.url.encode(args[3], meta));
+      } catch {return args[0];}
     });
   }
 }
