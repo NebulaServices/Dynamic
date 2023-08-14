@@ -30,6 +30,17 @@ Example:
 
 If this fits your need Change your `encoding` value to `plain`
 
+### AES
+Similar to the XOR encoding, AES (Advanced Encryption Standard) encoding is a type of symmetric encryption where the same key is used to both encrypt and decrypt a message, but different to the XOR encoding, AES doesn't settle for a one-byte affair; it operates with much logner key lengths. It is also a cipher and not an encoding. If you're trying to hide your activity the best, AES is the way to go. It's harder to decrypt than something than base64 and harder to read than the XOR encoded urls. This version of AES is also salted.
+
+Example: 
+* `https://google.com`
+    * `U2FsdGVkX19vOrJhB+tKkRLOrTZyBrUGWHXptoNXkU9JY6st/tFfsW0Y7UzwAFUm`
+* `https://www.youtube.com`
+    * `U2FsdGVkX18eYibgsnuW2xQsNrAqIUpsYWXMLSLKJRNyrCmeoOJzq38VBWwBSzzY`
+
+If this fits your need Change your `encoding` value to `aes`
+
 ### Base64
 Base64 is a encoding algorithm that allows you to transform any characters into an alphabet which consists of Latin letters, digits, plus, and slash. Thanks to it, Dynamic can hide URLs by turning the letters of the URL into numbers.
 
