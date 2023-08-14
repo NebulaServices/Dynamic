@@ -30,12 +30,12 @@ const aes = {
     encode: (str: string | undefined) => {
         if (!str) return str;
 
-        return CryptoJS.AES.encrypt(str, 'dynamic').toString();;
+        return CryptoJS.AES.encrypt(str, 'dynamic').toString().substring(10);
     },
     decode: (str: string | undefined) => {
         if (!str) return str;
 
-        return CryptoJS.AES.decrypt(str, 'dynamic').toString(CryptoJS.enc.Utf8);
+        return CryptoJS.AES.decrypt('U2FsdGVkX1' + str, 'dynamic').toString(CryptoJS.enc.Utf8);
     }
 }
 
