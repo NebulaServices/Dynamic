@@ -60,4 +60,3 @@ await copyFile("./lib/dynamic.config.js", "./dist/dynamic.config.js");
 console.log(await esbuild.analyzeMetafile((worker.metafile)));
 
 console.timeEnd("esbuild");
-process.exit(0);
