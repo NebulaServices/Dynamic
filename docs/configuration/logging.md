@@ -9,7 +9,7 @@ For absolutely no logging, change the value in your configuration to `0`
 If you only want errors in console, but want to ignore warnings, this is the level for you! Turn the value in your configuration to `1`
 
 ## Indecisive
-Lookin for both Errors and Warnings? Change the value in your configuration to `2`
+Looking for both Errors and Warnings? Change the value in your configuration to `2`
 
 ## The everything burger 
 Exactly what it sounds like, errors + warnings + info. Set the value in your configuration to `2`
