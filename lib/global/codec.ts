@@ -1,3 +1,5 @@
+import * as CryptoJS from 'crypto-js';
+
 const xor = {
     encode: (str: string | undefined, key: number = 2) => {
         if (!str) return str;
@@ -24,6 +26,19 @@ const plain = {
     }
 }
 
+const aes = {
+    encode: (str: string | undefined) => {
+        if (!str) return str;
+
+        return CryptoJS.AES.encrypt(str, 'dynamic').toString();;
+    },
+    decode: (str: string | undefined) => {
+        if (!str) return str;
+
+        return CryptoJS.AES.decrypt(str, 'dynamic').toString(CryptoJS.enc.Utf8);
+    }
+}
+
 const none = {
     encode: (str: string | undefined) => str,
     decode: (str: string | undefined) => str,
@@ -42,4 +57,4 @@ const base64 = {
     }
 }
 
-export { xor, plain, none, base64 };
+export { xor, plain, none, base64, aes };
