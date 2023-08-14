@@ -1,6 +1,8 @@
 import * as esbuild from "esbuild";
 import { copyFile } from "fs/promises";
 
+await import("./index.js");
+
 console.time("esbuild");
 
 const worker = await esbuild.context({
