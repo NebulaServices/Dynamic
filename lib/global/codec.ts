@@ -1,4 +1,4 @@
-import * as CryptoJS from 'crypto-js';
+import { AES, enc } from 'crypto-js';
 
 const xor = {
     encode: (str: string | undefined, key: number = 2) => {
@@ -30,12 +30,12 @@ const aes = {
     encode: (str: string | undefined) => {
         if (!str) return str;
 
-        return CryptoJS.AES.encrypt(str, 'dynamic').toString().substring(10);
+        return AES.encrypt(str, 'dynamic').toString().substring(10);
     },
     decode: (str: string | undefined) => {
         if (!str) return str;
 
-        return CryptoJS.AES.decrypt('U2FsdGVkX1' + str, 'dynamic').toString(CryptoJS.enc.Utf8);
+        return AES.decrypt('U2FsdGVkX1' + str, 'dynamic').toString(enc.Utf8);
     }
 }
 
