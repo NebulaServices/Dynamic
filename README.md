@@ -25,26 +25,24 @@ See [Examples](https://github.com/NebulaServices/Dynamic/tree/main/examples);
 
 ## Getting started (How to run)
 
-### Method 1 
+### Method 1
 
-1. Clone and Change directory into Dynamic
+1. Clone and change directory into Dynamic
 ```bash
-git clone https://GitHub.com/NebulaServices/dynamic.git && cd Dynamic
+git clone https://github,com/NebulaServices/Dynamic.git && cd Dynamic
 ```
 
-2. Give bash file permissions
-```bash 
-chmod +x ./bin/run.sh
-```
-
-3. Run bash file 
+2. Run bash script and follow the instructions in the script
 ```bash
-./bin/run.sh
+./bin/start.sh
 ```
+
 
 ### Method 2 
+
+1. Clone and change directory into Dynamic
 ```bash
-git clone https://GitHub.com/NebulaServices/dynamic.git && cd Dynamic
+git clone https://GitHub.com/NebulaServices/Dynamic.git && cd Dynamic
 ```
 
 2. Install dependencies
@@ -52,7 +50,12 @@ git clone https://GitHub.com/NebulaServices/dynamic.git && cd Dynamic
 npm i 
 ```
 
-3. Run the server
+3. Build Dynamic Bundles
+```bash
+npm run build
+```
+
+4. Run the server
 ```bash
 npm start
 ```
