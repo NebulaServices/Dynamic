@@ -1,41 +1,68 @@
+import Fastify from 'fastify';
+import fastifyStatic from '@fastify/static';
 import { createBareServer } from '@tomphttp/bare-server-node';
-import http from 'http';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
-import nodeStatic from 'node-static';
+import { createServer } from 'http';
 import chalk from 'chalk';
+import open from 'open';
+import { existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
+if (!existsSync("./dist")) await import("./esbuild.prod.js");
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const port = process.env.PORT || 3000;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _v = process.env.npm_package_version;
 
 const bare = createBareServer('/bare/');
-const serve = new nodeStatic.Server('static/');
-
-const server = http.createServer();
-
-server.on('request', (req, res) => {
-  if (bare.shouldRoute(req)) {
-    bare.routeRequest(req, res);
-  } else {
-    serve.serve(req, res);
-  }
+const serverFactory = (handler, opts) => {
+  return createServer()
+    .on("request", (req, res) => {
+      if (req.url === "/version") {
+        const versionResponse = {
+          version: _v,
+        };
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(versionResponse));
+      } else if (bare.shouldRoute(req)) {
+        bare.routeRequest(req, res);
+      } else {
+        handler(req, res)
+      }
+    }).on("upgrade", (req, socket, head) => {
+      if (bare.shouldRoute(req)) {
+        bare.routeUpgrade(req, socket, head);
+      } else {
+        socket.end();
+      }
+    });
+}
+const fastify = Fastify({ serverFactory });
+fastify.register(fastifyStatic, {
+  root: join(__dirname, "./static"),
+  decorateReply: false
+});
+fastify.register(fastifyStatic, {
+  root: join(__dirname, "./dist"),
+  prefix: "/dynamic/",
+  decorateReply: false
 });
 
-server.on('upgrade', (req, socket, head) => {
-  if (bare.shouldRoute(req, socket, head)) {
-    bare.routeUpgrade(req, socket, head);
-  } else {
-    socket.end();
+const URL = `http://localhost:${port}/`;
+fastify.listen({ port }, async (err) => {
+  if (err && err.code !== "EADDRINUSE") {
+    console.log(chalk.red.bold(`[Dynamic ${_v}] `) + "Port is already in use! Please close any apps using port " + chalk.bold.underline.red(port) + " and try again.");
+    process.exit(1);
+  } else if (err) {
+    console.log(chalk.bold.red(`[Dynamic ${_v}] `) + "An error occurred while starting the server! \n" + err);
+    process.exit(1);
   }
-});
-
-server.listen({
-  port: port,
-}, () => {
   console.log(chalk.bold('Thanks for using Dynamic!'), chalk.red(`Please notice that ${chalk.red.bold('dynamic is currently in public BETA')}. please report all issues to the GitHub page. `))
-  console.log(chalk.green.bold("[Dynamic] ") + "live at port " + chalk.bold.green(port));
+  console.log(chalk.green.bold(`Dynamic ${_v} `) + "live at port " + chalk.bold.green(port));
+  try {
+    await open(URL);
+  } catch (ERR) {
+    console.error(ERR);
+  }
 });

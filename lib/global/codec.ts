@@ -1,5 +1,3 @@
-import * as b64 from '@dynamic-pkg/base64';
-
 const xor = {
     encode: (str: string | undefined, key: number = 2) => {
         if (!str) return str;
@@ -35,12 +33,12 @@ const base64 = {
     encode: (str: string | undefined) => {
         if (!str) return str;
 
-        return decodeURIComponent(b64.encode(str));
+        return decodeURIComponent(btoa(str));
     },
     decode: (str: string | undefined) => {
         if (!str) return str;
 
-        return b64.decode(str);
+        return atob(str);
     }
 }
 

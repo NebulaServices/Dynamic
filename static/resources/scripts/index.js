@@ -19,7 +19,6 @@ function prependHttps(url) {
 }
 
 function isUrl(val = "") {
-  // Use a regular expression to check for a valid URL pattern
   const urlPattern = /^(http(s)?:\/\/)?([\w-]+\.)+[\w]{2,}(\/.*)?$/;
   return urlPattern.test(val);
 }
