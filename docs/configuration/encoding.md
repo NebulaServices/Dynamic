@@ -30,7 +30,7 @@ Example:
 
 If this fits your need Change your `encoding` value to `plain`
 
-### Plain
+### Base64
 Base64 is a encoding algorithm that allows you to transform any characters into an alphabet which consists of Latin letters, digits, plus, and slash. Thanks to it, Dynamic can hide URLs by turning the letters of the URL into numbers.
 
 Example: 
