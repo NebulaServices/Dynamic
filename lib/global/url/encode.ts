@@ -9,6 +9,15 @@ export default function encode(this: DynamicUrlRewriter, url: URL | string | any
 
   if (!url.match(this.ctx.regex.ProtocolRegex) && url.match(/^([a-zA-Z0-9\-]+)\:\/\//g)) return url;
   if (url.startsWith('chrome-extension://')) return url;
+  
+  if(url.startsWith('javascript:')
+    && !url.startsWith('javascript:__dynamic$eval') // for some reason the tag gets called multiple times
+  )
+  {
+    let urlData = new URL(url);
+
+    return `javascript:__dynamic$eval(${JSON.stringify(urlData.pathname)})`
+  }
 
   if (url.match(this.ctx.regex.WeirdRegex)) {
     var data = this.ctx.regex.WeirdRegex.exec(url);
