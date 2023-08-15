@@ -23,7 +23,7 @@
 		<div class="settings-connected"> 
 			<div class="connectedindicator"> 
 		</div>
-		<div id="service-status">service online</div> 
+		<div id="service-status">Service Worker Online</div> 
 	</div>
 			</div><!-- .modal-content -->
 		</div><!-- .modal-inner -->
@@ -32,12 +32,13 @@
 
 
   <canvas></canvas>
+  <img src="resources/img/logo.png" width="125" height="125"></img>
   <h1> Dynamic </h1>
 	<form action="/service/route" method="POST" id="uform">
 	  <input title="query" name="url" autocomplete="off" >
 	</form>
   <div class="footer"> 
-    <div class="copyright"> Copyright Nebula Services 2023 </div>
+    <div class="copyright" onclick="window.location.href='/credits.html';" style="cursor: pointer;"> Copyright Nebula Services 2023 </div>
  </div>  
 
 <button class="js-modal" data-modal="modal-1">Information</button>
