@@ -1,5 +1,5 @@
 #!/bin/bash
-tput setaf 33; echo "Welcome To Noctura!"; tput sgr0
+tput setaf 33; echo "Thanks for using Dynamic!"; tput sgr0
 
 #Navigating to the project root
 scriptDir="${0%/*}"
