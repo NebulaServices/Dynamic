@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
+import fastifyCompress from '@fastify/compress';
 import { createBareServer } from '@tomphttp/bare-server-node';
 import { createServer } from 'http';
 import chalk from 'chalk';
@@ -47,6 +48,9 @@ fastify.register(fastifyStatic, {
   root: join(__dirname, "./dist"),
   prefix: "/dynamic/",
   decorateReply: false
+});
+fastify.register(fastifyCompress, {
+  encodings: ["br"]
 });
 
 const URL = `http://localhost:${port}/`;
