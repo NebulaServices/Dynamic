@@ -96,12 +96,33 @@ svg {
     position: absolute;
     bottom: 0;
     width: 100%;
-    
+}
+
+.madeby {
+  display: block;
+  margin-top: 20px;
+}
+
+.credits-class {
+  display: block;
+  align-items: left;
+  font-size: 15px;
+}
+
+.contributers {
+  display: block;
+  position: relative;
+  justify-content: left;
+  font-size: 15px;
+}
+
+.license {
+  display: block;
 }
 
 .copyright { 
     position: absolute;
-    left: 17px;
+    align-content: center;
 }
 
 canvas {
@@ -252,7 +273,6 @@ canvas {
     margin-right: 13px;
     margin-top: 2px;
 }
-
 button { 
   position: absolute;
   right: 4px;
@@ -260,4 +280,28 @@ button {
   background: transparent;
   border: transparent;
   color: #ffffff30;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+}
+.dropdown-btn {
+  background-color: #3498db;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  min-width: 200px;
+  padding: 10px;
+}
+.dropdown.show .dropdown-content {
+  display: block;
 }
