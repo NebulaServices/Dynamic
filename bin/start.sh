@@ -126,6 +126,7 @@ then
         echo "Doing Both!"
         echo "Building Dynamic"
         npm run build:$devAns
+        sleep 0.5
         echo "Starting Dynamic :)"
         npm run start
     fi
