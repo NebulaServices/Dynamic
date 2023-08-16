@@ -1,4 +1,6 @@
-import { AES, enc } from 'crypto-js';
+// @ts-ignore
+// i'm not making types for aes.js lol
+// import { enc, dec } from "./aes.js";
 
 const xor = {
     encode: (str: string | undefined, key: number = 2) => {
@@ -26,18 +28,18 @@ const plain = {
     }
 }
 
-const aes = {
-    encode: (str: string | undefined) => {
-        if (!str) return str;
+// const aes = {
+//     encode: (str: string | undefined) => {
+//         if (!str) return str;
 
-        return AES.encrypt(str, 'dynamic').toString().substring(10);
-    },
-    decode: (str: string | undefined) => {
-        if (!str) return str;
+//         return encodeURIComponent(enc(str, 'dynamic').substring(10));
+//     },
+//     decode: (str: string | undefined) => {
+//         if (!str) return str;
 
-        return AES.decrypt('U2FsdGVkX1' + str, 'dynamic').toString(enc.Utf8);
-    }
-}
+//         return dec('U2FsdGVkX1' + decodeURIComponent(str), 'dynamic');
+//     }
+// }
 
 const none = {
     encode: (str: string | undefined) => str,
@@ -57,4 +59,4 @@ const base64 = {
     }
 }
 
-export { xor, plain, none, base64, aes };
+export { xor, plain, none, base64, /*aes*/ };
