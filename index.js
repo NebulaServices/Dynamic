@@ -8,6 +8,10 @@ import open from 'open';
 import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const gitCommitInfo = require('git-commit-info');
+
 
 if (!existsSync("./dist")) await import("./esbuild.prod.js");
 
@@ -15,17 +19,19 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const port = process.env.PORT || 3000;
 const _v = process.env.npm_package_version;
+const info = { 
+  hashShort: `${JSON.stringify(gitCommitInfo().shortHash).replace('"', "").replace("/", "").replace('\"', "")}`,
+  hash: `${JSON.stringify(gitCommitInfo().hash).replace('"', "").replace("/", "").replace('\"', "")}`,
+  version: _v, 
+}
 
 const bare = createBareServer('/bare/');
 const serverFactory = (handler, opts) => {
   return createServer()
     .on("request", (req, res) => {
-      if (req.url === "/version") {
-        const versionResponse = {
-          version: _v,
-        };
+      if (req.url === "/info") {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(versionResponse));
+        res.end(JSON.stringify(info));
       } else if (bare.shouldRoute(req)) {
         bare.routeRequest(req, res);
       } else {

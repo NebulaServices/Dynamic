@@ -90,16 +90,22 @@ class Modal {
 new Modal();
 
 window.addEventListener('DOMContentLoaded', function (){
-    console.log('buh')
+  
 const versionInd = document.getElementById('settings-version')
 const xhr = new XMLHttpRequest();
-xhr.open("GET", '/version');
+xhr.open("GET", '/info');
 xhr.send();
 xhr.responseType = "json";
 xhr.onload = () => {
   if (xhr.readyState == 4 && xhr.status == 200) {
-    console.log(xhr.response)
-    versionInd.innerText = `Dynamic v${xhr.response.version}`
+    const response = xhr.response;
+    versionInd.innerHTML = `Dynamic v${response.version} <span id='hashHover'> (${response.hashShort}) </span> `
+    const hashHover = document.getElementById('hashHover')
+    hashHover.onclick = function displayFullHash(){
+      console.log('cool')
+    hashHover.innerText = `(${response.hash})`
+    hashHover.style.fontSize = `10px`
+  }
   } else {
     versionInd.innerText = 'Unable to get version'
   }
