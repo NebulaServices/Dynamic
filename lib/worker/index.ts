@@ -144,7 +144,6 @@ import about from '../global/util/about';
 
       if (request.url.startsWith(__dynamic.config.bare.path.toString())) return false;
       if (request.url.startsWith(location.origin + self.__dynamic$config.prefix)) return true;
-      if (blockList.includes(request.url)) return false;
 
       if (request.mode !== 'navigate') request.client = (await self.clients.matchAll()).find((e:any)=>e.id==event.clientId);
 
@@ -221,7 +220,7 @@ import about from '../global/util/about';
 
         Dynamic.meta.load(new URL(Dynamic.url.decode(new URL(request.url))));
 
-        if (blockList.indexOf(Dynamic.meta.host) !== -1) return (this.fire('blocked', [Dynamic.meta, request]) || new Response(null, {
+        if (blockList.indexOf(Dynamic.meta.host) !== -1 || blockList.find((entry: RegExp) => entry instanceof RegExp && entry.test(Dynamic.meta.host))) return (this.fire('blocked', [Dynamic.meta, request]) || new Response(null, {
           status: 403,
           statusText: 'Forbidden'
         }));
