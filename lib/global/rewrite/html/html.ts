@@ -12,68 +12,68 @@ export default class html {
   generateHead: Function = generateHead;
 
   config: Array<Object> = [
-      {
-        "elements": "all",
-        "tags": ['style'],
-        "action": "css"
-      },
-      {
-          "elements": ['script', 'iframe', 'embed', 'input', 'track', 'media', 'source', 'img', 'a', 'link', 'area', 'form', 'object'],
-          "tags": ['src', 'href', 'action', 'data'],
-          "action": "url"
-      },
-      {
-          "elements": ['source', 'img'],
-          "tags": ['srcset'],
-          "action": "srcset"
-      },
-      /*{
-          "elements": ['a', 'link', 'area'],
-          "tags": ['href'],
-          "action": "url"
-      },
-      {
-          "elements": ['form'],
-          "tags": ['action'],
-          "action": "url"
-      }, 
-      {
-          "elements": ['object'],
-          "tags": ['data'],
-          "action": "url",
-      },*/
-      {
-        "elements": ['script', 'link'],
-        "tags": ['integrity'],
-        "action": "rewrite",
-        "new": "nointegrity",
-      },
-      {
-        "elements": ['script', 'link'],
-        "tags": ['nonce'],
-        "action": "rewrite",
-        "new": "nononce",
-      },
-      {
-        "elements": ['meta'],
-        "tags": ['http-equiv'],
-        "action": "http-equiv",
-      },
-      {
-        "elements": ['iframe'],
-        "tags": ['srcdoc'],
-        "action": "html",
-      },
-      {
-        "elements": ['link'],
-        "tags": ["imagesrcset"],
-        "action": "srcset",
-      },
-      {
-        "elements": 'all',
-        "tags": ['onclick'],
-        "action": "js",
-      }
+    {
+      "elements": "all",
+      "tags": ['style'],
+      "action": "css"
+    },
+    {
+      "elements": ['script', 'iframe', 'embed', 'input', 'track', 'media', 'source', 'img', 'a', 'link', 'area', 'form', 'object'],
+      "tags": ['src', 'href', 'action', 'data'],
+      "action": "url"
+    },
+    {
+      "elements": ['source', 'img'],
+      "tags": ['srcset'],
+      "action": "srcset"
+    },
+    /*{
+        "elements": ['a', 'link', 'area'],
+        "tags": ['href'],
+        "action": "url"
+    },
+    {
+        "elements": ['form'],
+        "tags": ['action'],
+        "action": "url"
+    }, 
+    {
+        "elements": ['object'],
+        "tags": ['data'],
+        "action": "url",
+    },*/
+    {
+      "elements": ['script', 'link'],
+      "tags": ['integrity'],
+      "action": "rewrite",
+      "new": "nointegrity",
+    },
+    {
+      "elements": ['script', 'link'],
+      "tags": ['nonce'],
+      "action": "rewrite",
+      "new": "nononce",
+    },
+    {
+      "elements": ['meta'],
+      "tags": ['http-equiv'],
+      "action": "http-equiv",
+    },
+    {
+      "elements": ['iframe'],
+      "tags": ['srcdoc'],
+      "action": "html",
+    },
+    {
+      "elements": ['link'],
+      "tags": ["imagesrcset"],
+      "action": "srcset",
+    },
+    {
+      "elements": 'all',
+      "tags": ['onclick'],
+      "action": "js",
+    }
   ];
 
   constructor(ctx: DynamicRewrites) {
@@ -93,27 +93,29 @@ The document has moved
 
   iterate(_dom: Object, cb: Function) {
     function it(dom: Object | any = _dom) {
-      for (var i = 0; i<dom.childNodes.length; i++) {
+      for (var i = 0; i < dom.childNodes.length; i++) {
         cb(dom.childNodes[i]);
-    
+
         if (dom.childNodes[i].childNodes) if (dom.childNodes[i].childNodes.length) {
           it(dom.childNodes[i]);
         };
       }
     }
-  
+
     it(_dom);
   }
 
   rewrite(src: string, meta: MetaURL, head: Array<string | Object> = []) {
     if (Array.isArray(src)) src = src[0];
-    
+
     if (!src) return src;
 
     src = src.toString();
 
-    if (!src.match(/<(html|script|style)[^>]*>/g) && src.match(/<\!DOCTYPE[^>]*>/gi)) return src;
+    if (!src.match(/<(html|script|style)[^>]*>/g) && !src.match(/<\!DOCTYPE[^>]*>/gi)) {
+      src = "<!DOCTYPE html>" + src
+    }
 
-    return src.replace(/(<!DOCTYPE html>|<html(.*?)>)/im, `$1${head.join(``)}\n`).replace(/<(script|link)\b[^>]*>/g,(e,n)=>e.replace(/\snonce\s*=\s*"[^"]*"/,e=>e.replace("nonce","nononce")).replace(/\sintegrity\s*=\s*"[^"]*"/,e=>e.replace("integrity","nointegrity")));
+    return src.replace(/(<!DOCTYPE html>|<html(.*?)>)/im, `$1${head.join(``)}\n`).replace(/<(script|link)\b[^>]*>/g, (e, n) => e.replace(/\snonce\s*=\s*"[^"]*"/, e => e.replace("nonce", "nononce")).replace(/\sintegrity\s*=\s*"[^"]*"/, e => e.replace("integrity", "nointegrity")));
   }
 }
