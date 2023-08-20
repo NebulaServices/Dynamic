@@ -9,7 +9,7 @@ This mode is recommended when:
 * Creating middleware with the Dynamic API 
 * Testing features that require debugging 
 
-## Development
+## Production
 
 When you set your performance mode to `production`, Dynamic will cache its bundle and configuration file. This is Dynamics peak performance mode. 
 
