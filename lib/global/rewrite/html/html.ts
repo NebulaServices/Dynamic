@@ -112,7 +112,7 @@ The document has moved
 
     src = src.toString();
 
-    if (!src.match(/<(html|script|style)[^>]*>/g) && !src.match(/<\!DOCTYPE[^>]*>/gi)) {
+    if (!src.match(/<\!DOCTYPE[^>]*>/gi)) {
       src = "<!DOCTYPE html>" + src
     }
 
