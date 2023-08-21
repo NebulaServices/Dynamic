@@ -41,7 +41,7 @@
     "@types/mime-db": "^1.43.1",
     "@types/path-browserify": "^1.0.0",
     "@types/set-cookie-parser": "^2.4.2",
-    "execa": "^7.1.1",
+    "execa": "^8.0.1",
     "ts-node": "^10.8.1",
     "typescript": "^5.1.6"
   }
