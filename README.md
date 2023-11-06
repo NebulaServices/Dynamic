@@ -29,7 +29,7 @@ See [Examples](https://github.com/NebulaServices/Dynamic/tree/main/examples);
 
 1. Clone and change directory into Dynamic
 ```bash
-git clone https://github,com/NebulaServices/Dynamic.git && cd Dynamic
+git clone https://github.com/NebulaServices/Dynamic.git && cd Dynamic
 ```
 
 2. Run bash script and follow the instructions in the script
@@ -42,7 +42,7 @@ git clone https://github,com/NebulaServices/Dynamic.git && cd Dynamic
 
 1. Clone and change directory into Dynamic
 ```bash
-git clone https://GitHub.com/NebulaServices/Dynamic.git && cd Dynamic
+git clone https://github.com/NebulaServices/Dynamic.git && cd Dynamic
 ```
 
 2. Install dependencies
