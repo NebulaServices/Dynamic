@@ -21,7 +21,7 @@
 - Written in TypeScript
 
 ## Implementation
-See [Examples](https://github.com/NebulaServices/Dynamic/tree/main/docs/examples);
+See [Examples](https://github.com/NebulaServices/Dynamic/tree/main/docs/examples)
 
 ## Getting started (How to run)
 
