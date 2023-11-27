@@ -36,7 +36,7 @@
   },
   "type": "module",
   "devDependencies": {
-    "@types/cookie": "^0.5.1",
+    "@types/cookie": "^0.6.0",
     "@types/crypto-js": "^4.1.1",
     "@types/mime-db": "^1.43.1",
     "@types/path-browserify": "^1.0.0",
