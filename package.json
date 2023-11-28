@@ -23,7 +23,7 @@
     "acorn": "^8.10.0",
     "astring": "^1.8.6",
     "chalk": "^5.3.0",
-    "cookie": "^0.5.0",
+    "cookie": "^0.6.0",
     "domhandler": "^5.0.3",
     "esbuild": "^0.19.0",
     "fastify": "^4.21.0",
