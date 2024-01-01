@@ -1,6 +1,6 @@
 {
   "name": "@nebula-services/dynamic",
-  "version": "0.7.2-patch.1",
+  "version": "0.7.2-patch.2",
   "description": "The new generation of interception proxies.",
   "main": "./bin/index.cjs",
   "types": "./bin/index.d.ts",
@@ -14,7 +14,7 @@
     "build:prod": "node esbuild.prod.js",
     "build": "node esbuild.prod.js",
     "webpack": "echo 'Webpack building is no longer a supported build utility.'",
-    "prepublish": "npm run build"
+    "release": "npm run build && npm publish --access public"
   },
   "keywords": [],
   "author": "",
