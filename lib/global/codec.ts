@@ -1,6 +1,9 @@
-// @ts-ignore
-// i'm not making types for aes.js lol
-import { enc, dec } from "./aes.js";
+//@ts-ignore
+import AES from '../../node_modules/crypto-js/aes.js';
+//@ts-ignore
+import Utf8 from '../../node_modules/crypto-js/enc-utf8.js';
+
+var aesKey = location.origin + navigator.userAgent;
 
 const xor = {
     encode: (str: string | undefined, key: number = 2) => {
@@ -32,14 +35,14 @@ const aes = {
     encode: (str: string | undefined) => {
         if (!str) return str;
 
-        return encodeURIComponent(enc(str, 'dynamic').substring(10));
+        return AES.encrypt(str, aesKey).toString().substring(10);
     },
     decode: (str: string | undefined) => {
         if (!str) return str;
 
-        return dec('U2FsdGVkX1' + decodeURIComponent(str), 'dynamic');
-    }
-}
+        return AES.decrypt('U2FsdGVkX1' + str, aesKey).toString(Utf8);
+    },
+};
 
 const none = {
     encode: (str: string | undefined) => str,
