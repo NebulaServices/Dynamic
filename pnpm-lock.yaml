@@ -51,8 +51,8 @@ dependencies:
     specifier: ^2.0.2
     version: 2.0.2
   idb:
-    specifier: ^7.0.2
-    version: 7.1.1
+    specifier: ^8.0.0
+    version: 8.0.0
   open:
     specifier: ^9.1.0
     version: 9.1.0
@@ -1013,8 +1013,8 @@ packages:
     engines: {node: '>=16.17.0'}
     dev: true
 
-  /idb@7.1.1:
-    resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
+  /idb@8.0.0:
+    resolution: {integrity: sha512-l//qvlAKGmQO31Qn7xdzagVPPaHTxXx199MhrAFuVBTPqydcPYBWjkrbv4Y0ktB+GmWOiwHl237UUOrLmQxLvw==}
     dev: false
 
   /ieee754@1.2.1:

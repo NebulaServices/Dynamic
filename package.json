@@ -35,7 +35,7 @@
     "esbuild": "^0.19.0",
     "fastify": "^4.21.0",
     "git-commit-info": "^2.0.2",
-    "idb": "^7.0.2",
+    "idb": "^8.0.0",
     "open": "^9.1.0",
     "parse5": "^7.1.2",
     "path-browserify": "^1.0.1",
