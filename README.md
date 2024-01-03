@@ -2,7 +2,7 @@
 
 ![Frame_1_6](https://github.com/NebulaServices/Dynamic/assets/81369743/373dc333-ff38-46c7-90f7-bd34899a6807)
 ![Version](https://img.shields.io/badge/status-BETA-build) 
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/NebulaServices/Dynamic/graphs/commit-activity)
 [![License](https://img.shields.io/github/license/NebulaServices/Dynamic.svg)](https://github.com/NebulaServices/Dynamic/blob/main/LICENSE)
 [![TypeScript](https://badgen.net/badge/icon/typescript?icon=typescript&label)](https://typescriptlang.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
