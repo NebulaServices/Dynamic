@@ -23,7 +23,7 @@
     "@dynamic-pkg/mime": "^1.0.1",
     "@dynamic-pkg/mutation": "^1.0.0",
     "@fastify/compress": "^6.4.0",
-    "@fastify/static": "^6.10.2",
+    "@fastify/static": "^7.0.0",
     "@tomphttp/bare-client": "^2.2.0-alpha",
     "@tomphttp/bare-server-node": "^2.0.1",
     "acorn": "^8.10.0",
