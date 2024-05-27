@@ -32,7 +32,7 @@
     "cookie": "^0.5.0",
     "crypto-js": "^4.2.0",
     "domhandler": "^5.0.3",
-    "esbuild": "^0.19.0",
+    "esbuild": "^0.20.2",
     "fastify": "^4.21.0",
     "git-commit-info": "^2.0.2",
     "idb": "^7.0.2",
